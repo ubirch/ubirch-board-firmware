@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.0.2)
 if (NOT CMAKE_TOOLCHAIN_FILE)
   set(CMAKE_TOOLCHAIN_FILE ../ubirch-arm-toolchain/cmake/ubirch-arm-gcc-toolchain.cmake)
 endif ()
+
 # set board type (ubirch#1 r0.2, FRDM-K82F, FRDM-KL82Z*)
 # (* not yet implemented)
 # you don't need to set it here, use 'cmake -DBOARD=<board> ..' during setup
@@ -21,8 +22,8 @@ endif ()
 
 project(ubirch-firmware C CXX ASM)
 
-require(PACKAGE KinetisSDK MCU ${MCU} VERSION 2.0 BUILD_TYPE MinSizeRel)
-require(PACKAGE wolfSSL MCU ${MCU} VERSION 3.9.0 BUILD_TYPE RelWithDebInfo)
+require(PACKAGE KinetisSDK MCU ${MCU} VERSION 2.0)
+require(PACKAGE wolfSSL MCU ${MCU} VERSION 3.9.0)
 
 add_definitions(-DNCIODEBUG)
 
