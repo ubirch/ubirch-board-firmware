@@ -8,13 +8,14 @@ endif ()
 # you don't need to set it here, use 'cmake -DBOARD=<board> ..' during setup
 # the board setting will determine the used MCU
 if (NOT BOARD)
-  #  set(BOARD "ubirch#1")
-  set(BOARD "FRDM-K82F")
+  set(BOARD "ubirch-1")
+  #  set(BOARD "FRDM-K82F")
   #  set(BOARD "FRDM-KL82Z")
 endif ()
-
 message(STATUS "selected board: ${BOARD}")
-if (BOARD MATCHES "ubirch#1|FRDM-K82F")
+
+# we set the used MCU based on the board
+if (BOARD MATCHES "ubirch-1|FRDM-K82F")
   set(MCU "MK82F25615")
 elseif (BOARD MATCHES "FRDM-KL82Z")
   set(MCU "MKL82Z7")
@@ -36,4 +37,4 @@ add_subdirectory(board)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/driver)
 add_subdirectory(firmware)
 
-provide(PACKAGE ubirch-firmware VERSION 1.0 MCU ${MCU} TARGETS board firmware)
+provide(PACKAGE firmware VERSION 1.0 MCU ${MCU} TARGETS board firmware)

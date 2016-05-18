@@ -14,4 +14,4 @@ add_library(firmware
   ubirch/timer.c
   )
 target_include_directories(firmware PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-target_link_libraries(firmware board wolfcrypt)
+target_link_libraries(firmware board KinetisSDK::${MCU}::ksdk20 wolfSSL::${MCU}::wolfcrypt)

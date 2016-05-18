@@ -1,6 +1,6 @@
 #! /bin/sh
 TOOLCHAIN=../ubirch-arm-toolchain/cmake/ubirch-arm-gcc-toolchain.cmake
-BOARD="FRDM-K82F"
+BOARD="ubirch-1"
 # do an out-of-source build for all configurations
 if [ "$1" == "-a" ]
 then BUILDS="Debug Release MinSizeRel RelWithDebInfo"
