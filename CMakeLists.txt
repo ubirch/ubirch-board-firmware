@@ -37,4 +37,4 @@ add_subdirectory(board)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/driver)
 add_subdirectory(firmware)
 
-provide(PACKAGE ubirch VERSION 1.0 MCU ${MCU} TARGETS board firmware)
+provide(PACKAGE ubirch VERSION 1.0 BOARD ${BOARD} TARGETS board firmware)
