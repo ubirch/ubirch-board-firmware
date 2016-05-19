@@ -97,7 +97,6 @@ uint8_t i2c_read_reg(uint8_t address, uint8_t reg);
  */
 uint16_t i2c_read_reg16(uint8_t address, uint8_t reg);
 
-#ifndef NDEBUG
 /**
  * Write a human readable I2C response code translation
  * to the debug console including explanation.
@@ -105,6 +104,5 @@ uint16_t i2c_read_reg16(uint8_t address, uint8_t reg);
  * @param status the status_t reference to check
  */
 void i2c_error(char *s, status_t status);
-#endif
 
 #endif // _UBIRCH_I2C_CORE_H

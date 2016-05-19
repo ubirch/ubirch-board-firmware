@@ -119,8 +119,6 @@ uint16_t i2c_read_reg16(uint8_t address, uint8_t reg) {
   return value;
 }
 
-#ifndef NDEBUG
-
 void i2c_error(char *s, status_t status) {
   if (status == kStatus_Success) return;
   PRINTF("%s (%x): ", s, status);
@@ -145,5 +143,3 @@ void i2c_error(char *s, status_t status) {
           break;
   }
 }
-
-#endif
