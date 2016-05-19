@@ -15,3 +15,7 @@ add_library(firmware
   )
 target_include_directories(firmware PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(firmware board KinetisSDK::${MCU}::ksdk20 wolfSSL::${MCU}::wolfcrypt)
+# only do the full debug output in "Debug"
+if (NOT CMAKE_BUILD_TYPE MATCHES Debug)
+  target_compile_definitions(firmware PUBLIC -DNCIODEBUG)
+endif ()

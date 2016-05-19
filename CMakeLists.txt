@@ -26,8 +26,6 @@ project(ubirch-firmware C CXX ASM)
 require(PACKAGE KinetisSDK MCU ${MCU} VERSION 2.0)
 require(PACKAGE wolfSSL MCU ${MCU} VERSION 3.9.0)
 
-add_definitions(-DNCIODEBUG)
-
 # board specific code (pins, peripherals etc.)
 add_subdirectory(board)
 
