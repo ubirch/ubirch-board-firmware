@@ -27,7 +27,16 @@ require(PACKAGE KinetisSDK MCU ${MCU} VERSION 2.0)
 require(PACKAGE wolfSSL MCU ${MCU} VERSION 3.9.0)
 
 # board specific code (pins, peripherals etc.)
-add_subdirectory(board)
+if (BOARD MATCHES "ubirch1r02")
+  set(BOARD_DIR ubirch1r02)
+elseif (BOARD MATCHES "FRDM-K82F")
+  set(BOARD_DIR frdm_k82f)
+elseif (BOARD MATCHES "FRDM-KL82Z")
+  set(BOARD_DIR frdm_kl82z)
+else ()
+  message(FATAL_ERROR "Please set a board type: -DBOARD=<...> (i.e. ubirch1r02, FRDM-K82F, FRDM-KL82Z)")
+endif ()
+add_subdirectory(board/${BOARD_DIR})
 
 # ubirch driver code
 # we need to add the include directory here, so it does not get
