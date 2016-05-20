@@ -24,6 +24,7 @@
 #include <ubirch/timer.h>
 #include <fsl_rtc.h>
 #include <stdlib.h>
+#include <string.h>
 #include "sim800h_parser.h"
 #include "sim800h_core.h"
 #include "sim800h_debug.h"
