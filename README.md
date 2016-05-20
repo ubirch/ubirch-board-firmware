@@ -11,7 +11,7 @@ See the board specific, including pin settings found here:
 * [FRDM-K82F](board/frdm_k82f)
 * [FRDM-KL82Z](board/frdm_kl82z)\*
 
-> \* Work in progress, the Kinetis SDK 2.0 is not available for the K82Z.
+> \* Work in progress, the Kinetis SDK 2.0 is not available for the KL82Z.
 
 ## License
 
