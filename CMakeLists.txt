@@ -3,19 +3,19 @@ if (NOT CMAKE_TOOLCHAIN_FILE)
   set(CMAKE_TOOLCHAIN_FILE ../ubirch-arm-toolchain/cmake/ubirch-arm-gcc-toolchain.cmake)
 endif ()
 
-# set board type (ubirch#1 r0.2, FRDM-K82F, FRDM-KL82Z*)
+# set board type (ubirch1r02, FRDM-K82F, FRDM-KL82Z*)
 # (* not yet implemented)
 # you don't need to set it here, use 'cmake -DBOARD=<board> ..' during setup
 # the board setting will determine the used MCU
 if (NOT BOARD)
-  set(BOARD "ubirch-1")
+  set(BOARD "ubirch1r02")
   #  set(BOARD "FRDM-K82F")
   #  set(BOARD "FRDM-KL82Z")
 endif ()
 message(STATUS "selected board: ${BOARD}")
 
 # we set the used MCU based on the board
-if (BOARD MATCHES "ubirch-1|FRDM-K82F")
+if (BOARD MATCHES "ubirch1|FRDM-K82F")
   set(MCU "MK82F25615")
 elseif (BOARD MATCHES "FRDM-KL82Z")
   set(MCU "MKL82Z7")
@@ -34,5 +34,15 @@ add_subdirectory(board)
 # lost in the nested scope of add_subdirectory()
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/driver)
 add_subdirectory(firmware)
+
+find_package(Doxygen)
+if (DOXYGEN_FOUND)
+  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile @ONLY)
+  add_custom_target(doc ALL
+    ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
+    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+    COMMENT "Generating API documentation with Doxygen" VERBATIM
+    )
+endif (DOXYGEN_FOUND)
 
 provide(PACKAGE ubirch VERSION 1.0 BOARD ${BOARD} TARGETS board firmware)

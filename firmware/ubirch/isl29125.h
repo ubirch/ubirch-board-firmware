@@ -1,5 +1,6 @@
-/**
- * @brief Driver for the RGB sensor ISL29125.
+/*!
+ * @file
+ * @brief ISL29125 RGB sensor driver.
  *
  * data sheet: http://www.intersil.com/content/dam/Intersil/documents/isl2/isl29125.pdf
  *
@@ -16,7 +17,7 @@
  *
  * Copyright 2016 ubirch GmbH (https://ubirch.com)
  *
- * == LICENSE ==
+ * ```
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -28,6 +29,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * ```
  */
 #ifndef _UBIRCH_ISL29125_H_
 #define _UBIRCH_ISL29125_H_
@@ -127,20 +129,20 @@ typedef struct RGB24 {
     uint8_t blue;
 } rgb24_t;
 
-/**
+/*!
  * Set up a value in a register on the sensor.
  * @param reg the register to write
  * @param data the value to write
  */
 bool isl_set(uint8_t reg, uint8_t data);
 
-/**
+/*!
  * Get current setup from a register on the sensor.
  * @param reg the register to write
  */
 uint8_t isl_get(uint8_t reg);
 
-/**
+/*!
  * Reset the sensor.
  * A non-zero return indicates an error condition.
  */
@@ -158,13 +160,13 @@ uint8_t isl_read_green8(void);
 
 uint8_t isl_read_blue8(void);
 
-/**
+/*!
  * Read full 48 bit color from sensor
  * @param rgb48 the color struct to store the color in
  */
 void isl_read_rgb48(rgb48_t *rgb48);
 
-/**
+/*!
  * Read sensor data as 24 bit RGB
  * @param rgb24 the color struct to store the color in
  */

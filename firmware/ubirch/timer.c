@@ -1,5 +1,5 @@
-/*!
- * @brief ubirch#1 timer driver code.
+/*
+ * ubirch#1 timer driver code.
  *
  * Based on https://github.com/mbedmicro/mbed/blob/master/libraries/mbed/targets/hal/TARGET_Freescale/TARGET_KSDK2_MCUS/TARGET_K64F/us_ticker.c
  *
@@ -8,7 +8,7 @@
  *
  * Copyright 2016 ubirch GmbH (https://ubirch.com)
  *
- * == LICENSE ==
+ * ```
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,6 +20,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * ```
  */
 
 #include <stdint.h>

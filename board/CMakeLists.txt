@@ -1,10 +1,10 @@
-if (BOARD MATCHES "ubirch-1")
+if (BOARD MATCHES "ubirch1r02")
   add_subdirectory(ubirch1r02)
 elseif (BOARD MATCHES "FRDM-K82F")
   add_subdirectory(frdm_k82f)
 elseif (BOARD MATCHES "FRDM-KL82Z")
   add_subdirectory(frdm_kl82z)
 else ()
-  message(FATAL_ERROR "Please set a board type: -DBOARD=<...> (i.e. ubirch-1, FRDM-K82F, FRDM-KL82Z)")
+  message(FATAL_ERROR "Please set a board type: -DBOARD=<...> (i.e. ubirch1r02, FRDM-K82F, FRDM-KL82Z)")
 endif ()
 

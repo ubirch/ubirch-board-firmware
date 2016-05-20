@@ -1,11 +1,12 @@
-/**
- * @brief Functionality for the SSD1306 chip driver for OLED displays.
+/*!
+ * @file
+ * @brief SSD1306 chip driver for OLED displays.
  *
  * @author Matthias L. Jugel
  *
  * Copyright 2015 ubirch GmbH (http://www.ubirch.com)
  *
- * == LICENSE ==
+ * ```
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -17,6 +18,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * ```
  */
 
 #ifndef _UBIRCH_SSD1306_H_
@@ -81,26 +83,26 @@
 
 #include <fsl_gpio.h>
 
-/**
+/*!
  * Reset the controller.
  */
 void ssd1306_reset(GPIO_Type *gpio, uint32_t reset_pin);
 
-/**
+/*!
  * Send a command to the OLED display controller.
  * @param address the controller i2c address
  * @param data the command byte
  */
 void ssd1306_cmd(uint8_t address, uint8_t command);
 
-/**
+/*!
  * Send data to the OLED display controller.
  * @param address the controller i2c address
  * @param data the data byte
  */
 void ssd1306_data(uint8_t address, uint8_t *data, size_t size);
 
-/**
+/*!
  * Clear the display.
  * @param address the controller i2c address
  */
