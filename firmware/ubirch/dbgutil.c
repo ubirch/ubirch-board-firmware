@@ -27,7 +27,7 @@
 
 void dbg_dump(const char *prefix, const uint8_t *b, size_t size) {
   for (int i = 0; i < size; i += 16) {
-    if (prefix && strlen(prefix) > 0) PRINTF("%s %04d: ", prefix, i);
+    if (prefix && strlen(prefix) > 0) PRINTF("%s %06d: ", prefix, i);
     for (int j = 0; j < 16; j++) {
       if ((i + j) < size) PRINTF("%02x", b[i + j]); else PRINTF("  ");
       if ((j+1) % 2 == 0) PUTCHAR(' ');
