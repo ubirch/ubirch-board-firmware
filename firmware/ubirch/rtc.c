@@ -1,5 +1,5 @@
 /*
- * ubirch#1 rtc driver code.
+ * ubirch#1 real time clock driver code.
  *
  * @author Matthias L. Jugel
  * @date 2016-04-07

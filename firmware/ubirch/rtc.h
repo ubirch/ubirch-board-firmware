@@ -1,8 +1,8 @@
 /*!
  * @file
- * @brief timer driver code.
+ * @brief real time clock driver code.
  *
- * Driver for timer related tasks.
+ * Driver for the real time clock.
  *
  * @author Matthias L. Jugel
  * @date 2016-04-06
