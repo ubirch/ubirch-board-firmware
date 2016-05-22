@@ -29,7 +29,9 @@
 //! @brief SHA512 hash size in bytes
 #define SHA512_HASH_SIZE SHA512_DIGEST_SIZE
 
+//! ED25519 key
 typedef ed25519_key uc_ed25519_key;
+//! RSA key
 typedef RsaKey uc_rsa_key;
 
 /*!
@@ -61,15 +63,15 @@ char *uc_base64_encode(const unsigned char *in, size_t inlen);
  * @param in the encoded character string
  * @param inlen the length of the input string
  * @param out the decoded byte array (must be preallocated)
- * @patam outlen the length of the decoded byte array
+ * @param outlen the length of the decoded byte array
  * @return true if the operation was successful, false if not
  */
 bool uc_base64_decode(const char *in, size_t inlen, unsigned char *out, size_t *outlen);
 
 /*!
- * \brief Create an SHA512 hash from the given message.
- * @param message the message to hash
- * @param size the size of the message
+ * @brief Create an SHA512 hash from the given message.
+ * @param in the message to hash
+ * @param inlen the size of the message
  * @param hash the hash to store the SHA512 digest in (must be preallocated to 64 bytes)
  * @return cStatus_Success for succes or cStatus_Failure if it fails
  */
@@ -111,8 +113,9 @@ char *uc_ecc_export_pub_encoded(ed25519_key *key);
 /*!
  * @brief Sign message using specified ECC key.
  * @param key the key to sign with
+ * @param in the input data to sign
  * @param inlen the size of the input
- * @patam signature the byte array to store the signature in, must be preallocated
+ * @param signature the byte array to store the signature in, must be preallocated
  * @return true if signature has been created, false if not
  */
 bool uc_ecc_sign(uc_ed25519_key *key, const unsigned char *in, size_t inlen, unsigned char *signature);

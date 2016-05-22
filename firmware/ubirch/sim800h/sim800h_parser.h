@@ -90,6 +90,7 @@ void sim800h_send(const char *pattern, ...);
 /*!
  * Expect a specific URC, blocks until it is received or timeout.
  * @param n the URC number
+ * @param timeout how long to wait for the urc in ms
  * @return whether the URC has been matched
  */
 bool sim800h_expect_urc(int n, uint32_t timeout);
@@ -97,7 +98,7 @@ bool sim800h_expect_urc(int n, uint32_t timeout);
 /*!
  * Expect a certain response, blocks util the response received or timeout.
  * This function will ignore URCs and return when the first non-URC has been received.
- * @param pattern the string to expect
+ * @param expected the string to expect
  * @param timeout how long to wait for the response in ms
  * @return true if received or false if not
  */

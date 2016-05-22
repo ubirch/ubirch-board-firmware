@@ -30,24 +30,24 @@
 #include <drivers/fsl_common.h>
 #include <drivers/fsl_port.h>
 
-/*!
- * Available I2C speeds.
- */
+//! Available I2C speeds.
 typedef enum i2c_speed {
-    I2C_STANDARD   =  100000U, // 100kHz
-    I2C_FULL_SPEED =  400000U, // 400kHz
-    I2C_FAST_MODE  = 1000000U, //   1MHz
-    I2C_HIGH_SPEED = 3400000U  // 3.4MHz
+    I2C_STANDARD   =  100000U, /*!< 100kHz */
+    I2C_FULL_SPEED =  400000U, /*!< 400kHz */
+    I2C_FAST_MODE  = 1000000U, /*!<   1MHz */
+    I2C_HIGH_SPEED = 3400000U  /*!< 3.4MHz */
 } i2c_speed_t;
 
+//! I2C configuration.
 typedef struct i2c_config {
-    I2C_Type *i2c;
-    PORT_Type *port;
-    clock_name_t i2c_clock;
-    clock_ip_name_t port_clock;
-    uint32_t SCL, SDA;
-    port_mux_t mux;
-    uint32_t baud;
+    I2C_Type *i2c;              /*!< I2C instance to be used */
+    PORT_Type *port;            /*!< I2C port */
+    clock_name_t i2c_clock;     /*!< I2C clock used */
+    clock_ip_name_t port_clock; /*!< corresponding port clock */
+    uint32_t SCL;               /*!< SCL line pin number */
+    uint32_t SDA;               /*!< SDA line pin number */
+    port_mux_t mux;             /*!< MUX Alt type to set the used port to */
+    uint32_t baud;              /*!< I2C speed */
 } i2c_config_t;
 
 /*!

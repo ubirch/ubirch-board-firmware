@@ -91,14 +91,15 @@ void ssd1306_reset(GPIO_Type *gpio, uint32_t reset_pin);
 /*!
  * Send a command to the OLED display controller.
  * @param address the controller i2c address
- * @param data the command byte
+ * @param command the command byte
  */
 void ssd1306_cmd(uint8_t address, uint8_t command);
 
 /*!
  * Send data to the OLED display controller.
  * @param address the controller i2c address
- * @param data the data byte
+ * @param data pointer to the data array
+ * @param size size of the data array
  */
 void ssd1306_data(uint8_t address, uint8_t *data, size_t size);
 

@@ -45,14 +45,14 @@ uint32_t timer_read(void);
 
 /*!
  * @brief Schedule a timer interrupt in the future (absolute).
- * @param a timestamp (timer_read() + delta interval)
+ * @param timestamp a timestamp (timer_read() + delta interval)
  * @return the target timestamp
  */
 uint32_t timer_schedule(uint32_t timestamp);
 
 /*!
  * @brief Schedule a timer interrupt in the future (relative).
- * @param a relative time interval in us
+ * @param us a relative time interval in us
  * @return the target timestamp (current + us)
  */
 static inline uint32_t timer_schedule_in(uint32_t us) {

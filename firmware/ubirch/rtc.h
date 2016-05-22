@@ -29,6 +29,7 @@
 
 #include <fsl_rtc.h>
 
+//! RTC datetime data structure
 typedef void (*rtc_datetime_handler_t)(rtc_datetime_t*);
 
 /*!
