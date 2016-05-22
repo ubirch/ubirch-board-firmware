@@ -26,16 +26,19 @@
 #include <wolfssl/wolfcrypt/ed25519.h>
 #include <wolfssl/wolfcrypt/rsa.h>
 
+//! @brief SHA512 hash size in bytes
 #define SHA512_HASH_SIZE SHA512_DIGEST_SIZE
 
 typedef ed25519_key uc_ed25519_key;
 typedef RsaKey uc_rsa_key;
 
-typedef struct _uc_ed25519_pkcs8 {
+/*!
+ * @brief PKCS#8 encoded public ED25519 key
+ */
+typedef struct _uc_ed25519_pub_pkcs8 {
     unsigned char header[15];
-    unsigned char data[32];
-    unsigned char footer[2];
-} uc_ed25519_pkcs8;
+    unsigned char key[32];
+} uc_ed25519_pub_pkcs8;
 
 extern WC_RNG uc_random;
 
@@ -96,7 +99,7 @@ bool uc_import_ecc_key(uc_ed25519_key *key, const unsigned char *in, size_t inle
  * @param pkcs8 the PKCS#8 structure where the public key will be stored
  * @return true if the export is successful
  */
-bool uc_ecc_export_pub(ed25519_key *key, uc_ed25519_pkcs8 *pkcs8);
+bool uc_ecc_export_pub(ed25519_key *key, uc_ed25519_pub_pkcs8 *pkcs8);
 
 /*!
  * @brief Export ECC public key Base64 encoded.

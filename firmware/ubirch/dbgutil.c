@@ -27,16 +27,21 @@
 
 void dbg_dump(const char *prefix, const uint8_t *b, size_t size) {
   for (int i = 0; i < size; i += 16) {
-    if(prefix && strlen(prefix) > 0) PRINTF("%s %04d ", prefix, i);
-    for (int j = 0; j < 16; j++) if ((i + j) < size) PRINTF("%02x ", b[i + j]); else PRINTF("   ");
-    for (int j = 0; j < 16 && (i + j) < size; j++)
-      PRINTF("%c", b[i + j] >= 0x20 && b[i + j] <= 0x7E ? b[i + j] : '.');
+    if (prefix && strlen(prefix) > 0) PRINTF("%s %04d ", prefix, i);
+    for (int j = 0; j < 16; j++) {
+      if ((i + j) < size) PRINTF("%02x", b[i + j]); else PRINTF("  ");
+      if ((j+1) % 2 == 0) PUTCHAR(' ');
+    }
+    PUTCHAR(' ');
+    for (int j = 0; j < 16 && (i + j) < size; j++) {
+      PUTCHAR(b[i + j] >= 0x20 && b[i + j] <= 0x7E ? b[i + j] : '.');
+    }
     PRINTF("\r\n");
   }
 }
 
 void dbg_xxd(const char *prefix, const uint8_t *b, size_t size) {
-  if(prefix && strlen(prefix) > 0) PRINTF("%s ", prefix);
-  for(int i = 0; i < size; i++) PRINTF("%02x", b[i]);
+  if (prefix && strlen(prefix) > 0) PRINTF("%s ", prefix);
+  for (int i = 0; i < size; i++) PRINTF("%02x", b[i]);
   PRINTF("\r\n");
 }
