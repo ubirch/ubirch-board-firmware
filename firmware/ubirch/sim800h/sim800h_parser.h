@@ -30,8 +30,10 @@
 
 #include <stdbool.h>
 
+//! calculate the remaining time in ms (for timeouts)
 #define REMAINING(t) (((t) - timer_read())/1000)
 
+//! size of the parser buffer
 #define CELL_PARSER_BUFSIZE 255
 
 /*!
@@ -45,17 +47,17 @@
  */
 //
 const char *SIM800H_URC[] = {
-  "+CIPRXGET: 1,",  /*! incoming socket data notification */
-  "+FTPGET: 1,",    /*! FTP state change notification */
-  "+PDP: DEACT",    /*! PDP disconnected */
-  "+SAPBR 1: DEACT",/*! PDP disconnected (for SAPBR apps) */
-  "*PSNWID:",       /*! AT+CLTS network name */
-  "*PSUTTZ:",       /*! AT+CLTS time */
-  "+CTZV:",         /*! AT+CLTS timezone */
-  "DST:",           /*! AT+CLTS dst information */
-  "+CIEV:",         /*! AT+CLTS undocumented indicator */
-  "RDY",            /*! Device ready. */
-  "+CFUN: 1",       /*! Device has entered full functional mode */
+  "+CIPRXGET: 1,",  /*!< incoming socket data notification */
+  "+FTPGET: 1,",    /*!< FTP state change notification */
+  "+PDP: DEACT",    /*!< PDP disconnected */
+  "+SAPBR 1: DEACT",/*!< PDP disconnected (for SAPBR apps) */
+  "*PSNWID:",       /*!< AT+CLTS network name */
+  "*PSUTTZ:",       /*!< AT+CLTS time */
+  "+CTZV:",         /*!< AT+CLTS timezone */
+  "DST:",           /*!< AT+CLTS dst information */
+  "+CIEV:",         /*!< AT+CLTS undocumented indicator */
+  "RDY",            /*!< Device ready. */
+  "+CFUN: 1",       /*!< Device has entered full functional mode */
   "+CPIN: READY",
   "Call Ready",
   "SMS Ready",
@@ -67,15 +69,17 @@ const char *SIM800H_URC[] = {
   NULL
 };
 
+//! registration status codes
 enum sim800h_creg_status {
-    CREG_NOT_SEARCHING = 0,
-    CREG_HOME = 1,
-    CREG_SEARCHING = 2,
-    CREG_DENIED = 3,
-    CREG_UNKNOWN = 4,
-    CREG_ROAMING = 5
+    CREG_NOT_SEARCHING = 0, /*!< not searching */
+    CREG_HOME = 1,          /*!< registered home network */
+    CREG_SEARCHING = 2,     /*!< searching network */
+    CREG_DENIED = 3,        /*!< network registration denied */
+    CREG_UNKNOWN = 4,       /*!< status unknown */
+    CREG_ROAMING = 5        /*!< registered roaming network */
 };
 
+//! AT "OK" response
 const char *RESPONSE_OK = "OK";
 
 /*!
@@ -88,7 +92,7 @@ int check_urc(const char *line);
 void sim800h_send(const char *pattern, ...);
 
 /*!
- * Expect a specific URC, blocks until it is received or timeout.
+ * @brief Expect a specific URC, blocks until it is received or timeout.
  * @param n the URC number
  * @param timeout how long to wait for the urc in ms
  * @return whether the URC has been matched
@@ -96,7 +100,7 @@ void sim800h_send(const char *pattern, ...);
 bool sim800h_expect_urc(int n, uint32_t timeout);
 
 /*!
- * Expect a certain response, blocks util the response received or timeout.
+ * @brief Expect a certain response, blocks util the response received or timeout.
  * This function will ignore URCs and return when the first non-URC has been received.
  * @param expected the string to expect
  * @param timeout how long to wait for the response in ms
@@ -104,13 +108,18 @@ bool sim800h_expect_urc(int n, uint32_t timeout);
  */
 bool sim800h_expect(const char *expected, uint32_t timeout);
 
+/*!
+ * Simply expect an "OK" response.
+ * @param timeout how long to wait for OK
+ * @returns true if OK else false
+ */
 static inline bool sim800h_expect_OK(uint32_t timeout) {
   return sim800h_expect(RESPONSE_OK, timeout);
 }
 
 
 /*!
- * Expect a formatted response, blocks until the response is received or timeout.
+ * @brief Expect a formatted response, blocks until the response is received or timeout.
  * This function will ignore URCs and return when the first non-URC has been received.
  * @param pattern the pattern to match
  * @param timeout how long to wait for the response in ms

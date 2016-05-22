@@ -25,14 +25,28 @@
 #ifndef _UBIRCH_SIM800H_HTTP_H_
 #define _UBIRCH_SIM800H_HTTP_H_
 
+//! supported HTTP methods
 typedef enum sim800h_http_methods {
-    HTTP_GET = 0,
-    HTTP_POST = 1
+    HTTP_GET = 0,   /*!< HTTP GET */
+    HTTP_POST = 1   /*!< HTTP POST */
 } sim800h_http_method_t;
 
 
+/*!
+ * @brief Prepare a HTTP request. Used by sim800h_http().
+ * @param url the URL to connect to
+ * @param timeout how to wait for finishing the preparation
+ * @return status of preparation
+ */
 int sim800h_http_prepare(const char *url, uint32_t timeout);
 
+/*!
+ * @brief Open HTTP connection using the specified method.
+ * @param op the HTTP method (see ::sim800h_http_methods)
+ * @param res_size the size of the response
+ * @param timeout how long to wait for the connection
+ * @return connection status
+ */
 int sim800h_http(sim800h_http_method_t op, size_t *res_size, uint32_t timeout);
 
 size_t sim800h_http_write(const uint8_t *buffer, size_t size, uint32_t timeout);

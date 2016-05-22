@@ -32,16 +32,17 @@
 #  define CIODEBUG(...)
 #  define CIODUMP(...)
 #else
-#  define CIODEBUG(...)  PRINTF(__VA_ARGS__)
-#  define CIODUMP(buffer, size) dbg_dump("GSM", buffer, size)
+#  define CIODEBUG(...)  PRINTF(__VA_ARGS__)                  /*!< Debug I/O message (AT commands) */
+#  define CIODUMP(buffer, size) dbg_dump("GSM", buffer, size) /*!< Debug and dump a buffer */
 #endif
 
 #ifdef NCSTDEBUG
 #  define CSTDEBUG(...)
 #else
-#  define CSTDEBUG(...)  PRINTF(__VA_ARGS__)
+#  define CSTDEBUG(...)  PRINTF(__VA_ARGS__)                  /*!< Standard debug message (info) */
 #endif
 
+//! textual representation of the registration status
 const char *reg_status[6] = {
   "NOT SEARCHING",
   "HOME",

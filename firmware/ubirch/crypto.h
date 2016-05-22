@@ -38,10 +38,11 @@ typedef RsaKey uc_rsa_key;
  * @brief PKCS#8 encoded public ED25519 key
  */
 typedef struct _uc_ed25519_pub_pkcs8 {
-    unsigned char header[15];
-    unsigned char key[32];
+    unsigned char header[15]; /*!< ASN.1 header */
+    unsigned char key[32];    /*!< the actual ED25519 key */
 } uc_ed25519_pub_pkcs8;
 
+//! Random Number Generator instance
 extern WC_RNG uc_random;
 
 /*!
