@@ -151,7 +151,6 @@ bool sim800h_location(status_t *status, double *lat, double *lon, rtc_datetime_t
 bool sim800h_imei(char *imei, const uint32_t timeout) {
   sim800h_send("AT+GSN");
   sim800h_readline(imei, 15, timeout);
-  PRINTF("GSM (%02d) -> '%s'\r\n",strnlen(imei,15),imei);
   CIODEBUG("GSM (%02d) -> '%s'\r\n", strnlen(imei, 15), imei);
   return sim800h_expect_OK(500);
 }
