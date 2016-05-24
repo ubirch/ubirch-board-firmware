@@ -31,7 +31,7 @@
 #include <drivers/fsl_port.h>
 
 //! Available I2C speeds.
-typedef enum i2c_speed {
+typedef enum  {
     I2C_STANDARD   =  100000U, //!< 100kHz
     I2C_FULL_SPEED =  400000U, //!< 400kHz
     I2C_FAST_MODE  = 1000000U, //!<   1MHz
@@ -47,7 +47,7 @@ typedef struct {
     uint32_t SCL;               //!< SCL line pin number
     uint32_t SDA;               //!< SDA line pin number
     port_mux_t mux;             //!< MUX Alt type to set the used port to
-    uint32_t baud;              //!< I2C speed
+    i2c_speed_t baud;              //!< I2C speed
 } i2c_config_t;
 
 /*!
