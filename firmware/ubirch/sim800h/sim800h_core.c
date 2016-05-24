@@ -23,6 +23,7 @@
 
 #include <drivers/fsl_lpuart.h>
 #include <ubirch/timer.h>
+#include <ctype.h>
 #include "sim800h_core.h"
 #include "sim800h_parser.h"
 #include "sim800h_debug.h"
@@ -236,7 +237,7 @@ size_t sim800h_readline(char *buffer, size_t max, uint32_t timeout) {
       }
       break;
     }
-    if (max - idx) buffer[idx++] = (char) c;
+    if (max - idx && isprint(c)) buffer[idx++] = (char) c;
   }
 
   buffer[idx] = 0;

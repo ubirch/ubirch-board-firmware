@@ -5,7 +5,6 @@ add_library(firmware
   ubirch/sim800h/sim800h_http.c
   ubirch/sim800h/sim800h_ops.c
   ubirch/sim800h/sim800h_parser.c
-  ubirch/crypto.c
   ubirch/dbgutil.c
   ubirch/i2c.c
   ubirch/isl29125.c
@@ -14,7 +13,7 @@ add_library(firmware
   ubirch/timer.c
   )
 target_include_directories(firmware PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-target_link_libraries(firmware board KinetisSDK::${MCU}::ksdk20 wolfSSL::${MCU}::wolfcrypt)
+target_link_libraries(firmware board KinetisSDK::${MCU}::ksdk20)
 # only do the full debug output in "Debug"
 if (NOT CMAKE_BUILD_TYPE MATCHES Debug)
   target_compile_definitions(firmware PUBLIC -DNCIODEBUG)
