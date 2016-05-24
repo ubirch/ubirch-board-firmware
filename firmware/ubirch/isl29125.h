@@ -116,17 +116,17 @@
 #define ISL_STATUS_BLUE     0b110000 // blue being converted
 
 //! 48 bit color value (the maximum available), also used for 12 bit color reads
-typedef struct RGB48 {
-    uint16_t red;   /*!< 16 bit red component */
-    uint16_t green; /*!< 16 bit green component */
-    uint16_t blue;  /*!< 16 bit blue component */
+typedef struct {
+    uint16_t red;   //!< 16 bit red component
+    uint16_t green; //!< 16 bit green component
+    uint16_t blue;  //!< 16 bit blue component
 } rgb48_t;
 
 //! 24 bit color value (downsampled)
-typedef struct RGB24 {
-    uint8_t red;   /*!< 8 bit red component */
-    uint8_t green; /*!< 8 bit red component */
-    uint8_t blue;  /*!< 8 bit red component */
+typedef struct {
+    uint8_t red;   //!< 8 bit red component
+    uint8_t green; //!< 8 bit green component
+    uint8_t blue;  //!< 8 bit blue component
 } rgb24_t;
 
 /*!

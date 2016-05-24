@@ -9,3 +9,8 @@ HIDE_FRIEND_COMPOUNDS  = YES
 EXTRACT_STATIC         = YES
 QUIET                  = YES
 SOURCE_BROWSER         = YES
+ENABLE_PREPROCESSING   = YES
+MACRO_EXPANSION        = YES
+EXPAND_ONLY_PREDEF     = YES
+PREDEFINED             = __attribute__(x)=
+
