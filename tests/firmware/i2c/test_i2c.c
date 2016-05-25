@@ -75,6 +75,6 @@ int main(void) {
 
   i2c_deinit();
 
-  PRINTF("\r\nI2C: OK\r\n");
+  PRINTF("\r\e[KI2C: OK\r\n");
   return 0;
 }

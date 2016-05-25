@@ -73,4 +73,6 @@ void test_isl29125() {
   test_isl29125_color(ISL_MODE_10KLUX, ISL_MODE_12BIT);
 
   assert(isl_set(ISL_R_COLOR_MODE, ISL_MODE_POWERDOWN));
+
+  PRINTF("\r\e[KISL29125: OK\r\n");
 }
