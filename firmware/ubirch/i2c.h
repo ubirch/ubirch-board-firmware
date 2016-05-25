@@ -47,7 +47,7 @@ typedef struct {
     uint32_t SCL;               //!< SCL line pin number
     uint32_t SDA;               //!< SDA line pin number
     port_mux_t mux;             //!< MUX Alt type to set the used port to
-    i2c_speed_t baud;              //!< I2C speed
+    i2c_speed_t baud;           //!< I2C speed
 } i2c_config_t;
 
 /*!

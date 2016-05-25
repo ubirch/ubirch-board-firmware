@@ -9,4 +9,6 @@ board. It has several peripherals including an RGB LED which is controlled using
 > If you want to debug using SWD but use the USB serial,
 > set both jumpers ```J6``` and ```J7``` to off.
 
+See the [user guide](https://cache.nxp.com/files/32bit/doc/user_guide/FRDMK82FUG.pdf) for more information.
+
 ![FRDM-K82F](http://cache.nxp.com/files/graphic/block_diagram/FRDM-K82-800x480-BD.jpg)

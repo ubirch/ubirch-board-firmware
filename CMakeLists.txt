@@ -1,8 +1,7 @@
 cmake_minimum_required(VERSION 3.0.2)
 set(CMAKE_TOOLCHAIN_FILE ../ubirch-arm-toolchain/cmake/ubirch-arm-gcc-toolchain.cmake CACHE STRING "toolchain")
 
-# set board type (ubirch1r02, FRDM-K82F, FRDM-KL82Z*)
-# (* not yet implemented)
+# set board type (ubirch1r02, FRDM-K82F, FRDM-KL82Z*) (* not yet implemented)
 # you don't need to set it here, use 'cmake -DBOARD=<board> ..' during setup
 # the board setting will determine the used MCU
 set(BOARD "ubirch1r02" CACHE STRING "board name")
@@ -26,11 +25,16 @@ project(ubirch-firmware C CXX ASM)
 
 require(PACKAGE KinetisSDK MCU ${MCU} VERSION 2.0)
 
+# board and firmware code
 add_subdirectory(board/${BOARD_DIR})
 add_subdirectory(firmware)
 
 provide(PACKAGE ubirch VERSION 1.0 BOARD ${BOARD} TARGETS board firmware)
 
+# add tests
+add_subdirectory(tests)
+
+# Generate Documentation for firmware and board
 find_package(Doxygen)
 if (DOXYGEN_FOUND)
   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile @ONLY)

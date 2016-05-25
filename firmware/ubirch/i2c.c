@@ -30,7 +30,14 @@ static i2c_config_t _config;
 void i2c_init(i2c_config_t config) {
   _config = config;
 
+  // enable pullups for I2C pins
+  port_pin_config_t pinConfig = {0};
+  pinConfig.pullSelect = kPORT_PullUp;
+  pinConfig.openDrainEnable = kPORT_OpenDrainEnable;
+
   CLOCK_EnableClock(_config.port_clock);
+  PORT_SetPinConfig(_config.port, _config.SCL, &pinConfig);
+  PORT_SetPinConfig(_config.port, _config.SDA, &pinConfig);
   PORT_SetPinMux(_config.port, _config.SCL, _config.mux);
   PORT_SetPinMux(_config.port, _config.SDA, _config.mux);
 
@@ -77,8 +84,10 @@ status_t i2c_write(uint8_t address, uint8_t reg, uint8_t *data, size_t size) {
     i2c_error("write reg", status);
   }
 #endif
+
   if (!size && status == kStatus_Success)
     status = I2C_MasterStop(_config.i2c);
+
   return status;
 }
 
@@ -103,17 +112,17 @@ status_t i2c_read(uint8_t address, uint8_t reg, uint8_t *data, size_t size) {
     I2C_MasterStop(_config.i2c);
   }
 #endif
+
   return status;
 }
 
 uint8_t i2c_read_reg(uint8_t address, uint8_t reg) {
-
-  i2c_read(address, reg, &reg, 1);
-  return reg;
+  uint8_t value = 0;
+  i2c_read(address, reg, &value, 1);
+  return value;
 }
 
 uint16_t i2c_read_reg16(uint8_t address, uint8_t reg) {
-
   uint8_t data[2];
   i2c_read(address, reg, data, 2);
   uint16_t value = (data[1] << 8 | data[0]);
