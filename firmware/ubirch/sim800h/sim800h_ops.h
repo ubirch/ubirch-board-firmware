@@ -29,21 +29,23 @@
 #include <stdint.h>
 #include <fsl_rtc.h>
 
+//! SIM800 battery status codes
 enum sim800_battery_status {
-    battery_NotCharging = 0,
-    battery_Charging = 1,
-    battery_Full = 2
+    battery_NotCharging = 0,  //!< battery is not charging
+    battery_Charging = 1,     //!< battery is currently charging
+    battery_Full = 2          //!< battery is not charging and full
 };
 
+//! SIM800 GPS location status codes
 enum sim800h_location_status {
-    loc_Success = 0,
-    loc_NotFound = 404,
-    loc_RequestTimeout = 408,
-    loc_NetworkError = 601,
-    loc_NoMemory = 602,
-    loc_DNSError = 603,
-    loc_StackBusy = 604,
-    loc_Error = 65535
+    loc_Success = 0,          //!< GPS localization successful
+    loc_NotFound = 404,       //!< GPS location could not be found
+    loc_RequestTimeout = 408, //!< Request timeout locating
+    loc_NetworkError = 601,   //!< Network error during location query
+    loc_NoMemory = 602,       //!< Memory has been exhausted in SIM800 module
+    loc_DNSError = 603,       //!< DNS error during GPS location query
+    loc_StackBusy = 604,      //!< Internal code stack is busy
+    loc_Error = 65535         //!< Unknown error occurred
 };
 
 /*!

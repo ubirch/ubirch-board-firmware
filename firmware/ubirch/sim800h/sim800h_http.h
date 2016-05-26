@@ -49,12 +49,46 @@ int sim800h_http_prepare(const char *url, uint32_t timeout);
  */
 int sim800h_http(sim800h_http_method_t op, size_t *res_size, uint32_t timeout);
 
+/*!
+ * @brief Write data to an opened HTTP connection.
+ * @param buffer the data to write
+ * @param size the size of the data
+ * @param timeout how long to wait for the connection
+ * @return amount of data written
+ */
 size_t sim800h_http_write(const uint8_t *buffer, size_t size, uint32_t timeout);
 
+/*!
+ * @brief Read data from a HTTP connection (the response).
+ *
+ * Reading may be done in multiple steps until the whole response is read.
+ *
+ * @param buffer the buffer to store the read data into
+ * @param start the start index in the http buffer to start reading
+ * @param size the amount of data to read
+ * @param timeout how long to wait for the connection
+ * @return amount of data read
+ */
 size_t sim800h_http_read(uint8_t *buffer, uint32_t start, size_t size, uint32_t timeout);
 
+/*!
+ * @brief Prepare and open a GET request.
+ * @param url the url to open
+ * @param res_size pointer to where the size of the response will be stored
+ * @param timeout how long to wait for the connection
+ * @return the HTTP status
+ */
 int sim800h_http_get(const char *url, size_t *res_size, uint32_t timeout);
 
+/*!
+ * @brief Prepare and open a POST request.
+ * @param url the url to open
+ * @param res_size pointer to where the size of the response will be stored
+ * @param request the request data to be posted
+ * @param req_size the amount of request data to be posted
+ * @param timeout how long to wait for the connection
+ * @return the HTTP status
+ */
 int sim800h_http_post(const char *url, size_t *res_size, uint8_t *request, size_t req_size, uint32_t timeout);
 
 #endif // _UBIRCH_SIM800H_HTTP_H_
