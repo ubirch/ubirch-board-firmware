@@ -64,6 +64,8 @@ int sim800h_http(sim800h_http_method_t method, size_t *res_size, uint32_t timeou
 }
 
 size_t sim800h_http_write(const uint8_t *buffer, size_t size, uint32_t timeout) {
+  if(size <= 0) return 0;
+
   uint32_t deadline = timer_read() + timeout * 1000;
 
   sim800h_send("AT+HTTPDATA=%d,%d", size, timeout);
@@ -78,6 +80,8 @@ size_t sim800h_http_write(const uint8_t *buffer, size_t size, uint32_t timeout) 
 }
 
 size_t sim800h_http_read(uint8_t *buffer, uint32_t start, size_t size, uint32_t timeout) {
+  if(size <= 0) return 0;
+
   uint32_t deadline = timer_read() + timeout * 1000;
   size_t available;
 
