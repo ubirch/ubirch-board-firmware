@@ -44,6 +44,8 @@
 #include "ubirch1r02.h"
 #include "clock_config.h"
 
+void (*runBootloader)(void *arg);
+
 /*!
  * @brief Initialize the basic board functions.
  */
@@ -67,6 +69,10 @@ static inline void board_init() {
 
   PORT_SetPinMux(BOARD_PWR_EN_PORT, BOARD_PWR_EN_PIN, kPORT_MuxAsGpio);
   GPIO_PinInit(BOARD_PWR_EN_GPIO, BOARD_PWR_EN_PIN, &OUTFALSE);
+
+  // install bootloader hook
+  uint32_t runBootloaderAddress = **(uint32_t **) (0x1c00001c);
+  runBootloader = (void (*)(void *arg)) runBootloaderAddress;
 }
 
 /*!

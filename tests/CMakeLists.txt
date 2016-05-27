@@ -6,3 +6,4 @@ add_library(ubirch::${BOARD}::board ALIAS board)
 
 # test code
 add_subdirectory(firmware/i2c)
+add_subdirectory(bootloader)
