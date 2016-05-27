@@ -50,6 +50,10 @@
  * Pressing the ubirch#1 board button will initiate an NMI interrupt which
  * is handled in a way that it tries to call the bootloader. This install
  * is necessary to make it work.
+ *
+ * If the hook was not installed before, flashing works by removing the USB,
+ * pressing the button (keep pressed) and re-insert USB. Then the board will
+ * be in bootloader mode.
  */
 void board_install_bootloader_hook(void);
 
