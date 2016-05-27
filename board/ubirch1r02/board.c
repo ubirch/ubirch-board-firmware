@@ -29,6 +29,18 @@
 
 #include "board.h"
 
+static void (*runBootloader)(void *arg);
+
 extern void board_init();
 extern void board_nmi_disable();
 extern status_t board_console_init(uint32_t baud);
+
+void board_install_bootloader_hook(void) {
+  // install bootloader hook
+  uint32_t runBootloaderAddress = **(uint32_t **) (0x1c00001c);
+  runBootloader = (void (*)(void *arg)) runBootloaderAddress;
+}
+
+void NMI_Handler(void) {
+  runBootloader(NULL);
+}

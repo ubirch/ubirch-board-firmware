@@ -45,7 +45,24 @@
 #include "clock_config.h"
 
 /*!
+ * @brief Installs a bootloader hook that runs on pressing the board button.
+ *
+ * Pressing the ubirch#1 board button will initiate an NMI interrupt which
+ * is handled in a way that it tries to call the bootloader. This install
+ * is necessary to make it work.
+ *
+ * If the hook was not installed before, flashing works by removing the USB,
+ * pressing the button (keep pressed) and re-insert USB. Then the board will
+ * be in bootloader mode.
+ */
+void board_install_bootloader_hook(void);
+
+/*!
  * @brief Initialize the basic board functions.
+ *
+ * Initialized the clocks and basic board functionality. It also installs
+ * the bootloader hook and configures the NMI interrupt to allow pressing
+ * the button to enter bootloader mode.
  */
 static inline void board_init() {
   BOARD_BootClockRUN();
@@ -67,10 +84,23 @@ static inline void board_init() {
 
   PORT_SetPinMux(BOARD_PWR_EN_PORT, BOARD_PWR_EN_PIN, kPORT_MuxAsGpio);
   GPIO_PinInit(BOARD_PWR_EN_GPIO, BOARD_PWR_EN_PIN, &OUTFALSE);
+
+  // installs a bootloader hook
+  board_install_bootloader_hook();
+
+  // enable NMI handler, use it to call the bootloader
+  SCB->SHCSR = SCB_ICSR_NMIPENDSET_Msk;
 }
 
 /*!
  * @brief Disable NMI for this board (PTA4) and make it work as a normal input pin.
+ *
+ * If you disable the NMI for the board, entering the bootloader via button press
+ * won't work anymore. However, you can then just call <code>runBootloader(NULL);</code>
+ * in your own button handler to have the same functionality.
+ *
+ * This may be useful if the button is required. Just use a long or short press to
+ * determine when to call your own code or the bootloader.
  */
 static inline void board_nmi_disable() {
   const gpio_pin_config_t IN = {kGPIO_DigitalInput, false};
