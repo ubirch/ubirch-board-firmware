@@ -14,7 +14,7 @@ the button on-board (keep pressed) and re-inserting the USB cable. Now the board
 2. __Firmware__: After flashing using the latest firmware entering the bootloader mode is just a
 matter of pressing the button once.
 
-If you use the [cmake build toolchain](https://gitlab.com/ubirch/ubirch-arm-toolchain), the `-flash` target for your
+If you use the [cmake build toolchain](https://github.com/ubirch/ubirch-arm-toolchain), the `-flash` target for your
 project will be configured to use the `blhost` tool coming with the toolchain to flash directly via USB.
 
 The commands it executes are:
