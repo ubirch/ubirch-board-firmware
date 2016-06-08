@@ -27,17 +27,30 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+#ifndef _CLOCK_CONFIG_H_
+#define _CLOCK_CONFIG_H_
 
-#include "board.h"
-#include "fsl_clock_manager.h"
-#include "fsl_smc_hal.h"
+/*******************************************************************************
+ * DEFINITION
+ ******************************************************************************/
+#define BOARD_XTAL0_CLK_HZ 12000000U
+#define BOARD_XTAL32K_CLK_HZ 32768U
 
+/*******************************************************************************
+ * API
+ ******************************************************************************/
 
-/* Function to initialize OSC0 base on board configuration. */
+#if defined(__cplusplus)
+extern "C" {
+#endif /* __cplusplus*/
+
+void BOARD_BootClockVLPR(void);
+void BOARD_BootClockRUN(void);
+void BOARD_BootClockHSRUN(void);
 void BOARD_InitOsc0(void);
 
-/* Function to initialize RTC external clock base on board configuration. */
-void BOARD_InitRtcOsc(void);
+#if defined(__cplusplus)
+}
+#endif /* __cplusplus*/
 
-/* Initialize clock. */
-void BOARD_ClockInit(void);
+#endif /* _CLOCK_CONFIG_H_ */

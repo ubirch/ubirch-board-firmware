@@ -57,7 +57,6 @@ static inline void board_init() {
 
   CLOCK_EnableClock(BOARD_BUTTON0_PORT_CLOCK);
   CLOCK_EnableClock(BOARD_BUTTON1_PORT_CLOCK);
-  CLOCK_EnableClock(BOARD_BUTTON2_PORT_CLOCK);
 
   // configure pins
   const gpio_pin_config_t OUTFALSE = {kGPIO_DigitalOutput, 0};

@@ -29,7 +29,7 @@
 
 static bool initialized = false;
 
-void PIT3_IRQHandler() {
+void PIT0_IRQHandler() {
   PIT_ClearStatusFlags(PIT, kPIT_Chnl_3, kPIT_TimerFlag);
   PIT_DisableInterrupts(PIT, kPIT_Chnl_3, kPIT_TimerInterruptEnable);
   __SEV();
@@ -50,7 +50,7 @@ void timer_init() {
   PIT_SetTimerPeriod(PIT, kPIT_Chnl_2, (uint32_t) USEC_TO_COUNT(1U, CLOCK_GetFreq(kCLOCK_BusClk)) - 1);
   PIT_SetTimerPeriod(PIT, kPIT_Chnl_3, 0xFFFFFFFF);
   PIT_SetTimerChainMode(PIT, kPIT_Chnl_3, true);
-  EnableIRQ(PIT3_IRQn);
+  EnableIRQ(PIT0_IRQn);
 }
 
 uint32_t timer_read() {
@@ -65,7 +65,7 @@ uint32_t timer_schedule(uint32_t timestamp) {
     // Set the interrupt as pending, but don't process it here.
     // This prevents a recursive loop under heavy load
     // which can lead to a stack overflow.
-    NVIC_SetPendingIRQ(PIT3_IRQn);
+    NVIC_SetPendingIRQ(PIT0_IRQn);
   } else {
 
     PIT_StopTimer(PIT, kPIT_Chnl_3);
