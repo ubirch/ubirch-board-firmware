@@ -40,6 +40,7 @@
 #include <drivers/fsl_i2c.h>
 
 #include <fsl_debug_console.h>
+#include <fsl_intmux.h>
 
 // board specific includes
 #include "frdm_kl82z.h"
@@ -50,6 +51,9 @@
  */
 static inline void board_init() {
   BOARD_BootClockRUN();
+
+  INTMUX_Init(INTMUX0);
+  INTMUX_SetChannelMode(INTMUX0, 0, kINTMUX_ChannelLogicOR);
 
   // enable led/button clock
   CLOCK_EnableClock(BOARD_LED0_PORT_CLOCK);
