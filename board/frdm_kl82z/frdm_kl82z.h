@@ -80,11 +80,11 @@
 // I2C configuration
 #define BOARD_I2C               I2C0
 #define BOARD_I2C_CLOCK         I2C0_CLK_SRC
-#define BOARD_I2C_PORT          PORTD
-#define BOARD_I2C_PORT_CLOCK    kCLOCK_PortD
-#define BOARD_I2C_ALT           kPORT_MuxAlt7
-#define BOARD_I2C_SCL_PIN       2U
-#define BOARD_I2C_SDA_PIN       3U
+#define BOARD_I2C_PORT          PORTB
+#define BOARD_I2C_PORT_CLOCK    kCLOCK_PortB
+#define BOARD_I2C_ALT           kPORT_MuxAlt2
+#define BOARD_I2C_SCL_PIN       0U
+#define BOARD_I2C_SDA_PIN       1U
 
 #define BOARD_RTC               RTC
 #define BOARD_RTC_CLOCK         RTC_CR_OSCE_MASK

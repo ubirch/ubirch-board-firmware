@@ -8,5 +8,6 @@ add_executable(test_firmware
   test_rtc.c
   )
 target_link_libraries(test_firmware ubirch::${BOARD}::firmware)
-prepare_flash(TARGET test_firmware JLINK DEVICE MKL82Z128xxx7)
+prepare_flash(TARGET test_firmware)
+#prepare_flash(TARGET test_firmware JLINK DEVICE MKL82Z128xxx7)
 #prepare_flash(TARGET test_firmware JLINK DEVICE MK82FN256xxx15)
