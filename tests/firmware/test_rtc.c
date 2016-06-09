@@ -60,7 +60,9 @@ void rtc_interrupt(rtc_datetime_t *datetime) {
   rtc_interrupt_happened = true;
 }
 
-void test_rtc_interrupt() {
+void test_rtc_alarm() {
+  rtc_interrupt_happened = false;
+
   rtc_set(&fixdate);
   rtc_datetime_t datetime;
   memcpy(&datetime, &fixdate, sizeof(rtc_datetime_t));
@@ -74,11 +76,29 @@ void test_rtc_interrupt() {
   assert(rtc_interrupt_happened == true);
 }
 
+void test_rtc_alarm_in() {
+  rtc_interrupt_happened = false;
+
+  rtc_set(&fixdate);
+  rtc_datetime_t datetime;
+  memcpy(&datetime, &fixdate, sizeof(rtc_datetime_t));
+
+  rtc_attach(rtc_interrupt);
+  datetime.second += 2;
+  rtc_set_alarm_in(2);
+  delay(3000);
+  rtc_detach();
+
+  assert(rtc_interrupt_happened == true);
+}
+
+
 int test_rtc(void) {
   rtc_init();
 
   test_rtc_advances();
-  test_rtc_interrupt();
+  test_rtc_alarm();
+  test_rtc_alarm_in();
 
   return 0;
 }
