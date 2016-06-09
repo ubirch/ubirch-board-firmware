@@ -121,7 +121,7 @@ bool sim800h_gprs_detach(uint32_t timeout) {
 }
 
 
-bool sim800h_battery(status_t *status, short int *level, int *voltage, const uint32_t timeout) {
+bool sim800h_battery(status_t *status, int *level, int *voltage, const uint32_t timeout) {
   sim800h_send("AT+CBC");
   sim800h_expect_scan("+CBC: %d,%d,%d", timeout, status, level, voltage);
   return sim800h_expect_OK(500);

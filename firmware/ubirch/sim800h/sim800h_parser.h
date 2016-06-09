@@ -33,9 +33,6 @@
 //! calculate the remaining time in ms (for timeouts)
 #define REMAINING(t) (((t) - timer_read())/1000)
 
-//! size of the parser buffer
-#define CELL_PARSER_BUFSIZE 255
-
 /*!
  * A list of unsolicited response codes we need to take care of.
  * The list of by no means complete and may change for other versions

@@ -76,7 +76,7 @@ bool sim800h_gprs_detach(uint32_t timeout);
  * @param voltage where voltage is stored (in mV)
  * @param timeout how long to wait in ms
  */
-bool sim800h_battery(status_t *status, short int *level, int *voltage, uint32_t timeout);
+bool sim800h_battery(status_t *status, int *level, int *voltage, uint32_t timeout);
 
 /*!
  * @brief Get GSM location information, as well as date and time.

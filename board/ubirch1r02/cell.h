@@ -47,7 +47,11 @@
 
 // set uart speed if not defined elsewhere
 #ifndef BOARD_CELL_UART_BAUD
-# define BOARD_CELL_UART_BAUD       57600         //!< cell modem uart speed if not set elsewhere
+# define BOARD_CELL_UART_BAUD       57600                         //!< cell modem uart speed if not set elsewhere
+#endif
+
+#ifndef BOARD_CELL_BUFSIZE
+# define BOARD_CELL_BUFSIZE         255                           //!< size of the parser buffer
 #endif
 
 // power domain enabler

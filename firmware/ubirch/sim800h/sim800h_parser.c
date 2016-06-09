@@ -28,6 +28,7 @@
 #include "sim800h_core.h"
 #include "sim800h_parser.h"
 #include "sim800h_debug.h"
+#include <board.h>
 
 int check_urc(const char *line) {
   size_t len = strlen(line);
@@ -43,10 +44,10 @@ int check_urc(const char *line) {
 }
 
 void sim800h_send(const char *pattern, ...) {
-  char cmd[CELL_PARSER_BUFSIZE];
+  char cmd[BOARD_CELL_BUFSIZE];
 
   // cleanup the input buffer and check for URC messages
-  while (sim800h_readline(cmd, CELL_PARSER_BUFSIZE -1, 100)) check_urc(cmd);
+  while (sim800h_readline(cmd, BOARD_CELL_BUFSIZE -1, 100)) check_urc(cmd);
   cmd[0] = '\0';
 
   va_list ap;
@@ -62,7 +63,7 @@ bool sim800h_expect_urc(int n, uint32_t timeout) {
   char response[128] = {0};
   bool urc_found = false;
   do {
-    const size_t len = sim800h_readline(response, CELL_PARSER_BUFSIZE - 1, timeout);
+    const size_t len = sim800h_readline(response, BOARD_CELL_BUFSIZE - 1, timeout);
     if (!len) break;
     int r = check_urc(response);
     urc_found = r == n;
@@ -81,7 +82,7 @@ bool sim800h_expect(const char *expected, uint32_t timeout) {
   char response[255] = {0};
   size_t len, expected_len = strlen(expected);
   while (true) {
-    len = sim800h_readline(response, CELL_PARSER_BUFSIZE - 1, timeout);
+    len = sim800h_readline(response, BOARD_CELL_BUFSIZE - 1, timeout);
     if (len == 0) return false;
     if (check_urc(response) >= 0) continue;
     CIODEBUG("GSM (%02d) -> '%s'\r\n", len, response);
@@ -90,10 +91,10 @@ bool sim800h_expect(const char *expected, uint32_t timeout) {
 }
 
 int sim800h_expect_scan(const char *pattern, uint32_t timeout, ...) {
-  char response[CELL_PARSER_BUFSIZE];
+  char response[BOARD_CELL_BUFSIZE];
   va_list ap;
   do {
-    sim800h_readline(response, CELL_PARSER_BUFSIZE - 1, timeout);
+    sim800h_readline(response, BOARD_CELL_BUFSIZE - 1, timeout);
   } while (check_urc(response) != -1);
   CIODEBUG("GSM (%02d) -> '%s'\r\n", strlen(response), response);
 
