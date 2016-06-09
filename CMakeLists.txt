@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.0.2)
 set(CMAKE_TOOLCHAIN_FILE ../ubirch-arm-toolchain/cmake/ubirch-arm-gcc-toolchain.cmake CACHE STRING "toolchain")
 
-# set board type (ubirch1r02, FRDM-K82F, FRDM-KL82Z*) (* not yet implemented)
+# set board type (ubirch1r02, FRDM-K82F, FRDM-KL82Z)
 # you don't need to set it here, use 'cmake -DBOARD=<board> ..' during setup
 # the board setting will determine the used MCU
 set(BOARD "ubirch1r02" CACHE STRING "board name")
