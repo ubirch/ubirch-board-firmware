@@ -24,21 +24,41 @@
 
 #include <board.h>
 #include <stdio.h>
+#include <ubirch/timer.h>
 
-void SysTick_Handler() {
-  static uint32_t counter = 0;
-  counter++;
-  BOARD_LED0((counter % 100) < 10);
+extern uint32_t test_100ms_ticker;
+
+void test_delay(void) {
+  uint32_t start = test_100ms_ticker;
+  delay(1000);
+
+  // test that the elapsed time is 100 (100ms precision)
+  uint32_t elapsed = test_100ms_ticker - start;
+  assert(elapsed >= 100);
 }
 
-int main(void) {
-  board_init();
-  board_console_init(BOARD_DEBUG_BAUD);
-  SysTick_Config(BOARD_SYSTICK_100MS);
+void test_schedule() {
+  int counter = 0;
 
+  uint32_t target = timer_schedule_in(1000 * 1000);
+  // do the waiting as in delay()
+  uint32_t start = timer_read();
+  while (timer_read() < target) { __WFE(); counter++; }
+  uint32_t elapsed =  (timer_read() - start) / 1000;
+
+  // assert that we didn't just busy loop through the delay
+  assert(counter < 1000);
+
+  // assert the timing is 1000 (elapsed time between start and end)
+  assert(elapsed >= 1000);
+}
+
+int test_timer(void) {
   timer_init();
   assert(timer_read() > 0);
 
-  PRINTF("\r\e[KTimer: OK\r\n");
+  test_delay();
+  test_schedule();
+
   return 0;
 }

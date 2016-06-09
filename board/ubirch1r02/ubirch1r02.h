@@ -27,6 +27,8 @@
 #ifndef _UBIRCH1R01_BOARD_H_
 #define _UBIRCH1R01_BOARD_H_
 
+#define BOARD                   "ubirch1r02"
+
 #define BOARD_SYSTICK_1MS       (SystemCoreClock / 1000 - 1)
 #define BOARD_SYSTICK_100MS     (SystemCoreClock / 100 - 1)
 

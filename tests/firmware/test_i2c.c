@@ -29,8 +29,9 @@
 #include <stdio.h>
 #include <ubirch/i2c.h>
 #include <ubirch/isl29125.h>
+#include "test.h"
 
-void test_isl29125();
+int test_isl29125();
 
 static const i2c_config_t i2c_config = {
   .i2c = BOARD_I2C,
@@ -43,17 +44,7 @@ static const i2c_config_t i2c_config = {
   .baud = I2C_FULL_SPEED
 };
 
-void SysTick_Handler() {
-  static uint32_t counter = 0;
-  counter++;
-  BOARD_LED0((counter % 100) < 10);
-}
-
-int main(void) {
-  board_init();
-  board_console_init(BOARD_DEBUG_BAUD);
-  SysTick_Config(BOARD_SYSTICK_100MS);
-
+int test_i2c(void) {
   i2c_init(i2c_config);
   assert(i2c_ping(0x00) == kStatus_Success);
 
@@ -63,11 +54,11 @@ int main(void) {
     if (status == kStatus_Success) {
       switch (address) {
         case ISL_DEVICE_ADDRESS: {
-          test_isl29125();
+          TEST("ISL29125", test_isl29125());
           break;
         }
         default: {
-          PRINTF("%02x: unknown device detected\r\n", address);
+          PRINTF("- I2C: 0x%02x: unknown device detected\r\n", address);
         }
       }
     }
@@ -75,6 +66,5 @@ int main(void) {
 
   i2c_deinit();
 
-  PRINTF("\r\e[KI2C: OK\r\n");
   return 0;
 }

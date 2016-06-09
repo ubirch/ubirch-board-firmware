@@ -56,7 +56,7 @@ void test_isl29125_color(int bits, int lux) {
   assert(!(INIT_RED == color.red && INIT_GREEN == color.green && INIT_BLUE == color.blue));
 }
 
-void test_isl29125() {
+int test_isl29125() {
   assert(isl_reset());
 
   // set sampling mode, ir filter and interrupt mode
@@ -74,5 +74,5 @@ void test_isl29125() {
 
   assert(isl_set(ISL_R_COLOR_MODE, ISL_MODE_POWERDOWN));
 
-  PRINTF("\r\e[KISL29125: OK\r\n");
+  return 0;
 }

@@ -27,6 +27,8 @@
 #ifndef _FRDM_K82F_BOARD_H_
 #define _FRDM_K82F_BOARD_H_
 
+#define BOARD                   "FRDM-KL82Z"
+
 #define BOARD_SYSTICK_1MS       (SystemCoreClock / 1000 - 1)
 #define BOARD_SYSTICK_100MS     (SystemCoreClock / 100 - 1)
 

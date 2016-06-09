@@ -9,9 +9,32 @@ See the board specific, including pin settings found here:
 
 * [ubirch#1 r0.2](board/ubirch1r02)
 * [FRDM-K82F](board/frdm_k82f)
-* [FRDM-KL82Z](board/frdm_kl82z)\*
+* [FRDM-KL82Z](board/frdm_kl82z)
 
-> \* Work in progress, the Kinetis SDK 2.0 is not available for the KL82Z.
+## Testing
+
+The firmware project contains some tests that check that the required implementation
+for the different boards is working as expected. Check the directory [test](test) and flash
+the `test_firmware` target.
+
+Test output will be displayed on the serial debug console and should look like this:
+
+```
+Testing Board and Firmware: FRDM-KL82Z
+
+- I2C: 0x1c: unknown device detected
+I2C            : OK
+TIMER          : OK
+RTC            : OK
+Test finished.
+```
+
+The default is that tests display `TEST: OK` or, if failed, just `ASSERT ERROR` with some
+additional information what went wrong. Informational messages are prefixed with a `-`.
+
+> Please allow for a little time as some tests require waiting for events to happen. An example is
+> the RTC test, that schedules an interrupt 2s in the future and waits for
+> three seconds to check it has happened.
 
 ## License
 

@@ -104,4 +104,11 @@ static inline status_t board_console_init(uint32_t baud) {
   return DbgConsole_Init((uint32_t) BOARD_DEBUG_UART, baud, BOARD_DEBUG_TYPE, BOARD_DEBUG_CLK_FREQ);
 }
 
+/*!
+ * @brief Used to enable interrupts in the INTMUX (NOT USED FOR K82F)
+ * @param irq the irq to enable
+ */
+static inline void enable_interrupt(IRQn_Type irq) {
+  EnableIRQ(irq);
+}
 #endif // _UBIRCH_BOARD_H_

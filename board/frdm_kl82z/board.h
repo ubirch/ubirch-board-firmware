@@ -52,6 +52,7 @@
 static inline void board_init() {
   BOARD_BootClockRUN();
 
+  // initialize the INTMUX - any interrupt triggers output interrupt (OR)
   INTMUX_Init(INTMUX0);
   INTMUX_SetChannelMode(INTMUX0, 0, kINTMUX_ChannelLogicOR);
 
@@ -109,4 +110,12 @@ static inline status_t board_console_init(uint32_t baud) {
   return DbgConsole_Init((uint32_t) BOARD_DEBUG_UART, baud, BOARD_DEBUG_TYPE, BOARD_DEBUG_CLK_FREQ);
 }
 
+/*!
+ * @brief Enable an IRQ using the INTMUX (KL82Z).
+ * @param irq the irq to enable
+ */
+static inline void enable_interrupt(IRQn_Type irq) {
+  INTMUX_EnableInterrupt(INTMUX0, 0, irq);
+  EnableIRQ(irq);
+}
 #endif // _UBIRCH_BOARD_H_
