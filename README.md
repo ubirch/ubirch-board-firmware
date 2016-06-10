@@ -1,4 +1,4 @@
-# ubirch #1 (r0.2) board firmware
+# ubirch board firmware
 
 This repository contains the firmware implementation for our own board. The toolchain
 is built in a way so it may also run on other boards, like the [FRDM-K82F](http://www.nxp.com/products/software-and-tools/run-time-software/kinetis-software-and-tools/ides-for-kinetis-mcus/freescale-freedom-development-platform-for-kinetis-k82-k81-and-k80-mcus:FRDM-K82F)
