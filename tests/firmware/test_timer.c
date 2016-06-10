@@ -25,6 +25,7 @@
 #include <board.h>
 #include <stdio.h>
 #include <ubirch/timer.h>
+#include <fsl_pit.h>
 
 extern uint32_t test_100ms_ticker;
 
@@ -59,6 +60,17 @@ int test_timer(void) {
 
   test_delay();
   test_schedule();
+
+  timer_schedule_in(20000000);
+  while (true) {
+    PRINTF("\e[K%10lu %10lu %10lu %10lu\r",
+           (PIT_GetCurrentTimerCount(PIT, kPIT_Chnl_0)),
+           (PIT_GetCurrentTimerCount(PIT, kPIT_Chnl_1)),
+           (PIT_GetCurrentTimerCount(PIT, kPIT_Chnl_2)),
+           (PIT_GetCurrentTimerCount(PIT, kPIT_Chnl_3)));
+    for(uint32_t n = 1000000; n > 0; n--);
+  }
+
 
   return 0;
 }

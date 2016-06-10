@@ -30,12 +30,21 @@
 static bool initialized = false;
 
 void PIT0_IRQHandler() {
+  // clear interrupt flag
   PIT_ClearStatusFlags(PIT, kPIT_Chnl_3, kPIT_TimerFlag);
   PIT_DisableInterrupts(PIT, kPIT_Chnl_3, kPIT_TimerInterruptEnable);
+  // stop the timer
+  PIT_StopTimer(PIT, kPIT_Chnl_3);
+  PIT_StopTimer(PIT, kPIT_Chnl_2);
+
   __SEV();
+  PRINTF("PIT0 INTR\r\n");
 }
 
 void timer_init() {
+  if (initialized) return;
+  initialized = true;
+
   pit_config_t pitConfig;
   PIT_GetDefaultConfig(&pitConfig);
   PIT_Init(PIT, &pitConfig);
