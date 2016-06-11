@@ -29,7 +29,7 @@
 
 #include <fsl_rtc.h>
 
-//! RTC datetime data structure
+//! interrupt handler for the real time clock
 typedef void (*rtc_datetime_handler_t)(rtc_datetime_t*);
 
 /*!

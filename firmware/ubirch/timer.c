@@ -33,12 +33,13 @@ void PIT0_IRQHandler() {
   // clear interrupt flag
   PIT_ClearStatusFlags(PIT, kPIT_Chnl_3, kPIT_TimerFlag);
   PIT_DisableInterrupts(PIT, kPIT_Chnl_3, kPIT_TimerInterruptEnable);
+
   // stop the timer
   PIT_StopTimer(PIT, kPIT_Chnl_3);
   PIT_StopTimer(PIT, kPIT_Chnl_2);
 
+  // create continue event
   __SEV();
-  PRINTF("PIT0 INTR\r\n");
 }
 
 void timer_init() {
@@ -67,26 +68,25 @@ uint32_t timer_read() {
   return ~(PIT_GetCurrentTimerCount(PIT, kPIT_Chnl_1));
 }
 
-uint32_t timer_schedule(uint32_t timestamp) {
-  int delta = (int) (timestamp - timer_read());
-  if (delta <= 0) {
-    // This event was in the past.
-    // Set the interrupt as pending, but don't process it here.
-    // This prevents a recursive loop under heavy load
-    // which can lead to a stack overflow.
-    NVIC_SetPendingIRQ(PIT0_IRQn);
-  } else {
+// TODO: handle longer than 71 minute interrupt times (chaining both timers)
+void timer_set_interrupt(uint32_t us) {
+  if (!initialized) timer_init();
 
-    PIT_StopTimer(PIT, kPIT_Chnl_3);
-    PIT_StopTimer(PIT, kPIT_Chnl_2);
-    PIT_SetTimerPeriod(PIT, kPIT_Chnl_3, (uint32_t) delta);
-    PIT_EnableInterrupts(PIT, kPIT_Chnl_3, kPIT_TimerInterruptEnable);
-    PIT_StartTimer(PIT, kPIT_Chnl_3);
-    PIT_StartTimer(PIT, kPIT_Chnl_2);
-  }
-  return timestamp;
+  PIT_StopTimer(PIT, kPIT_Chnl_3);
+  PIT_StopTimer(PIT, kPIT_Chnl_2);
+  PIT_SetTimerPeriod(PIT, kPIT_Chnl_3, (uint32_t) us);
+  PIT_EnableInterrupts(PIT, kPIT_Chnl_3, kPIT_TimerInterruptEnable);
+  PIT_StartTimer(PIT, kPIT_Chnl_3);
+  PIT_StartTimer(PIT, kPIT_Chnl_2);
 }
 
-extern uint32_t timer_schedule_in(uint32_t us);
+extern void timer_timeout(uint32_t us);
+extern uint32_t timer_timeout_remaining();
 
-extern void delay(uint32_t ms);
+void delay(uint32_t ms) {
+  if (ms > (UINT32_MAX - 1) / 1000) return;
+  if (!initialized) timer_init();
+
+  timer_timeout(ms * 1000);
+  while (timer_timeout_remaining()) { __WFE(); }
+}

@@ -1,6 +1,9 @@
 /**
  * Test the Firmware code.
  *
+ * Blinks at 100ms interval while working and 1s interval when finished successfully.
+ * Also prints messages do debug output.
+ *
  * @author Matthias L. Jugel
  * @date 2016-05-09
  *
@@ -25,18 +28,33 @@
 #include "test.h"
 
 int test_i2c();
+
 int test_timer();
+
 int test_rtc();
 
+#if defined(BOARD_FRDM_KL82Z) || defined(BOARD_FRDM_K82F)
+#  define LED BOARD_LED1
+#elif defined(BOARD_UBIRCH_1R02)
+#  define LED BOARD_LED0
+#else
+#  define LED(...)
+#endif
+
+volatile bool on = true;
+
 void SysTick_Handler() {
-  test_100ms_ticker++;
-  BOARD_LED0((test_100ms_ticker % 100) < 10);
+  test_1ms_ticker++;
+  if (test_1ms_ticker % 100 == 0) on = !on;
+  LED(on);
 }
 
 int main(void) {
   board_init();
   board_console_init(BOARD_DEBUG_BAUD);
-  SysTick_Config(BOARD_SYSTICK_100MS);
+
+  // set the ticker to 1ms for comparison rates
+  SysTick_Config(BOARD_SYSTICK_1MS);
 
   PRINTF("Testing Board and Firmware: " BOARD "\r\n\r\n");
 
@@ -45,6 +63,8 @@ int main(void) {
   TEST("RTC", test_rtc());
 
   PRINTF("Test finished.\r\n");
+
+  SysTick_Config(BOARD_SYSTICK_100MS);
 
   return 0;
 }
