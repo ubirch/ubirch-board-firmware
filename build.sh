@@ -1,9 +1,9 @@
-#! /bin/sh
-TOOLCHAIN=../ubirch-arm-toolchain/cmake/ubirch-arm-gcc-toolchain.cmake
+#!/bin/bash -x
+TOOLCHAIN=${TOOLCHAIN:-"../ubirch-arm-toolchain/cmake/ubirch-arm-gcc-toolchain.cmake"}
 BOARD=${BOARD:-"ubirch1r02"}
 # do an out-of-source build for all configurations
 if [ "$1" == "-a" ]
-then BUILDS="Debug Release MinSizeRel RelWithDebInfo"
+  then BUILDS="Debug Release MinSizeRel RelWithDebInfo"
 else BUILDS=MinSizeRel
 fi
 [ -d "build/$BOARD" ] && rm -r "build/$BOARD"

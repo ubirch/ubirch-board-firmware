@@ -19,7 +19,7 @@ function init() {
 }
 
 function build_software() {
-  docker run --user `id -u`:`id -g` -e "HOME=/build" --workdir=/build/ubirch-board-firmware --volume=${PWD}/..:/build -e "TOOLCHAIN=${TOOLCHAIN}" --entrypoint=/bin/bash ubirch/arm-build:${ARM_CONTAINER_VERSION} ./build.sh
+  docker run --user `id -u`:`id -g` -e "HOME=/build" --workdir=/build/ubirch-board-firmware --env=${BOARD} --volume=${PWD}/..:/build -e "TOOLCHAIN=${TOOLCHAIN}" --entrypoint=/bin/bash ubirch/arm-build:${ARM_CONTAINER_VERSION} ./build.sh
   if [ $? -ne 0 ]; then
       echo "Docker build failed"
       exit 1
