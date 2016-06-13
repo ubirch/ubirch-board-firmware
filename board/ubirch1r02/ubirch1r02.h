@@ -27,6 +27,7 @@
 #ifndef _UBIRCH1R01_BOARD_H_
 #define _UBIRCH1R01_BOARD_H_
 
+#define BOARD_UBIRCH_1R02
 #define BOARD                   "ubirch1r02"
 
 #define BOARD_SYSTICK_1MS       (SystemCoreClock / 1000 - 1)
@@ -48,7 +49,7 @@
 #define BOARD_BUTTON0_GPIO      GPIOD
 #define BOARD_BUTTON0_PORT_CLOCK kCLOCK_PortD
 #define BOARD_BUTTON0_PIN       0
-#define BOARD_BUTTON0_IRQ       PORTD_IRQHandler
+#define BOARD_BUTTON0_HANDLER   PORTD_IRQHandler
 
 // K82F NMI pin (PTA4)
 #define BOARD_NMI_PORT          PORTA
@@ -71,6 +72,12 @@
 #define BOARD_I2C_SCL_PIN       10U
 #define BOARD_I2C_SDA_PIN       11U
 
+// timer interrupt (PIT)
+#define BOARD_TIMER             PIT
+#define BOARD_TIMER_IRQ         PIT3_IRQn
+#define BOARD_TIMER_HANDLER     PIT3_IRQHandler
+
+// board rtc (PIT)
 #define BOARD_RTC               RTC
 #define BOARD_RTC_CLOCK         RTC_CR_OSCE_MASK
 #define BOARD_RTC_IRQ           RTC_IRQn

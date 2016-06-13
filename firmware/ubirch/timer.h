@@ -26,8 +26,11 @@
 #ifndef _UBIRCH_TIMER_H_
 #define _UBIRCH_TIMER_H_
 
+#include <fsl_pit.h>
 #include <stdint.h>
 #include <board.h>
+
+#define TIMEOUT 0
 
 /*!
  * @brief Initialize the timer.
@@ -44,35 +47,41 @@ void timer_init(void);
 uint32_t timer_read(void);
 
 /*!
- * @brief Schedule a timer interrupt in the future (absolute).
- * @param timestamp a timestamp (timer_read() + delta interval)
- * @return the target timestamp
- */
-uint32_t timer_schedule(uint32_t timestamp);
-
-/*!
  * @brief Schedule a timer interrupt in the future (relative).
- * @param us a relative time interval in us
- * @return the target timestamp (current + us)
+ *
+ * Schedules a timer interrupt in the given number of microseconds.
+ * The maximum time of the interval given is just over 71 minutes.
+ * If the interval is too large, no interrupt will be scheduled.
+ *
+ * @param us a relative time interval in us (less than UINT32_MAX)
  */
-static inline uint32_t timer_schedule_in(uint32_t us) {
-  return timer_schedule(timer_read() + us);
+void timer_set_interrupt(uint32_t us);
+
+static inline void timer_timeout(uint32_t us) {
+  assert((PIT_GetEnabledInterrupts(PIT, kPIT_Chnl_3) & kPIT_TimerInterruptEnable) == 0);
+  timer_set_interrupt(us);
+}
+
+static inline uint32_t timer_timeout_remaining(void) {
+  if (PIT_GetEnabledInterrupts(PIT, kPIT_Chnl_3) & kPIT_TimerInterruptEnable)
+    return PIT_GetCurrentTimerCount(PIT, kPIT_Chnl_3);
+  return 0;
 }
 
 /*!
- * @brief Delay execution for a certain amount of time.
+ * @brief Delay execution for a certain amount of milliseconds.
  *
- * This function will try to go into a low power mode (__WFI()) until the
+ * This function will try to go into a low power mode (__WFE()) until the
  * end of the delay. It will schedule an interrupt in the future
  * and under optimal conditions only wake up when the interrupt
  * is triggered. If other events preempt this it checks the
  * time and continues.
  *
+ * The maximum delay interval is just over 71 minutes, longer intervals
+ * will return immediately, effectively not delaying!
+ *
  * @param ms the milliseconds to delay execution
  */
-static inline void delay(uint32_t ms) {
-  uint32_t timestamp = timer_schedule_in(ms * 1000);
-  while (timer_read() < timestamp) { __WFE(); }
-}
+void delay(uint32_t ms);
 
 #endif // _UBIRCH_TIMER_H_

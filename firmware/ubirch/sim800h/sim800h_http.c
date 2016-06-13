@@ -28,37 +28,37 @@
 #include "sim800h_debug.h"
 
 int sim800h_http_prepare(const char *url, uint32_t timeout) {
-  uint32_t deadline = timer_read() + timeout * 1000;
+  timer_timeout(timeout * 1000);
 
   sim800h_send("AT+HTTPTERM");
   sim800h_expect_OK(timeout);
 
   sim800h_send("AT+HTTPINIT");
-  if (!sim800h_expect_OK(REMAINING(deadline))) return 1000;
+  if (!sim800h_expect_OK(TIMEOUT)) return 1000;
 
   sim800h_send("AT+HTTPPARA=\"CID\",1");
-  if (!sim800h_expect_OK(REMAINING(deadline))) return 1101;
+  if (!sim800h_expect_OK(TIMEOUT)) return 1101;
 
   sim800h_send("AT+HTTPPARA=\"UA\",\"ubirch#1 r0.2\"");
-  if (!sim800h_expect_OK(REMAINING(deadline))) return 1102;
+  if (!sim800h_expect_OK(TIMEOUT)) return 1102;
 
   sim800h_send("AT+HTTPPARA=\"REDIR\",1");
-  if (!sim800h_expect_OK(REMAINING(deadline))) return 1103;
+  if (!sim800h_expect_OK(TIMEOUT)) return 1103;
 
   sim800h_send("AT+HTTPPARA=\"URL\",\"%s\"", url);
-  if (!sim800h_expect_OK(REMAINING(deadline))) return 1110;
+  if (!sim800h_expect_OK(TIMEOUT)) return 1110;
 
   return 0;
 }
 
 int sim800h_http(sim800h_http_method_t method, size_t *res_size, uint32_t timeout) {
-  uint32_t deadline = timer_read() + timeout * 1000;
+  timer_timeout(timeout * 1000);
   int bearer, status;
 
   sim800h_send("AT+HTTPACTION=%d", method);
-  if (!sim800h_expect_OK(REMAINING(deadline))) return 1004;
+  if (!sim800h_expect_OK(TIMEOUT)) return 1004;
 
-  sim800h_expect_scan("+HTTPACTION: %d,%d,%d", REMAINING(deadline), &bearer, &status, res_size);
+  sim800h_expect_scan("+HTTPACTION: %d,%d,%d", TIMEOUT, &bearer, &status, res_size);
 
   return status;
 }
@@ -66,15 +66,15 @@ int sim800h_http(sim800h_http_method_t method, size_t *res_size, uint32_t timeou
 size_t sim800h_http_write(const uint8_t *buffer, size_t size, uint32_t timeout) {
   if(size <= 0) return 0;
 
-  uint32_t deadline = timer_read() + timeout * 1000;
+  timer_timeout(timeout * 1000);
 
   sim800h_send("AT+HTTPDATA=%d,%d", size, timeout);
-  sim800h_expect("DOWNLOAD", REMAINING(deadline));
+  sim800h_expect("DOWNLOAD", TIMEOUT);
 
   CIODUMP(buffer, size);
   sim800h_write(buffer, size);
 
-  if (!sim800h_expect_OK(REMAINING(deadline))) return 0;
+  if (!sim800h_expect_OK(TIMEOUT)) return 0;
 
   return size;
 }
@@ -82,14 +82,14 @@ size_t sim800h_http_write(const uint8_t *buffer, size_t size, uint32_t timeout) 
 size_t sim800h_http_read(uint8_t *buffer, uint32_t start, size_t size, uint32_t timeout) {
   if(size <= 0) return 0;
 
-  uint32_t deadline = timer_read() + timeout * 1000;
+  timer_timeout(timeout * 1000);
   size_t available;
 
   sim800h_send("AT+HTTPREAD=%d,%d", start, size);
   sim800h_expect_scan("+HTTPREAD: %lu", timeout, &available);
 
-  size_t idx = sim800h_read_binary(buffer, available, REMAINING(deadline));
-  if (!sim800h_expect_OK(REMAINING(deadline))) return 0;
+  size_t idx = sim800h_read_binary(buffer, available, TIMEOUT);
+  if (!sim800h_expect_OK(TIMEOUT)) return 0;
 
   CIODUMP(buffer, idx);
 
@@ -97,23 +97,23 @@ size_t sim800h_http_read(uint8_t *buffer, uint32_t start, size_t size, uint32_t 
 }
 
 int sim800h_http_get(const char *url, size_t *res_size, uint32_t timeout) {
-  uint32_t deadline = timer_read() + timeout * 1000;
+  timer_timeout(timeout * 1000);
 
   int status = sim800h_http_prepare(url, timeout);
   if (status) return status;
 
-  return sim800h_http(HTTP_GET, res_size, REMAINING(deadline));
+  return sim800h_http(HTTP_GET, res_size, TIMEOUT);
 }
 
 int sim800h_http_post(const char *url, size_t *res_size, uint8_t *request, size_t req_size, uint32_t timeout) {
-  uint32_t deadline = timer_read() + timeout * 1000;
+  timer_timeout(timeout * 1000);
 
   int status = sim800h_http_prepare(url, timeout);
   if(status) return status;
 
-  sim800h_http_write(request, req_size, REMAINING(deadline));
+  sim800h_http_write(request, req_size, TIMEOUT);
 
-  return sim800h_http(HTTP_POST, res_size, REMAINING(deadline));
+  return sim800h_http(HTTP_POST, res_size, TIMEOUT);
 }
 
 

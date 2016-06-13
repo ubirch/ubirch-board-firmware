@@ -61,3 +61,22 @@ The pin configuration is as follows:
 ![ubirch#1 r0.2 front](ubirch1r02-front.jpg)
 ![ubirch#1 r0.2 back](ubirch1r02-back.jpg)
 
+# R.I.P.
+
+Here is a list of devices that died in the process of constructing the firmware:
+
+1. ubirch#1 r0.2 `(01)` - died of a wrongly attached battery. Apparently the battery socket has some direction
+   and not checking that it is attached the right way before attaching the battery while having USB attached
+   as well kills the power management unit. I should have taken a look at the marks on the board before
+   attaching. <br/>
+   *What I learned: Do not expect that the board manufacturer always does it right :-)*
+
+2. ubirch#1 r0.2 `(02)` - died of a power surge due to too many power eating LEDs. The MCU's pins can just take
+   a certain amount of current. Attaching too many of them (in line) kills the MCU. This one almost died of
+   cause #1 when I tried to attach a battery which had it's power lines wrongly connected.<br/>
+   *What I learned: Read the specs and don't just mindlessly attach stuff to pins :-)*
+
+3. ubirch#1 r0.2 `(03)` - died of potential Potential difference. Having the UART connected to a different
+   host is not a good idea, esp. not connecting `GND`. In this case, the MCU heated up quite a bit :(<br/>
+   *What I learned: Learn some more about electronics and how current flows. Always at least connect ground
+   to level out the potential.*

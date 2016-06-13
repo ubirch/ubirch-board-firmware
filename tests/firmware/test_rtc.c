@@ -27,7 +27,7 @@
 #include <ubirch/rtc.h>
 #include <ubirch/timer.h>
 
-extern uint32_t test_100ms_ticker;
+extern uint32_t test_1ms_ticker;
 
 static const rtc_datetime_t fixdate = {
   .year = 2016,

@@ -26,39 +26,57 @@
 #include <stdio.h>
 #include <ubirch/timer.h>
 
-extern uint32_t test_100ms_ticker;
+extern uint32_t test_1ms_ticker;
 
-void test_delay(void) {
-  uint32_t start = test_100ms_ticker;
-  delay(1000);
+void test_timer_runs(void) {
+  const uint32_t interval = SystemCoreClock / 10 - 1;
 
-  // test that the elapsed time is 100 (100ms precision)
-  uint32_t elapsed = test_100ms_ticker - start;
-  assert(elapsed >= 100);
+  uint32_t timer_start = timer_read();
+  uint32_t start = test_1ms_ticker;
+  for(uint32_t i = interval; i > 0; i--);
+  uint32_t ticker_elapsed = test_1ms_ticker - start;
+  uint32_t timer_elapsed = timer_read() - timer_start;
+
+  // test that timer elapsed at least 100000us
+  assert(timer_elapsed > 100000);
+  // test that the ticker has elapsed about 1000ms
+  assert(ticker_elapsed <= 1005);
 }
 
-void test_schedule() {
+
+void test_delay(void) {
+  uint32_t start = test_1ms_ticker;
+  delay(1000);
+  uint32_t elapsed = test_1ms_ticker - start;
+
+  // test that the elapsed time is 1000ms (precision of the timer is 1ms)
+  assert(elapsed >= 1000);
+}
+
+void test_timeout() {
   int counter = 0;
 
-  uint32_t target = timer_schedule_in(1000 * 1000);
-  // do the waiting as in delay()
-  uint32_t start = timer_read();
-  while (timer_read() < target) { __WFE(); counter++; }
-  uint32_t elapsed =  (timer_read() - start) / 1000;
+  const uint32_t interval = 1000 * 1000;
+  timer_timeout(interval);
 
-  // assert that we didn't just busy loop through the delay
-  assert(counter < 1000);
+  uint32_t timer_start = timer_read();
+  while (timer_timeout_remaining()) { __WFI(); counter++; }
+  uint32_t elapsed =  (timer_read() - timer_start) / 1000;
+
+  // assert that we didn't just busy loop through the delay, we have an interrupt every ms
+  assert(counter <= 1010);
 
   // assert the timing is 1000 (elapsed time between start and end)
-  assert(elapsed >= 1000);
+  assert(elapsed >= 1000 && elapsed <= 1010);
 }
 
 int test_timer(void) {
   timer_init();
   assert(timer_read() > 0);
 
+  test_timer_runs();
+  test_timeout();
   test_delay();
-  test_schedule();
 
   return 0;
 }

@@ -38,9 +38,6 @@
 static uint8_t gsmUartRingBuffer[GSM_RINGBUFFER_SIZE];
 static volatile int gsmRxIndex, gsmRxHead;
 
-/*!
- * The
- */
 void BOARD_CELL_UART_IRQ_HANDLER(void) {
   if ((kLPUART_RxDataRegFullFlag) & LPUART_GetStatusFlags(BOARD_CELL_UART)) {
     uint8_t data = LPUART_ReadByte(BOARD_CELL_UART);
@@ -200,10 +197,10 @@ int sim800h_read() {
 }
 
 size_t sim800h_read_binary(uint8_t *buffer, size_t max, uint32_t timeout) {
-  uint32_t deadline = timer_schedule_in(timeout * 1000);
+  if(timeout) timer_timeout(timeout * 1000);
   size_t idx = 0;
   while (idx < max) {
-    if (timer_read() > deadline) break;
+    if (!timer_timeout_remaining()) break;
     int c = sim800h_read();
     if (c == -1) {
       // nothing in the buffer, allow some sleep
@@ -217,10 +214,10 @@ size_t sim800h_read_binary(uint8_t *buffer, size_t max, uint32_t timeout) {
 }
 
 size_t sim800h_readline(char *buffer, size_t max, uint32_t timeout) {
-  uint32_t deadline = timer_schedule_in(timeout * 1000);
+  if(timeout) timer_timeout(timeout * 1000);
   size_t idx = 0;
   while (idx < max) {
-    if (timer_read() > deadline) break;
+    if (!timer_timeout_remaining()) break;
 
     int c = sim800h_read();
     if (c == -1) {
