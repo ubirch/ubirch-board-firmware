@@ -49,7 +49,7 @@ void test_delay(void) {
   delay(1000);
   uint32_t elapsed = test_1ms_ticker - start;
 
-  // test that the elapsed time is 100 (100ms precision)
+  // test that the elapsed time is 1000ms (precision of the timer is 1ms)
   assert(elapsed >= 1000);
 }
 
