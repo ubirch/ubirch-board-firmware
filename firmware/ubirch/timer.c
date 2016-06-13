@@ -84,13 +84,13 @@ void timer_set_interrupt(uint32_t us) {
   PIT_StartTimer(BOARD_TIMER, kPIT_Chnl_2);
 }
 
-extern void timer_timeout(uint32_t us);
+extern void timer_set_timeout(uint32_t us);
 extern uint32_t timer_timeout_remaining();
 
 void delay(uint32_t ms) {
-  if (ms > (UINT32_MAX - 1) / 1000) return;
+  if (ms > (uTimer_MaxTimeout - 1) / 1000) return;
   if (!initialized) timer_init();
 
-  timer_timeout(ms * 1000);
+  timer_set_timeout(ms * 1000);
   while (timer_timeout_remaining()) { __WFE(); }
 }

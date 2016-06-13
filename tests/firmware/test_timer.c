@@ -57,7 +57,7 @@ void test_timeout() {
   int counter = 0;
 
   const uint32_t interval = 1000 * 1000;
-  timer_timeout(interval);
+  timer_set_timeout(interval);
 
   uint32_t timer_start = timer_read();
   while (timer_timeout_remaining()) { __WFI(); counter++; }

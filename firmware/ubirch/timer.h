@@ -30,7 +30,10 @@
 #include <stdint.h>
 #include <board.h>
 
-#define TIMEOUT 0
+typedef enum _timer_settings {
+  uTimer_MaxTimeout = INT32_MAX,
+  uTimer_Remaining = 0
+} timer_settings_t;
 
 /*!
  * @brief Initialize the timer.
@@ -57,7 +60,7 @@ uint32_t timer_read(void);
  */
 void timer_set_interrupt(uint32_t us);
 
-static inline void timer_timeout(uint32_t us) {
+static inline void timer_set_timeout(uint32_t us) {
   assert((PIT_GetEnabledInterrupts(PIT, kPIT_Chnl_3) & kPIT_TimerInterruptEnable) == 0);
   timer_set_interrupt(us);
 }

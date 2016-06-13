@@ -32,13 +32,13 @@
 #include "sim800h_debug.h"
 
 bool sim800h_register(const uint32_t timeout) {
-  timer_timeout(timeout * 1000);
+  timer_set_timeout(timeout * 1000);
 
   bool registered = false;
   while (!registered && timer_timeout_remaining()) {
     int bearer = 0, status = 0;
     sim800h_send("AT+CREG?");
-    const int matched = sim800h_expect_scan("+CREG: %d,%d", TIMEOUT, &bearer, &status);
+    const int matched = sim800h_expect_scan("+CREG: %d,%d", uTimer_Remaining, &bearer, &status);
     sim800h_expect_OK(500);
     if (matched == 2) {
       CSTDEBUG("GSM INFO !! [%02d] %s\r\n", status, status < 6 ? reg_status[status] : "???");
@@ -51,56 +51,56 @@ bool sim800h_register(const uint32_t timeout) {
 }
 
 bool sim800h_gprs_attach(const char *apn, const char *user, const char *password, const uint32_t timeout) {
-  timer_timeout(timeout * 1000);
+  timer_set_timeout(timeout * 1000);
 
   // shut down any previous GPRS connection
   sim800h_send("AT+CIPSHUT");
-  if (!sim800h_expect("SHUT OK", TIMEOUT)) return false;
+  if (!sim800h_expect("SHUT OK", uTimer_Remaining)) return false;
 
   // enable multiplex mode (TODO check it necessary, I read somewhere multiplex mode is more stable)
   sim800h_send("AT+CIPMUX=1");
-  if (!sim800h_expect_OK(TIMEOUT)) return false;
+  if (!sim800h_expect_OK(uTimer_Remaining)) return false;
 
   // enable manual receive mode
   sim800h_send("AT+CIPRXGET=1");
-  if (!sim800h_expect_OK(TIMEOUT)) return false;
+  if (!sim800h_expect_OK(uTimer_Remaining)) return false;
 
   // attach to the network
   bool attached = false;
   do {
     sim800h_send("AT+CGATT=1");
-    attached = sim800h_expect_OK(TIMEOUT);
+    attached = sim800h_expect_OK(uTimer_Remaining);
     if (!attached) delay(1000);
   } while (!attached && timer_timeout_remaining());
   if (!attached) return false;
 
   // configure connection
   sim800h_send("AT+SAPBR=3,1,\"CONTYPE\",\"GPRS\"");
-  if (!sim800h_expect_OK(TIMEOUT)) return false;
+  if (!sim800h_expect_OK(uTimer_Remaining)) return false;
 
   // set bearer profile access point name
   if (apn) {
     sim800h_send("AT+SAPBR=3,1,\"APN\",\"%s\"", apn);
-    if (!sim800h_expect_OK(TIMEOUT)) return false;
+    if (!sim800h_expect_OK(uTimer_Remaining)) return false;
     if (user) {
       sim800h_send("AT+SAPBR=3,1,\"USER\",\"%s\"", user);
-      if (!sim800h_expect_OK(TIMEOUT)) return false;
+      if (!sim800h_expect_OK(uTimer_Remaining)) return false;
     }
     if (password) {
       sim800h_send("AT+SAPBR=3,1,\"PWD\",\"%s\"", password);
-      if (!sim800h_expect_OK(TIMEOUT)) return false;
+      if (!sim800h_expect_OK(uTimer_Remaining)) return false;
     }
   }
 
   // open GPRS context
   sim800h_send("AT+SAPBR=1,1");
-  sim800h_expect_OK(TIMEOUT);
+  sim800h_expect_OK(uTimer_Remaining);
 
   int opened;
   do {
     sim800h_send("AT+SAPBR=2,1");
-    sim800h_expect_scan("+SAPBR: 1,%d", TIMEOUT, &opened);
-    if(!sim800h_expect_OK(TIMEOUT)) return false;
+    sim800h_expect_scan("+SAPBR: 1,%d", uTimer_Remaining, &opened);
+    if(!sim800h_expect_OK(uTimer_Remaining)) return false;
     delay(1000);
   } while (opened != 1 && timer_timeout_remaining());
 
@@ -108,16 +108,16 @@ bool sim800h_gprs_attach(const char *apn, const char *user, const char *password
 }
 
 bool sim800h_gprs_detach(uint32_t timeout) {
-  timer_timeout(timeout * 1000);
+  timer_set_timeout(timeout * 1000);
 
   sim800h_send("AT+CIPSHUT");
-  if (!sim800h_expect("SHUT OK", TIMEOUT)) return false;
+  if (!sim800h_expect("SHUT OK", uTimer_Remaining)) return false;
 
   sim800h_send("AT+SAPBR=0,1");
-  if (!sim800h_expect_OK(TIMEOUT)) return false;
+  if (!sim800h_expect_OK(uTimer_Remaining)) return false;
 
   sim800h_send("AT+CGATT=0");
-  return sim800h_expect_OK(TIMEOUT);
+  return sim800h_expect_OK(uTimer_Remaining);
 }
 
 
