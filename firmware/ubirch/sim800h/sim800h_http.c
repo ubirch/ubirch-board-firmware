@@ -34,7 +34,7 @@ int sim800h_http_prepare(const char *url, uint32_t timeout) {
   sim800h_expect_OK(timeout);
 
   sim800h_send("AT+HTTPINIT");
-  if (!sim800h_expect_OK(0)) return 1000;
+  if (!sim800h_expect_OK(TIMEOUT)) return 1000;
 
   sim800h_send("AT+HTTPPARA=\"CID\",1");
   if (!sim800h_expect_OK(TIMEOUT)) return 1101;
