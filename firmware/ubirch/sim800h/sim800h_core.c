@@ -38,9 +38,6 @@
 static uint8_t gsmUartRingBuffer[GSM_RINGBUFFER_SIZE];
 static volatile int gsmRxIndex, gsmRxHead;
 
-/*!
- * The
- */
 void BOARD_CELL_UART_IRQ_HANDLER(void) {
   if ((kLPUART_RxDataRegFullFlag) & LPUART_GetStatusFlags(BOARD_CELL_UART)) {
     uint8_t data = LPUART_ReadByte(BOARD_CELL_UART);
