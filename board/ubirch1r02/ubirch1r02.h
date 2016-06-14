@@ -27,6 +27,8 @@
 #ifndef _UBIRCH1R01_BOARD_H_
 #define _UBIRCH1R01_BOARD_H_
 
+//! @{
+
 #define BOARD_UBIRCH_1R02
 #define BOARD                   "ubirch1r02"
 
@@ -99,5 +101,6 @@
 #define BOARD_DEBUG_TX_PIN      17
 #define BOARD_DEBUG_TX_ALT      kPORT_MuxAlt3
 
+//! @}
 
 #endif // _UBIRCH1R01_BOARD_H_

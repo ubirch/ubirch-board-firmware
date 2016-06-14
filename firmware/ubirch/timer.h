@@ -30,9 +30,10 @@
 #include <stdint.h>
 #include <board.h>
 
+//! special settings for the timer
 typedef enum _timer_settings {
-  uTimer_MaxTimeout = INT32_MAX,
-  uTimer_Remaining = 0
+  uTimer_MaxTimeout = UINT32_MAX,  //<! maximum possible timeout ~71 min
+  uTimer_Remaining = 0             //<! Use the remaining timeout
 } timer_settings_t;
 
 /*!
@@ -60,8 +61,24 @@ uint32_t timer_read(void);
  */
 void timer_set_interrupt(uint32_t us);
 
+/*!
+ * @brief Set a timeout.
+ *
+ * Sets a timeout by scheduling a timer interrupt in the future and
+ * counting down. The remaining time in microseconds can then be queried
+ * using timer_timeout_remaining().
+ *
+ * @param us the timeout in microseconds
+ */
 void timer_set_timeout(uint32_t us);
 
+/*!
+ * @brief Query the remaining time in microseconds for the set timeout.
+ *
+ * Useful for checking if there is time left.
+ *
+ * @return The amount of time left in microseconds.
+ */
 uint32_t timer_timeout_remaining(void);
 
 /*!

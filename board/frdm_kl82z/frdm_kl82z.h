@@ -27,6 +27,8 @@
 #ifndef _FRDM_K82F_BOARD_H_
 #define _FRDM_K82F_BOARD_H_
 
+//! @{
+
 #define BOARD_FRDM_KL82Z
 #define BOARD                   "FRDM-KL82Z"
 
@@ -118,5 +120,7 @@
 #ifndef BOARD_DEBUG_BAUD
 #  define BOARD_DEBUG_BAUD      115200
 #endif
+
+//! @}
 
 #endif // _FRDM_K82F_BOARD_H_
