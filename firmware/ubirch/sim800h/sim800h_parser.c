@@ -29,6 +29,7 @@
 #include "sim800h_parser.h"
 #include "sim800h_debug.h"
 #include <board.h>
+#include <ubirch/timer.h>
 
 int check_urc(const char *line) {
   size_t len = strlen(line);
@@ -47,7 +48,10 @@ void sim800h_send(const char *pattern, ...) {
   char cmd[BOARD_CELL_BUFSIZE];
 
   // cleanup the input buffer and check for URC messages
+  uint32_t remaining = timer_timeout_remaining();
   while (sim800h_readline(cmd, BOARD_CELL_BUFSIZE -1, 100)) check_urc(cmd);
+  timer_set_timeout(remaining);
+
   cmd[0] = '\0';
 
   va_list ap;

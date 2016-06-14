@@ -197,7 +197,7 @@ int sim800h_read() {
 }
 
 size_t sim800h_read_binary(uint8_t *buffer, size_t max, uint32_t timeout) {
-  if(timeout) timer_set_timeout(timeout * 1000);
+  timer_set_timeout(timeout * 1000);
   size_t idx = 0;
   while (idx < max) {
     if (!timer_timeout_remaining()) break;
@@ -214,7 +214,7 @@ size_t sim800h_read_binary(uint8_t *buffer, size_t max, uint32_t timeout) {
 }
 
 size_t sim800h_readline(char *buffer, size_t max, uint32_t timeout) {
-  if(timeout) timer_set_timeout(timeout * 1000);
+  timer_set_timeout(timeout * 1000);
   size_t idx = 0;
   while (idx < max) {
     if (!timer_timeout_remaining()) break;

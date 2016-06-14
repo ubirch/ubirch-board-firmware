@@ -39,10 +39,10 @@ bool sim800h_register(const uint32_t timeout) {
     int bearer = 0, status = 0;
     sim800h_send("AT+CREG?");
     const int matched = sim800h_expect_scan("+CREG: %d,%d", uTimer_Remaining, &bearer, &status);
-    sim800h_expect_OK(500);
     if (matched == 2) {
       CSTDEBUG("GSM INFO !! [%02d] %s\r\n", status, status < 6 ? reg_status[status] : "???");
       registered = ((status == CREG_HOME) || (status == CREG_ROAMING));
+      sim800h_expect_OK(uTimer_Remaining);
     }
     if (!registered) delay(2000);
   }

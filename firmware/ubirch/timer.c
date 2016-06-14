@@ -84,13 +84,30 @@ void timer_set_interrupt(uint32_t us) {
   PIT_StartTimer(BOARD_TIMER, kPIT_Chnl_2);
 }
 
-extern void timer_set_timeout(uint32_t us);
-extern uint32_t timer_timeout_remaining();
+void timer_set_timeout(uint32_t us) {
+  if(us) timer_set_interrupt(us);
+}
+
+uint32_t timer_timeout_remaining() {
+  if (!initialized) timer_init();
+
+  if (PIT_GetEnabledInterrupts(PIT, kPIT_Chnl_3) & kPIT_TimerInterruptEnable)
+    return PIT_GetCurrentTimerCount(PIT, kPIT_Chnl_3);
+  return 0;
+}
 
 void delay(uint32_t ms) {
   if (ms > (uTimer_MaxTimeout - 1) / 1000) return;
   if (!initialized) timer_init();
 
-  timer_set_timeout(ms * 1000);
+  uint32_t us_delay = ms * 1000;
+
+  // save the current timeout, so delay() does not interfere
+  uint32_t remaining = timer_timeout_remaining();
+
+  timer_set_timeout(us_delay);
   while (timer_timeout_remaining()) { __WFE(); }
+
+  // set timeout to the value before delay and minus this delay
+  if(remaining > us_delay) timer_set_timeout(remaining - us_delay);
 }

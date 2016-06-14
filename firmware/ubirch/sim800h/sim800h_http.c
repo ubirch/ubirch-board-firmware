@@ -68,7 +68,7 @@ size_t sim800h_http_write(const uint8_t *buffer, size_t size, uint32_t timeout) 
 
   timer_set_timeout(timeout * 1000);
 
-  sim800h_send("AT+HTTPDATA=%d,%d", size, timeout);
+  sim800h_send("AT+HTTPDATA=%d,%d", size, timer_timeout_remaining()/1000);
   sim800h_expect("DOWNLOAD", uTimer_Remaining);
 
   CIODUMP(buffer, size);

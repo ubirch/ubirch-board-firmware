@@ -60,16 +60,9 @@ uint32_t timer_read(void);
  */
 void timer_set_interrupt(uint32_t us);
 
-static inline void timer_set_timeout(uint32_t us) {
-  assert((PIT_GetEnabledInterrupts(PIT, kPIT_Chnl_3) & kPIT_TimerInterruptEnable) == 0);
-  timer_set_interrupt(us);
-}
+void timer_set_timeout(uint32_t us);
 
-static inline uint32_t timer_timeout_remaining(void) {
-  if (PIT_GetEnabledInterrupts(PIT, kPIT_Chnl_3) & kPIT_TimerInterruptEnable)
-    return PIT_GetCurrentTimerCount(PIT, kPIT_Chnl_3);
-  return 0;
-}
+uint32_t timer_timeout_remaining(void);
 
 /*!
  * @brief Delay execution for a certain amount of milliseconds.
