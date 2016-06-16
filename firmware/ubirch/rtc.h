@@ -29,8 +29,12 @@
 
 #include <fsl_rtc.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 //! interrupt handler for the real time clock
-typedef void (*rtc_datetime_handler_t)(rtc_datetime_t*);
+typedef void (*rtc_datetime_handler_t)(rtc_datetime_t *);
 
 /*!
  * @brief Initialize Real Time Clock.
@@ -58,5 +62,9 @@ void rtc_attach(rtc_datetime_handler_t handler);
 
 /*! @brief Detach alarm handler. */
 static inline void rtc_detach() { rtc_attach(NULL); }
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif // _UBIRCH_RTC_H_

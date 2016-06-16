@@ -30,10 +30,14 @@
 #include <stdint.h>
 #include <board.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 //! special settings for the timer
 typedef enum _timer_settings {
-  uTimer_MaxTimeout = UINT32_MAX,  //<! maximum possible timeout ~71 min
-  uTimer_Remaining = 0             //<! Use the remaining timeout
+    uTimer_MaxTimeout = UINT32_MAX,  //<! maximum possible timeout ~71 min
+    uTimer_Remaining = 0             //<! Use the remaining timeout
 } timer_settings_t;
 
 /*!
@@ -96,5 +100,9 @@ uint32_t timer_timeout_remaining(void);
  * @param ms the milliseconds to delay execution
  */
 void delay(uint32_t ms);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif // _UBIRCH_TIMER_H_

@@ -25,6 +25,10 @@
 #ifndef _UBIRCH_DEBUG_H_
 #define _UBIRCH_DEBUG_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /*!
  * @brief Dump the buffer in hex and ascii format.
  * @param prefix printed in front of the array lines
@@ -41,5 +45,8 @@ void dbg_dump(const char *prefix, const uint8_t *b, size_t size);
  */
 void dbg_xxd(const char *prefix, const uint8_t *b, size_t size);
 
+#ifdef __cplusplus
+}
+#endif
 
 #endif // _UBIRCH_DEBUG_H_

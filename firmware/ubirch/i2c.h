@@ -30,11 +30,15 @@
 #include <drivers/fsl_common.h>
 #include <drivers/fsl_port.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 //! Available I2C speeds.
-typedef enum  {
-    I2C_STANDARD   =  100000U, //!< 100kHz
-    I2C_FULL_SPEED =  400000U, //!< 400kHz
-    I2C_FAST_MODE  = 1000000U, //!<   1MHz
+typedef enum {
+    I2C_STANDARD = 100000U, //!< 100kHz
+    I2C_FULL_SPEED = 400000U, //!< 400kHz
+    I2C_FAST_MODE = 1000000U, //!<   1MHz
     I2C_HIGH_SPEED = 3400000U  //!< 3.4MHz
 } i2c_speed_t;
 
@@ -106,5 +110,9 @@ uint16_t i2c_read_reg16(uint8_t address, uint8_t reg);
  * @param status the status_t reference to check
  */
 void i2c_error(char *s, status_t status);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif // _UBIRCH_I2C_CORE_H

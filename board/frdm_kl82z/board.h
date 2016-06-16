@@ -46,6 +46,10 @@
 #include "frdm_kl82z.h"
 #include "clock_config.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /*!
  * @brief Initialize the basic board functions.
  */
@@ -118,4 +122,9 @@ static inline void enable_interrupt(IRQn_Type irq) {
   INTMUX_EnableInterrupt(INTMUX0, 0, irq);
   EnableIRQ(irq);
 }
+
+#ifdef __cplusplus
+}
+#endif
+
 #endif // _UBIRCH_BOARD_H_

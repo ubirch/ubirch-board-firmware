@@ -25,6 +25,10 @@
 #ifndef _UBIRCH_SIM800H_HTTP_H_
 #define _UBIRCH_SIM800H_HTTP_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 //! supported HTTP methods
 typedef enum sim800h_http_methods {
     HTTP_GET = 0,   /*!< HTTP GET */
@@ -90,5 +94,9 @@ int sim800h_http_get(const char *url, size_t *res_size, uint32_t timeout);
  * @return the HTTP status
  */
 int sim800h_http_post(const char *url, size_t *res_size, uint8_t *request, size_t req_size, uint32_t timeout);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif // _UBIRCH_SIM800H_HTTP_H_

@@ -30,6 +30,10 @@
 
 #include <stdbool.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /*!
  * A list of unsolicited response codes we need to take care of.
  * The list of by no means complete and may change for other versions
@@ -120,5 +124,9 @@ static inline bool sim800h_expect_OK(uint32_t timeout) {
  * @return the number of matched elements
  */
 int sim800h_expect_scan(const char *pattern, uint32_t timeout, ...);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif // _SIM800H_PARSER_H_

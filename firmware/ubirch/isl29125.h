@@ -36,6 +36,10 @@
 
 #include <stdint.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define ISL_DEVICE_ADDRESS  0x44      //!< ISL29125 device address
 #define ISL_R_DEVICE_ID     0x00      //!< Device ID register
 #define ISL_DEVICE_ID       0x7D      //!< Device ID (when reading ID register)
@@ -173,5 +177,9 @@ void isl_read_rgb48(rgb48_t *rgb48);
  * @param rgb24 the color struct to store the color in
  */
 void isl_read_rgb24(rgb24_t *rgb24);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif // _UBIRCH_ISL29125_H_

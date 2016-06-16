@@ -24,6 +24,10 @@
 #ifndef _UBIRCH_SSD1306_H_
 #define _UBIRCH_SSD1306_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 // the default controller device address
 #define OLED_DEVICE_ADDRESS     0x3d //!< SSD1306 device address
 
@@ -108,5 +112,9 @@ void ssd1306_data(uint8_t address, uint8_t *data, size_t size);
  * @param address the controller i2c address
  */
 void ssd1306_clear(uint8_t address);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif // _UBIRCH_SSD1306_H_

@@ -28,6 +28,10 @@
 #include <fsl_debug_console.h>
 #include <ubirch/dbgutil.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #ifdef NCIODEBUG
 #  define CIODEBUG(...)
 #  define CIODUMP(...)
@@ -51,5 +55,9 @@ const char *reg_status[6] = {
   "UNKNOWN",
   "ROAMING"
 };
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif // _UBIRCH_SIM800H_DEBUG_

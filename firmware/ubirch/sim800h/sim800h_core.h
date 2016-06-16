@@ -31,6 +31,10 @@
 #include <stdint.h>
 #include <fsl_lpuart.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /*!
  * @brief Enable the power domain for the SIM800H.
  * If voltage sensing is available, returns as soon as the voltage is
@@ -40,6 +44,7 @@ void sim800h_enable();
 
 /*! @brief Disable the power domain for the SIM800H */
 void sim800h_disable();
+
 /*!
  * @brief Enable communication with the SIM800H.
  * This actually configures the UART and powers/resets the chip to
@@ -80,5 +85,9 @@ void sim800h_write(const uint8_t *buffer, size_t size);
 
 /*! @brief Write a line to the SIM800H and terminate it using CR LF */
 void sim800h_writeline(const char *buffer);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif // _UBIRCH_SIM800_CORE_H_

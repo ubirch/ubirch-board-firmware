@@ -29,6 +29,10 @@
 #include <stdint.h>
 #include <fsl_rtc.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 //! SIM800 battery status codes
 enum sim800_battery_status {
     battery_NotCharging = 0,  //!< battery is not charging
@@ -94,5 +98,9 @@ bool sim800h_location(status_t *status, double *lat, double *lon, rtc_datetime_t
  * @param timeout how long to wait in ms
  */
 bool sim800h_imei(char *imei, const uint32_t timeout);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif // _UBIRCH_SIM800H_OPS_H_
