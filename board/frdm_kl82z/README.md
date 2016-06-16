@@ -11,7 +11,7 @@ board. It has several peripherals including an RGB LED which is controlled using
 
 ## Board Pins
 
-Please see page 2 of the [Quickstart Guide](http://cache.nxp.com/files/32bit/doc/quick_start_guide/FRDM-KL82Z-QSG.pdf) for a description of the pins location.
+Please see page 2 of the [Quickstart Guide](http://cache.nxp.com/files/32bit/doc/quick_start_guide/FRDM-KL82Z-QSG.pdf) for a description of the pin locations.
 
 - `I2C`
    - `SCL` - `PTB0`
