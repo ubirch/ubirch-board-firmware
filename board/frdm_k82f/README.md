@@ -22,3 +22,4 @@ See the [user guide](https://cache.nxp.com/files/32bit/doc/user_guide/FRDMK82FUG
    - `TX` - `PTD3`
 
 ![FRDM-K82F](http://cache.nxp.com/files/graphic/block_diagram/FRDM-K82-800x480-BD.jpg)
+Board Photo &copy; [NXP](http://www.nxp.com)

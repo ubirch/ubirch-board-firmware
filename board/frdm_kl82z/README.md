@@ -24,3 +24,4 @@ Please see page 2 of the [Quickstart Guide](http://cache.nxp.com/files/32bit/doc
    - `TX` - `PTC4`
 
 ![FRDM-KL82Z](http://cache.nxp.com/files/graphic/block_diagram/FRDM-KL82Z-BD.jpg)
+ Board Photo &copy; [NXP](http://www.nxp.com)
