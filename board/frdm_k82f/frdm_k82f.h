@@ -86,8 +86,8 @@
 #define BOARD_I2C_PORT          PORTB
 #define BOARD_I2C_PORT_CLOCK    kCLOCK_PortB
 #define BOARD_I2C_ALT           kPORT_MuxAlt2
-#define BOARD_I2C_SCL_PIN       0U
-#define BOARD_I2C_SDA_PIN       1U
+#define BOARD_I2C_SCL_PIN       2U
+#define BOARD_I2C_SDA_PIN       3U
 
 // timer interrupt (PIT)
 #define BOARD_TIMER             PIT

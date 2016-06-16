@@ -12,8 +12,8 @@ board. It has several peripherals including an RGB LED which is controlled using
 See the [user guide](https://cache.nxp.com/files/32bit/doc/user_guide/FRDMK82FUG.pdf) for more information.
 
 - `I2C`
-   - `SCL` - `PTB0`
-   - `SDA` - `PTB1`
+   - `SCL` - `PTB3`
+   - `SDA` - `PTB2`
 - Cellphone UART connection
    - `PWRKEY` - `PTD0`
    - `Status` - `PTD4`
