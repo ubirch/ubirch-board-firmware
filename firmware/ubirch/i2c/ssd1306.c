@@ -23,7 +23,7 @@
 #include <ubirch/i2c.h>
 #include <drivers/fsl_gpio.h>
 #include <drivers/fsl_port.h>
-#include "timer.h"
+#include <ubirch/timer.h>
 #include "ssd1306.h"
 
 void ssd1306_reset(GPIO_Type *gpio, uint32_t reset_pin) {

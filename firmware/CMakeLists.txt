@@ -7,9 +7,9 @@ add_library(firmware
   ubirch/sim800h/sim800h_parser.c
   ubirch/dbgutil.c
   ubirch/i2c.c
-  ubirch/isl29125.c
+  ubirch/i2c/isl29125.c
+  ubirch/i2c/ssd1306.c
   ubirch/rtc.c
-  ubirch/ssd1306.c
   ubirch/timer.c
   )
 target_include_directories(firmware PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})

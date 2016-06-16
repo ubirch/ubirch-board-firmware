@@ -22,12 +22,9 @@
  * limitations under the License.
  */
 #include <stdint.h>
-#include <stdbool.h>
 #include <stdio.h>
 #include <board.h>
-#include <ubirch/isl29125.h>
-#include <ubirch/i2c.h>
-#include <ubirch/timer.h>
+#include <ubirch/i2c/isl29125.h>
 
 #define INIT_RED    0xf0f0
 #define INIT_GREEN  0x0f0f

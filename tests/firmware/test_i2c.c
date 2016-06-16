@@ -26,9 +26,8 @@
  */
 
 #include <board.h>
-#include <stdio.h>
 #include <ubirch/i2c.h>
-#include <ubirch/isl29125.h>
+#include <ubirch/i2c/isl29125.h>
 #include "test.h"
 
 int test_isl29125();
