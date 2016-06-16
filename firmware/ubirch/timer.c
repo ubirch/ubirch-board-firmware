@@ -85,7 +85,7 @@ void timer_set_interrupt(uint32_t us) {
 }
 
 void timer_set_timeout(uint32_t us) {
-  if(us) timer_set_interrupt(us);
+  if (us) timer_set_interrupt(us);
 }
 
 uint32_t timer_timeout_remaining() {
@@ -96,18 +96,21 @@ uint32_t timer_timeout_remaining() {
   return 0;
 }
 
-void delay(uint32_t ms) {
-  if (ms > (uTimer_MaxTimeout - 1) / 1000) return;
-  if (!initialized) timer_init();
-
-  uint32_t us_delay = ms * 1000;
-
+void delay_us(uint32_t us) {
   // save the current timeout, so delay() does not interfere
   uint32_t remaining = timer_timeout_remaining();
 
-  timer_set_timeout(us_delay);
+  timer_set_timeout(us);
   while (timer_timeout_remaining()) { __WFE(); }
 
   // set timeout to the value before delay and minus this delay
-  if(remaining > us_delay) timer_set_timeout(remaining - us_delay);
+  if (remaining > us) timer_set_timeout(remaining - us);
 }
+
+void delay(uint32_t ms) {
+  if (ms > (uTimer_MaxTimeout - 1) / 1000) return;
+
+  uint32_t us_delay = ms * 1000;
+  delay_us(us_delay);
+}
+

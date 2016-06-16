@@ -86,6 +86,22 @@ void timer_set_timeout(uint32_t us);
 uint32_t timer_timeout_remaining(void);
 
 /*!
+ * @brief Delay execution for a certain amount of microseconds.
+ *
+ * This function will try to go into a low power mode (__WFE()) until the
+ * end of the delay. It will schedule an interrupt in the future
+ * and under optimal conditions only wake up when the interrupt
+ * is triggered. If other events preempt this it checks the
+ * time and continues.
+ *
+ * The maximum delay interval is just over 71 minutes, longer intervals
+ * will return immediately, effectively not delaying!
+ *
+ * @param us the milliseconds to delay execution
+ */
+void delay_us(uint32_t us);
+
+/*!
  * @brief Delay execution for a certain amount of milliseconds.
  *
  * This function will try to go into a low power mode (__WFE()) until the

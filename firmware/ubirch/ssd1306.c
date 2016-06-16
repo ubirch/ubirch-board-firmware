@@ -23,13 +23,8 @@
 #include <ubirch/i2c.h>
 #include <drivers/fsl_gpio.h>
 #include <drivers/fsl_port.h>
+#include "timer.h"
 #include "ssd1306.h"
-
-// == low level functions ==================================
-static inline void _delay_us(uint32_t us) {
-  uint32_t ticks = SystemCoreClock / 10000000U * us;
-  while (ticks--) __asm("nop");
-}
 
 void ssd1306_reset(GPIO_Type *gpio, uint32_t reset_pin) {
   const gpio_pin_config_t OUTFALSE = {kGPIO_DigitalOutput, false};
@@ -37,9 +32,9 @@ void ssd1306_reset(GPIO_Type *gpio, uint32_t reset_pin) {
 
   // reset sequence
   GPIO_WritePinOutput(gpio, reset_pin, true);
-  _delay_us(100);
+  delay_us(100);
   GPIO_WritePinOutput(gpio, reset_pin, false);
-  _delay_us(100);
+  delay_us(100);
   GPIO_WritePinOutput(gpio, reset_pin, true);
 
   // software configuration according to specs
