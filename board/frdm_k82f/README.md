@@ -11,4 +11,14 @@ board. It has several peripherals including an RGB LED which is controlled using
 
 See the [user guide](https://cache.nxp.com/files/32bit/doc/user_guide/FRDMK82FUG.pdf) for more information.
 
+- `I2C`
+   - `SCL` - `PTB0`
+   - `SDA` - `PTB1`
+- Cellphone UART connection
+   - `PWRKEY` - `PTD0`
+   - `Status` - `PTD4`
+   - `Reset` - `PTC1`
+   - `RX` - `PTD2`
+   - `TX` - `PTD3`
+
 ![FRDM-K82F](http://cache.nxp.com/files/graphic/block_diagram/FRDM-K82-800x480-BD.jpg)

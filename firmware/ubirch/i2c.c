@@ -30,16 +30,19 @@ static i2c_config_t _config;
 void i2c_init(i2c_config_t config) {
   _config = config;
 
-  // enable pullups for I2C pins
-  port_pin_config_t pinConfig = {0};
+  port_pin_config_t pinConfig;
+
+  // do a sensible default configuration for the I2C pins
   pinConfig.pullSelect = kPORT_PullUp;
+  pinConfig.slewRate = kPORT_FastSlewRate;
+  pinConfig.passiveFilterEnable = kPORT_PassiveFilterDisable;
   pinConfig.openDrainEnable = kPORT_OpenDrainEnable;
+  pinConfig.driveStrength = kPORT_LowDriveStrength;
+  pinConfig.mux = _config.mux;
 
   CLOCK_EnableClock(_config.port_clock);
   PORT_SetPinConfig(_config.port, _config.SCL, &pinConfig);
   PORT_SetPinConfig(_config.port, _config.SDA, &pinConfig);
-  PORT_SetPinMux(_config.port, _config.SCL, _config.mux);
-  PORT_SetPinMux(_config.port, _config.SDA, _config.mux);
 
   // configure I2C
   i2c_master_config_t i2c_config;

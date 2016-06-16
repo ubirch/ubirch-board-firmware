@@ -9,4 +9,18 @@ board. It has several peripherals including an RGB LED which is controlled using
 > If you want to debug using SWD but use the USB serial,
 > set both jumpers ```J6``` and ```J7``` to off.
 
+## Board Pins
+
+Please see page 2 of the [Quickstart Guide](http://cache.nxp.com/files/32bit/doc/quick_start_guide/FRDM-KL82Z-QSG.pdf) for a description of the pins location.
+
+- `I2C`
+   - `SCL` - `PTB0`
+   - `SDA` - `PTB1`
+- Cellphone UART connection
+   - `PWRKEY` - `PTC5`
+   - `Status` - `PTC7`
+   - `Reset` - `PTC6`
+   - `RX` - `PTC3`
+   - `TX` - `PTC4`
+
 ![FRDM-KL82Z](http://cache.nxp.com/files/graphic/block_diagram/FRDM-KL82Z-BD.jpg)
