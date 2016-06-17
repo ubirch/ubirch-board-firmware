@@ -4,7 +4,7 @@
  *
  * @author Matthias L. Jugel
  *
- * Copyright 2015 ubirch GmbH (http://www.ubirch.com)
+ * @copyright &copy; 2015 ubirch GmbH (https://ubirch.com)
  *
  * ```
  * Licensed under the Apache License, Version 2.0 (the "License");
