@@ -33,6 +33,13 @@ uint8_t isl_get(uint8_t reg) {
   return i2c_read_reg(ISL_DEVICE_ADDRESS, reg);
 }
 
+static uint16_t isl_get16(uint8_t reg) {
+  uint8_t data[2];
+  i2c_read(ISL_DEVICE_ADDRESS, reg, data, 2);
+  uint16_t value = (data[1] << 8 | data[0]);
+  return value;
+}
+
 bool isl_reset(void) {
   // check device is there
   uint8_t device_id = i2c_read_reg(ISL_DEVICE_ADDRESS, ISL_R_DEVICE_ID);
@@ -50,9 +57,9 @@ bool isl_reset(void) {
 
 // TODO: burst read 48 bit
 void isl_read_rgb48(rgb48_t *rgb48) {
-  rgb48->red = i2c_read_reg16(ISL_DEVICE_ADDRESS, ISL_R_RED_L);
-  rgb48->green = i2c_read_reg16(ISL_DEVICE_ADDRESS, ISL_R_GREEN_L);
-  rgb48->blue = i2c_read_reg16(ISL_DEVICE_ADDRESS, ISL_R_BLUE_L);
+  rgb48->red = isl_get16(ISL_R_RED_L);
+  rgb48->green = isl_get16(ISL_R_GREEN_L);
+  rgb48->blue = isl_get16(ISL_R_BLUE_L);
 }
 
 void isl_read_rgb24(rgb24_t *rgb24) {

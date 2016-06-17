@@ -4,6 +4,7 @@ add_executable(test_firmware
   test_firmware.c
   test_i2c.c
   i2c/test_isl29125.c
+  i2c/test_bmp180.c
   test_timer.c
   test_rtc.c
   )

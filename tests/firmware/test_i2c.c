@@ -28,8 +28,10 @@
 #include <board.h>
 #include <ubirch/i2c.h>
 #include <ubirch/i2c/isl29125.h>
+#include <ubirch/i2c/bmp180.h>
 #include "test.h"
 
+int test_bmp180();
 int test_isl29125();
 
 static const i2c_config_t i2c_config = {
@@ -56,9 +58,12 @@ int test_i2c(void) {
           TEST("ISL29125", test_isl29125());
           break;
         }
-        default: {
-          PRINTF("- I2C: 0x%02x: unknown device detected\r\n", address);
+        case BMP180_DEVICE_ADDRESS: {
+          TEST("BMP180", test_bmp180());
+          break;
         }
+        default:
+          PRINTF("- I2C: 0x%02x: unknown device detected\r\n", address);
       }
     }
   }

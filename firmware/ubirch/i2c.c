@@ -4,8 +4,9 @@
  * @author Matthias L. Jugel
  * @date 2016-04-01
  *
- * Copyright 2016 ubirch GmbH (https://ubirch.com)
+ * @copyright &copy; 2016 ubirch GmbH (https://ubirch.com)
  *
+ * @section LICENSE
  * ```
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -122,13 +123,6 @@ status_t i2c_read(uint8_t address, uint8_t reg, uint8_t *data, size_t size) {
 uint8_t i2c_read_reg(uint8_t address, uint8_t reg) {
   uint8_t value = 0;
   i2c_read(address, reg, &value, 1);
-  return value;
-}
-
-uint16_t i2c_read_reg16(uint8_t address, uint8_t reg) {
-  uint8_t data[2];
-  i2c_read(address, reg, data, 2);
-  uint16_t value = (data[1] << 8 | data[0]);
   return value;
 }
 
