@@ -23,7 +23,7 @@ endif ()
 
 project(ubirch-firmware C CXX ASM)
 
-require(PACKAGE KinetisSDK MCU ${MCU} VERSION 2.0 BUILD_TYPE ${CMAKE_BUILD_TYPE})
+require(PACKAGE KinetisSDK MCU ${MCU} VERSION 2.0 BUILD_TYPE MinSizeRel)
 
 # board and firmware code
 add_subdirectory(board/${BOARD_DIR})

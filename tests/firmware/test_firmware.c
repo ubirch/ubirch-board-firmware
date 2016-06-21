@@ -42,6 +42,7 @@ int test_rtc();
 #  define LED(...)
 #endif
 
+uint32_t test_1ms_ticker = 0;
 volatile bool on = true;
 
 void SysTick_Handler() {

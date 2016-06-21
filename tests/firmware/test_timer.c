@@ -26,6 +26,7 @@
 #include <board.h>
 #include <stdio.h>
 #include <ubirch/timer.h>
+#include "test.h"
 
 extern uint32_t test_1ms_ticker;
 
@@ -34,14 +35,16 @@ void test_timer_runs(void) {
 
   uint32_t timer_start = timer_read();
   uint32_t start = test_1ms_ticker;
-  for(uint32_t i = interval; i > 0; i--);
+  for(uint32_t i = interval; i > 0; i--) __asm__ __volatile__("");
   uint32_t ticker_elapsed = test_1ms_ticker - start;
   uint32_t timer_elapsed = timer_read() - timer_start;
 
+  PRINTF("- timer=%d, ticker=%d\r\n", timer_elapsed, ticker_elapsed);
+
   // test that timer elapsed at least 100000us
-  assert(timer_elapsed > 100000);
+  ASSERT_GREATER(timer_elapsed, 100000);
   // test that the ticker has elapsed about 1000ms
-  assert(ticker_elapsed <= 1005);
+  ASSERT_LESS(ticker_elapsed, 1005);
 }
 
 
@@ -50,8 +53,10 @@ void test_delay(void) {
   delay(1000);
   uint32_t elapsed = test_1ms_ticker - start;
 
+  PRINTF("- start=%d, elapsed=%d, remaining=%d\r\n", start, elapsed, timer_timeout_remaining());
+
   // test that the elapsed time is 1000ms (precision of the timer is 1ms)
-  assert(elapsed >= 1000);
+  ASSERT_TRUE(elapsed >= 1000);
 }
 
 void test_timeout() {
@@ -64,16 +69,18 @@ void test_timeout() {
   while (timer_timeout_remaining()) { __WFI(); counter++; }
   uint32_t elapsed =  (timer_read() - timer_start) / 1000;
 
+  PRINTF("- start=%d, elapsed=%d, remaining=%d\r\n", timer_start, elapsed, timer_timeout_remaining());
+
   // assert that we didn't just busy loop through the delay, we have an interrupt every ms
-  assert(counter <= 1010);
+  ASSERT_TRUE(counter <= 1010);
 
   // assert the timing is 1000 (elapsed time between start and end)
-  assert(elapsed >= 1000 && elapsed <= 1010);
+  ASSERT_TRUE(elapsed >= 1000 && elapsed <= 1010);
 }
 
 int test_timer(void) {
   timer_init();
-  assert(timer_read() > 0);
+  ASSERT_TRUE(timer_read() > 0);
 
   test_timer_runs();
   test_timeout();

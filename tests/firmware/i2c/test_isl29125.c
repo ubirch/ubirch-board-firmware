@@ -27,6 +27,7 @@
 #include <board.h>
 #include <ubirch/i2c/isl29125.h>
 #include <ubirch/timer.h>
+#include "../test.h"
 
 #define INIT_RED    0xf0f0
 #define INIT_GREEN  0x0f0f
@@ -37,25 +38,25 @@ static inline void init_color(rgb48_t *color) {
   color->green = INIT_GREEN;
   color->blue = INIT_BLUE;
 
-  assert(INIT_RED == color->red);
-  assert(INIT_GREEN == color->green);
-  assert(INIT_BLUE == color->blue);
+  ASSERT_EQUALS(INIT_RED, color->red);
+  ASSERT_EQUALS(INIT_GREEN, color->green);
+  ASSERT_EQUALS(INIT_BLUE,color->blue);
 }
 
 void test_isl29125_color(int bits, int lux) {
   rgb48_t color;
   init_color(&color);
 
-  assert(isl_reset());
+  ASSERT_TRUE(isl_reset());
 
-  assert(isl_set(ISL_R_FILTERING, ISL_FILTER_IR_MAX));
-  assert(isl_set(ISL_R_COLOR_MODE, (uint8_t) (ISL_MODE_RGB | lux | bits)));
+  ASSERT_TRUE(isl_set(ISL_R_FILTERING, ISL_FILTER_IR_MAX));
+  ASSERT_TRUE(isl_set(ISL_R_COLOR_MODE, (uint8_t) (ISL_MODE_RGB | lux | bits)));
 
   // ensure we can actually read sensible data from the sensor
   delay(600);
 
   isl_read_rgb48(&color);
-  assert(!(INIT_RED == color.red && INIT_GREEN == color.green && INIT_BLUE == color.blue));
+  ASSERT_TRUE(!(INIT_RED == color.red && INIT_GREEN == color.green && INIT_BLUE == color.blue));
 
   PRINTF("- S(%02d) B(%d) RGB(0x%04x, 0x%04x, 0x%04x)\r\n", lux, bits, color.red, color.green, color.blue);
 }
@@ -63,22 +64,22 @@ void test_isl29125_color(int bits, int lux) {
 int test_isl29125() {
   PRINTF("= ISL29125 Test\r\n");
 
-  assert(isl_reset());
+  ASSERT_TRUE(isl_reset());
 
   // set sampling mode, ir filter and interrupt mode
-  assert(isl_set(ISL_R_FILTERING, ISL_FILTER_IR_NONE));
-  assert(isl_set(ISL_R_COLOR_MODE, ISL_MODE_RGB | ISL_MODE_375LUX | ISL_MODE_16BIT));
+  ASSERT_TRUE(isl_set(ISL_R_FILTERING, ISL_FILTER_IR_NONE));
+  ASSERT_TRUE(isl_set(ISL_R_COLOR_MODE, ISL_MODE_RGB | ISL_MODE_375LUX | ISL_MODE_16BIT));
 
-  assert(0x05 == isl_get(ISL_R_COLOR_MODE));
-  assert(0x00 == isl_get(ISL_R_FILTERING));
-  assert(0x00 == isl_get(ISL_R_INTERRUPT));
+  ASSERT_EQUALS(0x05, isl_get(ISL_R_COLOR_MODE));
+  ASSERT_EQUALS(0x00, isl_get(ISL_R_FILTERING));
+  ASSERT_EQUALS(0x00, isl_get(ISL_R_INTERRUPT));
 
   test_isl29125_color(ISL_MODE_375LUX, ISL_MODE_16BIT);
   test_isl29125_color(ISL_MODE_375LUX, ISL_MODE_12BIT);
   test_isl29125_color(ISL_MODE_10KLUX, ISL_MODE_16BIT);
   test_isl29125_color(ISL_MODE_10KLUX, ISL_MODE_12BIT);
 
-  assert(isl_set(ISL_R_COLOR_MODE, ISL_MODE_POWERDOWN));
+  ASSERT_TRUE(isl_set(ISL_R_COLOR_MODE, ISL_MODE_POWERDOWN));
 
   return 0;
 }

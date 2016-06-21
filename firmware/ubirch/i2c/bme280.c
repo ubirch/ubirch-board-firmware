@@ -84,5 +84,8 @@ uint32_t bme280_humidity(void) {
   return bme280_compensate_humidity_int32(humidity_raw);
 }
 
-extern float bme280_altitude(float sea_level);
+extern float bme280_altitude(uint32_t pressure_sea_level, uint32_t pressure);
+
+extern float bme280_pressure_sea_level(uint32_t pressure, float altitude);
+
 

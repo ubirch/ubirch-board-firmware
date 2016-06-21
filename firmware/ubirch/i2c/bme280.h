@@ -109,8 +109,16 @@ uint32_t bme280_humidity();
  * @param sea_level_pressure the current pressure at sea level
  * @return the altitude in meters
  */
-static inline float bme280_altitude(float sea_level_pressure) {
-  return 44330.0f * (1.0f - (float) pow(bme280_pressure() / 100.0F / sea_level_pressure, 0.1903F));
+static inline float bme280_altitude(uint32_t pressure_sea_level, uint32_t pressure) {
+  return 44330.0f * (1.0f - (float) pow((float) pressure / (float) pressure_sea_level, 1 / 5.255));
+}
+
+/*!
+ * @brief Calculate current sea level pressure.
+ * @return the sea level pressure in Pa
+ */
+static inline float bme280_pressure_sea_level(uint32_t pressure, float altitude) {
+  return (float) pressure / (float) pow(1.0f - (altitude / 44330.0), 5.255);
 }
 
 #ifdef __cplusplus

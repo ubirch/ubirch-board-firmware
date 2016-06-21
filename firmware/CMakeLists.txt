@@ -10,6 +10,7 @@ add_library(firmware
   ubirch/i2c/isl29125.c
   ubirch/i2c/ssd1306.c
   ubirch/i2c/bosch_sensortec/bme280.c
+  ubirch/i2c/bosch_sensortec/bmp180.c
   ubirch/i2c/bmp180.c
   ubirch/i2c/bme280.c
   ubirch/rtc.c

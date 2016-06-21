@@ -31,43 +31,36 @@
 #include <ubirch/timer.h>
 #include "../test.h"
 
-static void test_reset() {
-  assert(bmp180_reset());
-  assert(bmp180_get(ResultMSB) == 0x80);
-}
-
-static void test_read_raw_temperature() {
-  long temp_raw = bmp180_temperature_raw();
-  assert(temp_raw != 0x0000 && temp_raw != 0x8000);
-}
+#define PRESSURE_SEA_LEVEL 101325
 
 static void test_read_temperature() {
-  long temp = bmp180_temperature();
-  assert(temp != 0);
-}
-
-static void test_read_raw_pressure() {
-  long press_raw = bmp180_pressure_raw(NoOversample);
-  assert(press_raw != 0);
+  const int temp = bmp180_temperature();
+  PRINTF("- %.2f℃\r\n", temp / 100.0f);
+  ASSERT_TRUE(temp != 0);
 }
 
 static void test_read_pressure() {
-  long pressure = bmp180_pressure(Oversample3);
-  assert(pressure != 0);
+  const int pressure = bmp180_pressure();
+  PRINTF("- %.2fhPa\r\n", pressure / 100.0f);
+  ASSERT_TRUE(pressure != 0);
+}
+
+static void test_read_altitude() {
+  const float altitude = bmp180_altitude(PRESSURE_SEA_LEVEL, (uint32_t) bmp180_pressure());
+  PRINTF("- %.3fm\r\n", altitude);
+  ASSERT_TRUE(altitude != 0);
 }
 
 int test_bmp180() {
   PRINTF("= BMP180 Test\r\n");
 
-  assert(bmp180_init());
+  ASSERT_TRUE(bmp180_init());
 
-  assert(BMP180_CHIP_ID == bmp180_get(ChipId));
+  ASSERT_TRUE(BMP180_CHIP_ID == i2c_read_reg(BMP180_DEVICE_ADDRESS, BMP180_CHIP_ID_REG));
 
-  test_reset();
-  test_read_raw_temperature();
   test_read_temperature();
-  test_read_raw_pressure();
   test_read_pressure();
+  test_read_altitude();
 
   return 0;
 }

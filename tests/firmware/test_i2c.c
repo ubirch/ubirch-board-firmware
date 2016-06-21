@@ -39,11 +39,11 @@ int test_isl29125();
 
 int test_i2c(void) {
   i2c_init(i2c_config_default);
-  assert(i2c_ping(0x00) == kStatus_Success);
+  ASSERT_EQUALS(i2c_ping(0x00), kStatus_Success);
 
   for (uint8_t address = 0x01; address <= 0x7f; address++) {
     status_t status = i2c_ping(address);
-    assert(status == kStatus_Success || status == kStatus_I2C_Nak);
+    ASSERT_TRUE(status == kStatus_Success || status == kStatus_I2C_Nak);
     if (status == kStatus_Success) {
       switch (address) {
         case ISL_DEVICE_ADDRESS: {
@@ -52,7 +52,7 @@ int test_i2c(void) {
         }
         // also BME280
         case BMP180_DEVICE_ADDRESS: {
-          const uint8_t chip_id = i2c_read_reg(address, ChipId);
+          const uint8_t chip_id = i2c_read_reg(address, (0xD0));
           switch(chip_id) {
             case BMP180_CHIP_ID: {
               TEST("BMP180", test_bmp180());
