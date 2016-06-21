@@ -29,6 +29,7 @@
 
 #include <drivers/fsl_common.h>
 #include <drivers/fsl_port.h>
+#include <board.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -53,6 +54,17 @@ typedef struct {
     port_mux_t mux;             //!< MUX Alt type to set the used port to
     i2c_speed_t baud;           //!< I2C speed
 } i2c_config_t;
+
+const i2c_config_t i2c_config_default = {
+  .i2c = BOARD_I2C,
+  .port = BOARD_I2C_PORT,
+  .i2c_clock = BOARD_I2C_CLOCK,
+  .port_clock = BOARD_I2C_PORT_CLOCK,
+  .SCL = BOARD_I2C_SCL_PIN,
+  .SDA = BOARD_I2C_SDA_PIN,
+  .mux = BOARD_I2C_ALT,
+  .baud = I2C_FULL_SPEED
+};
 
 /*!
  * Initialize the I2C bus with a specific speed.

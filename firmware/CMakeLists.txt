@@ -9,9 +9,11 @@ add_library(firmware
   ubirch/i2c.c
   ubirch/i2c/isl29125.c
   ubirch/i2c/ssd1306.c
+  ubirch/i2c/bosch_sensortec/bme280.c
+  ubirch/i2c/bmp180.c
+  ubirch/i2c/bme280.c
   ubirch/rtc.c
   ubirch/timer.c
-  ubirch/i2c/bmp180.c
   )
 target_include_directories(firmware PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(firmware board KinetisSDK::${MCU}::ksdk20)

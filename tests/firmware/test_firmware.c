@@ -67,5 +67,5 @@ int main(void) {
 
   SysTick_Config(BOARD_SYSTICK_100MS);
 
-  return 0;
+  while(true);
 }

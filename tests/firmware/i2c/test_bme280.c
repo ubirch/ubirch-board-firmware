@@ -1,7 +1,7 @@
 /**
- * Humidity Sensor test (BMPx80).
+ * Temperature, Pressure, Humidity Sensor test (BME280).
  *
- * Tests functionality of the BMPx80 sensor library.
+ * Tests functionality of the BME280 sensor driver.
  *
  * @author Matthias L. Jugel
  * @date 2016-06-16
@@ -24,50 +24,46 @@
  */
 
 #include <stdint.h>
-#include <stdio.h>
 #include <board.h>
-#include <ubirch/i2c/bmp180.h>
-#include <ubirch/i2c.h>
+#include <ubirch/i2c/bme280.h>
 #include <ubirch/timer.h>
-#include "../test.h"
-
-static void test_reset() {
-  assert(bmp180_reset());
-  assert(bmp180_get(ResultMSB) == 0x80);
-}
-
-static void test_read_raw_temperature() {
-  long temp_raw = bmp180_temperature_raw();
-  assert(temp_raw != 0x0000 && temp_raw != 0x8000);
-}
+#include <ubirch/i2c.h>
 
 static void test_read_temperature() {
-  long temp = bmp180_temperature();
+  const int temp = bme280_temperature();
+  PRINTF("- temperature: %.2f\r\n", temp / 100.0f);
   assert(temp != 0);
 }
 
-static void test_read_raw_pressure() {
-  long press_raw = bmp180_pressure_raw(NoOversample);
-  assert(press_raw != 0);
-}
-
 static void test_read_pressure() {
-  long pressure = bmp180_pressure(Oversample3);
+  const unsigned int pressure = bme280_pressure();
+  PRINTF("- pressure:    %.2fhPa\r\n", pressure / 100.0f);
   assert(pressure != 0);
 }
 
-int test_bmp180() {
-  PRINTF("= BMP180 Test\r\n");
+static void test_read_humidity() {
+  const unsigned int humidity = bme280_humidity();
+  PRINTF("- humidity:    %.3f\r\n", humidity / 1024.0f);
+  assert(humidity != 0);
+}
 
-  assert(bmp180_init());
+static void test_read_altitude() {
+  const float altitude = bme280_altitude(1013.25);
+  PRINTF("- altitude:    %.3f\r\n", altitude);
+  assert(altitude != 0);
+}
 
-  assert(BMP180_CHIP_ID == bmp180_get(ChipId));
+int test_bme280() {
+  PRINTF("= BME280 Test\r\n");
 
-  test_reset();
-  test_read_raw_temperature();
+  assert(bme280_init());
+
   test_read_temperature();
-  test_read_raw_pressure();
   test_read_pressure();
+  test_read_humidity();
+  test_read_altitude();
+
+  assert(bme280_power_mode(BME280_Sleep));
 
   return 0;
 }

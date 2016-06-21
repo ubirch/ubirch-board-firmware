@@ -30,24 +30,15 @@
 #include <ubirch/i2c.h>
 #include <ubirch/i2c/isl29125.h>
 #include <ubirch/i2c/bmp180.h>
+#include <ubirch/i2c/bme280.h>
 #include "test.h"
 
 int test_bmp180();
+int test_bme280();
 int test_isl29125();
 
-static const i2c_config_t i2c_config = {
-  .i2c = BOARD_I2C,
-  .i2c_clock = BOARD_I2C_CLOCK,
-  .port = BOARD_I2C_PORT,
-  .mux = BOARD_I2C_ALT,
-  .port_clock = BOARD_I2C_PORT_CLOCK,
-  .SCL = BOARD_I2C_SCL_PIN,
-  .SDA = BOARD_I2C_SDA_PIN,
-  .baud = I2C_FULL_SPEED
-};
-
 int test_i2c(void) {
-  i2c_init(i2c_config);
+  i2c_init(i2c_config_default);
   assert(i2c_ping(0x00) == kStatus_Success);
 
   for (uint8_t address = 0x01; address <= 0x7f; address++) {
@@ -59,8 +50,21 @@ int test_i2c(void) {
           TEST("ISL29125", test_isl29125());
           break;
         }
+        // also BME280
         case BMP180_DEVICE_ADDRESS: {
-          TEST("BMP180", test_bmp180());
+          const uint8_t chip_id = i2c_read_reg(address, ChipId);
+          switch(chip_id) {
+            case BMP180_CHIP_ID: {
+              TEST("BMP180", test_bmp180());
+              break;
+            }
+            case BME280_CHIP_ID: {
+              TEST("BME280", test_bme280());
+              break;
+            }
+            default:
+              PRINTF("- I2C: Bosch Sensor 0x%02x: unknown chip ID: 0x%02x\r\n", address, chip_id);
+          }
           break;
         }
         default:

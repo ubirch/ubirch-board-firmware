@@ -26,6 +26,7 @@
 #include <stdio.h>
 #include <board.h>
 #include <ubirch/i2c/isl29125.h>
+#include <ubirch/timer.h>
 
 #define INIT_RED    0xf0f0
 #define INIT_GREEN  0x0f0f
@@ -50,11 +51,18 @@ void test_isl29125_color(int bits, int lux) {
   assert(isl_set(ISL_R_FILTERING, ISL_FILTER_IR_MAX));
   assert(isl_set(ISL_R_COLOR_MODE, (uint8_t) (ISL_MODE_RGB | lux | bits)));
 
+  // ensure we can actually read sensible data from the sensor
+  delay(600);
+
   isl_read_rgb48(&color);
   assert(!(INIT_RED == color.red && INIT_GREEN == color.green && INIT_BLUE == color.blue));
+
+  PRINTF("- S(%02d) B(%d) RGB(0x%04x, 0x%04x, 0x%04x)\r\n", lux, bits, color.red, color.green, color.blue);
 }
 
 int test_isl29125() {
+  PRINTF("= ISL29125 Test\r\n");
+
   assert(isl_reset());
 
   // set sampling mode, ir filter and interrupt mode
