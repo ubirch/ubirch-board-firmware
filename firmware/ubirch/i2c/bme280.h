@@ -45,6 +45,12 @@ extern "C" {
 #define BME280_DEVICE_ADDRESS 0x77  //!< BMP180 device address (same address for multiple devices)
 #define BME280_CHIP_ID 0x60         //!< BMP180 chip id is fixed
 
+typedef struct {
+    int32_t temperature;
+    uint32_t pressure;
+    uint32_t humidity;
+} bme280_data_t;
+
 //! BME280 power mode setting
 typedef enum {
     BME280_Normal = BME280_NORMAL_MODE, //!< normal measuring mode
@@ -100,6 +106,16 @@ uint32_t bme280_pressure(void);
  * @return humidity in %rH, 0 for error condition
  */
 uint32_t bme280_humidity();
+
+/*!
+ * @brief Sample the complete set of data from this sensor.
+ *
+ * Reads temperature, pressure and humidity.
+ *
+ * @param data the sample data structure
+ * @return whether the sampling was successful
+ */
+bool bme280_sample(bme280_data_t *data);
 
 /*!
  * @brief Read current altitude.

@@ -45,6 +45,10 @@ extern "C" {
 #define BMP180_DEVICE_ADDRESS 0x77  //!< BMP180 device address (same address for multiple devices)
 #define BMP180_CHIP_ID 0x55         //!< BMP180 chip id is fixed
 
+typedef struct {
+    int32_t temperature;
+    int32_t pressure;
+} bme180_data_t;
 
 /*!
  * @brief Initialize BMP180 driver.
@@ -71,6 +75,14 @@ int32_t bmp180_temperature(void);
  * @return atmospheric pressure in Pa, 0 if there was an error
  */
 int32_t bmp180_pressure(void);
+
+/*!
+ * @brief Sample temperature and pressure.
+ *
+ * @param data the full data structure set
+ * @return whether the sample was successful
+ */
+bool bmp180_sample(bme180_data_t *data);
 
 /*!
  * @brief Read current altitude.

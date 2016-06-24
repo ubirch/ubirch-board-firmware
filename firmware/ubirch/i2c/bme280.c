@@ -41,7 +41,7 @@ s8 bme280_bus_write(uint8_t address, uint8_t reg, uint8_t *data, uint8_t size) {
 
 bool bme280_init(void) {
   // check that this is the correct chip, they are not all fully compatible
-  if(i2c_read_reg(BME280_DEVICE_ADDRESS, BME280_CHIP_ID_REG) != BME280_CHIP_ID) return false;
+  if (i2c_read_reg(BME280_DEVICE_ADDRESS, BME280_CHIP_ID_REG) != BME280_CHIP_ID) return false;
 
   bme280.dev_addr = BME280_DEVICE_ADDRESS;
   bme280.bus_read = bme280_bus_read;
@@ -55,7 +55,7 @@ bool bme280_init(void) {
   result += bme280_set_oversamp_temperature(BME280_OVERSAMP_16X);
 
   // do some initial waiting to make sure measurements are correct
-  if(!result) {
+  if (!result) {
     uint8_t wait_time;
     bme280_compute_wait_time(&wait_time);
     delay(wait_time);
@@ -83,6 +83,21 @@ uint32_t bme280_humidity(void) {
   if (bme280_read_uncomp_humidity(&humidity_raw)) return 0;
   return bme280_compensate_humidity_int32(humidity_raw);
 }
+
+bool bme280_sample(bme280_data_t *data) {
+  s32 temp_raw, press_raw, humid_raw;
+
+  if (bme280_read_uncomp_temperature(&temp_raw)) return false;
+  if (bme280_read_uncomp_pressure(&press_raw)) return false;
+  if (bme280_read_uncomp_humidity(&humid_raw)) return false;
+
+  data->temperature = bme280_compensate_temperature_int32(temp_raw);
+  data->pressure = bme280_compensate_pressure_int32(press_raw);
+  data->humidity = bme280_compensate_humidity_int32(humid_raw);
+
+  return true;
+}
+
 
 extern float bme280_altitude(uint32_t pressure_sea_level, uint32_t pressure);
 

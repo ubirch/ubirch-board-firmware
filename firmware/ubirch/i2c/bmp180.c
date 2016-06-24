@@ -40,7 +40,7 @@ s8 bmp180_bus_write(uint8_t address, uint8_t reg, uint8_t *data, uint8_t size) {
 
 bool bmp180_init(void) {
   // check that this is the correct chip, they are not all fully compatible
-  if(i2c_read_reg(BMP180_DEVICE_ADDRESS, BMP180_CHIP_ID_REG) != BMP180_CHIP_ID) return false;
+  if (i2c_read_reg(BMP180_DEVICE_ADDRESS, BMP180_CHIP_ID_REG) != BMP180_CHIP_ID) return false;
 
   bmp180.dev_addr = BMP180_DEVICE_ADDRESS;
   bmp180.bus_read = bmp180_bus_read;
@@ -60,6 +60,12 @@ int32_t bmp180_temperature(void) {
 int32_t bmp180_pressure(void) {
   bmp180_get_uncomp_temperature();
   return bmp180_get_pressure(bmp180_get_uncomp_pressure());
+}
+
+bool bmp180_sample(bme180_data_t *data) {
+  data->temperature = bmp180_get_uncomp_temperature();
+  data->pressure = bmp180_get_pressure(bmp180_get_uncomp_pressure());
+  return true;
 }
 
 extern float bmp180_altitude(uint32_t sea_level_pressure, uint32_t pressure);
