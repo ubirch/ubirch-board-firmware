@@ -81,7 +81,7 @@ int32_t bmp180_pressure(void);
  * @return the altitude in meters
  */
 static inline float bmp180_altitude(uint32_t sea_level_pressure, uint32_t pressure) {
-  return 44330.0f * (1.0f - (float) pow(bmp180_pressure() / sea_level_pressure, 1 / 5.255));
+  return 44330.0f * (1.0f - (float) pow((float) pressure / (float) sea_level_pressure, 1 / 5.255));
 }
 
 /*!

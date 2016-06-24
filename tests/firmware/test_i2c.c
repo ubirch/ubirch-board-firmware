@@ -31,15 +31,36 @@
 #include <ubirch/i2c/isl29125.h>
 #include <ubirch/i2c/bmp180.h>
 #include <ubirch/i2c/bme280.h>
+#include <ubirch/i2c/ssd1306.h>
+#include <ubirch/timer.h>
 #include "test.h"
 
 int test_bmp180();
 int test_bme280();
 int test_isl29125();
+int test_ssd1306();
+
+void reset_ssd1306() {
+  CLOCK_EnableClock(kCLOCK_PortB);
+  PORT_SetPinMux(PORTB, 2, kPORT_MuxAsGpio);
+
+  const gpio_pin_config_t OUTFALSE = {kGPIO_DigitalOutput, false};
+  GPIO_PinInit(GPIOB, 2, &OUTFALSE);
+
+  // ssd1306 reset sequence
+  GPIO_WritePinOutput(GPIOB, 2, true);
+  delay_us(100);
+  GPIO_WritePinOutput(GPIOB, 2, false);
+  delay_us(100);
+  GPIO_WritePinOutput(GPIOB, 2, true);
+}
 
 int test_i2c(void) {
   i2c_init(i2c_config_default);
   ASSERT_EQUALS(i2c_ping(0x00), kStatus_Success);
+
+  // do some basic initialization in case an OLED is attached
+  reset_ssd1306();
 
   for (uint8_t address = 0x01; address <= 0x7f; address++) {
     status_t status = i2c_ping(address);
@@ -50,7 +71,11 @@ int test_i2c(void) {
           TEST("ISL29125", test_isl29125());
           break;
         }
-        // also BME280
+        case OLED_DEVICE_ADDRESS: {
+          TEST("SSD1306", test_ssd1306());
+          break;
+        }
+        // BMP180, BME280
         case BMP180_DEVICE_ADDRESS: {
           const uint8_t chip_id = i2c_read_reg(address, (0xD0));
           switch(chip_id) {
@@ -77,3 +102,4 @@ int test_i2c(void) {
 
   return 0;
 }
+
