@@ -55,6 +55,7 @@ typedef struct {
     i2c_speed_t baud;           //!< I2C speed
 } i2c_config_t;
 
+//! Default I2C settings for this specific board
 const i2c_config_t i2c_config_default = {
   .i2c = BOARD_I2C,
   .port = BOARD_I2C_PORT,

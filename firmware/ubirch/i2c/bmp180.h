@@ -45,9 +45,10 @@ extern "C" {
 #define BMP180_DEVICE_ADDRESS 0x77  //!< BMP180 device address (same address for multiple devices)
 #define BMP180_CHIP_ID 0x55         //!< BMP180 chip id is fixed
 
+//! Data structure holding all sensor values for the BMP180
 typedef struct {
-    int32_t temperature;
-    int32_t pressure;
+    int32_t temperature;  //!< temperature data in 0.01℃
+    int32_t pressure;     //!< pressure data in Pascal
 } bme180_data_t;
 
 /*!
@@ -62,7 +63,7 @@ bool bmp180_init(void);
  * The temperature is calculalated from the raw temperature using
  * calibration data read from the chips memory.
  *
- * @return temperature in 0.01℃ (2345 is 23.45℃), -INT32_MAX for error condition
+ * @return temperature in 0.01℃ (2345 is 23.45℃)
  */
 int32_t bmp180_temperature(void);
 
@@ -90,6 +91,7 @@ bool bmp180_sample(bme180_data_t *data);
  * Requires the current pressure at sea level to calculate.
  *
  * @param sea_level_pressure the current pressure at sea level
+ * @param pressure the pressure as measured by this sensor
  * @return the altitude in meters
  */
 static inline float bmp180_altitude(uint32_t sea_level_pressure, uint32_t pressure) {
@@ -98,6 +100,8 @@ static inline float bmp180_altitude(uint32_t sea_level_pressure, uint32_t pressu
 
 /*!
  * @brief Calculate current sea level pressure.
+ * @param pressure the pressure as measured by this sensor
+ * @param altitude the altitude of the sensor
  * @return the sea level pressure in Pa
  */
 static inline float bmp180_pressure_sea_level(uint32_t pressure, float altitude) {

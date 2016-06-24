@@ -42,13 +42,14 @@
 extern "C" {
 #endif
 
-#define BME280_DEVICE_ADDRESS 0x77  //!< BMP180 device address (same address for multiple devices)
-#define BME280_CHIP_ID 0x60         //!< BMP180 chip id is fixed
+#define BME280_DEVICE_ADDRESS 0x77  //!< BME280 device address (same address for multiple devices)
+#define BME280_CHIP_ID 0x60         //!< BME280 chip id is fixed
 
+//! Data structure holding all sensor values for the BME280
 typedef struct {
-    int32_t temperature;
-    uint32_t pressure;
-    uint32_t humidity;
+    int32_t temperature;  //!< temperature data in 0.01℃
+    uint32_t pressure;    //!< pressure data in Pascal
+    uint32_t humidity;    //!< humidity .001 rH%
 } bme280_data_t;
 
 //! BME280 power mode setting
@@ -122,7 +123,8 @@ bool bme280_sample(bme280_data_t *data);
  *
  * Requires the current pressure at sea level to calculate.
  *
- * @param sea_level_pressure the current pressure at sea level
+ * @param pressure_sea_level the current pressure at sea level
+ * @param pressure the current pressure measured by this sensor
  * @return the altitude in meters
  */
 static inline float bme280_altitude(uint32_t pressure_sea_level, uint32_t pressure) {
@@ -131,6 +133,8 @@ static inline float bme280_altitude(uint32_t pressure_sea_level, uint32_t pressu
 
 /*!
  * @brief Calculate current sea level pressure.
+ * @param pressure the current pressure as measure by this sensor
+ * @param altitude the altitude of the sensor
  * @return the sea level pressure in Pa
  */
 static inline float bme280_pressure_sea_level(uint32_t pressure, float altitude) {
