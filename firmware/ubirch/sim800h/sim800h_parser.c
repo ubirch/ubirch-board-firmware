@@ -49,14 +49,14 @@ void sim800h_send(const char *pattern, ...) {
 
   // cleanup the input buffer and check for URC messages
   uint32_t remaining = timer_timeout_remaining();
-  while (sim800h_readline(cmd, BOARD_CELL_BUFSIZE -1, 100)) check_urc(cmd);
+  while (sim800h_readline(cmd, BOARD_CELL_BUFSIZE - 1, 100)) check_urc(cmd);
   timer_set_timeout(remaining);
 
   cmd[0] = '\0';
 
   va_list ap;
   va_start(ap, pattern);
-  vsnprintf(cmd, 254, pattern, ap);
+  vsnprintf(cmd, BOARD_CELL_BUFSIZE, pattern, ap);
   va_end(ap);
 
   CIODEBUG("GSM (%02d) <- '%s'\r\n", strlen(cmd), cmd);
