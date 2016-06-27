@@ -72,9 +72,7 @@ bool bme280_init(void);
  *
  * @return whether the sleep mode setting was successful
  */
-static inline bool bme280_power_mode(power_mode_t mode) {
-  return !bme280_set_power_mode(mode);
-}
+bool bme280_power_mode(power_mode_t mode);
 
 /*!
  * @brief Read current temperature.

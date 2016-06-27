@@ -49,16 +49,28 @@ bool bme280_init(void) {
   bme280.delay_msec = (void (*)(u16)) delay;
 
   int result = _bme280_init(&bme280);
-  result += bme280_set_power_mode(BME280_NORMAL_MODE);
-  result += bme280_set_oversamp_humidity(BME280_OVERSAMP_16X);
-  result += bme280_set_oversamp_pressure(BME280_OVERSAMP_16X);
-  result += bme280_set_oversamp_temperature(BME280_OVERSAMP_16X);
+  result += bme280_power_mode(BME280_Normal);
 
-  // do some initial waiting to make sure measurements are correct
-  if (!result) {
-    uint8_t wait_time;
-    bme280_compute_wait_time(&wait_time);
-    delay(wait_time);
+  return !result;
+}
+
+bool bme280_power_mode(power_mode_t mode) {
+  int result = 0;
+
+  if(bme280_set_power_mode(mode)) return false;
+
+  if(mode == BME280_Normal || mode == BME280_Forced) {
+    result += bme280_set_power_mode(BME280_NORMAL_MODE);
+    result += bme280_set_oversamp_humidity(BME280_OVERSAMP_16X);
+    result += bme280_set_oversamp_pressure(BME280_OVERSAMP_16X);
+    result += bme280_set_oversamp_temperature(BME280_OVERSAMP_16X);
+
+    // do some initial waiting to make sure measurements are correct
+    if (!result) {
+      uint8_t wait_time;
+      bme280_compute_wait_time(&wait_time);
+      delay(wait_time);
+    }
   }
 
   return !result;
