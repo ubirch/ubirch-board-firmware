@@ -128,7 +128,7 @@ void sim800h_init() {
 //  return val;
 //}
 
-void sim800h_enable() {
+bool sim800h_enable() {
   char response[10];
   size_t len;
 
@@ -169,13 +169,16 @@ void sim800h_enable() {
     CSTDEBUG("GSM #### !! already on\r\n");
   }
 
+  bool is_on = false;
   // wait for the chip to boot and react to commands
   for (int i = 0; i < 5; i++) {
     sim800h_send("ATE0");
     // if we still have echo on, this fails and falls through to the next OK
-    if (sim800h_expect_OK(1000)) break;
-    if (sim800h_expect_OK(1000)) break;
+    if ((is_on = sim800h_expect_OK(1000))) break;
+    if ((is_on = sim800h_expect_OK(1000))) break;
   }
+
+  return is_on;
 }
 
 void sim800h_disable() {

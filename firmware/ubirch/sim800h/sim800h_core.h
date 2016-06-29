@@ -39,8 +39,9 @@ extern "C" {
  * @brief Enable the power domain for the SIM800H.
  * If voltage sensing is available, returns as soon as the voltage is
  * high enough to make the chip work.
+ * @return true if the chip was enabled, false if there was a problem
  */
-void sim800h_enable();
+bool sim800h_enable();
 
 /*! @brief Disable the power domain for the SIM800H */
 void sim800h_disable();
