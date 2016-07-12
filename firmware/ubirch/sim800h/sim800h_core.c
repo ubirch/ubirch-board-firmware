@@ -28,7 +28,7 @@
 #include "sim800h_parser.h"
 #include "sim800h_debug.h"
 
-#ifndef BOARD_CELL_PORT
+#ifndef BOARD_CELL_UART_PORT
 #  error "No PORT found for cell phone chip. please configure ports/pins/clocks!"
 #endif
 
@@ -60,23 +60,26 @@ void sim800h_init() {
   const gpio_pin_config_t IN = {kGPIO_DigitalInput, false};
 
   // initialize BOARD_CELL pins
-  CLOCK_EnableClock(BOARD_CELL_PORT_CLOCK);
-  PORT_SetPinMux(BOARD_CELL_PORT, BOARD_CELL_UART_TX_PIN, BOARD_CELL_UART_TX_ALT);
-  PORT_SetPinMux(BOARD_CELL_PORT, BOARD_CELL_UART_RX_PIN, BOARD_CELL_UART_RX_ALT);
+  CLOCK_EnableClock(BOARD_CELL_UART_PORT_CLOCK);
+  PORT_SetPinMux(BOARD_CELL_UART_PORT, BOARD_CELL_UART_TX_PIN, BOARD_CELL_UART_TX_ALT);
+  PORT_SetPinMux(BOARD_CELL_UART_PORT, BOARD_CELL_UART_RX_PIN, BOARD_CELL_UART_RX_ALT);
 
-  PORT_SetPinMux(BOARD_CELL_PORT, BOARD_CELL_STATUS_PIN, kPORT_MuxAsGpio);
-  GPIO_PinInit(BOARD_CELL_GPIO, BOARD_CELL_STATUS_PIN, &IN);
+  CLOCK_EnableClock(BOARD_CELL_PIN_PORT_CLOCK);
+  PORT_SetPinMux(BOARD_CELL_PIN_PORT, BOARD_CELL_STATUS_PIN, kPORT_MuxAsGpio);
+  GPIO_PinInit(BOARD_CELL_PIN_GPIO, BOARD_CELL_STATUS_PIN, &IN);
 
+#if BOARD_CELL_RESET_PIN
   PORT_SetPinMux(BOARD_CELL_PORT, BOARD_CELL_RESET_PIN, kPORT_MuxAsGpio);
   GPIO_PinInit(BOARD_CELL_GPIO, BOARD_CELL_RESET_PIN, &OUTTRUE);
+#endif
 
-  PORT_SetPinMux(BOARD_CELL_PORT, BOARD_CELL_PWRKEY_PIN, kPORT_MuxAsGpio);
-  GPIO_PinInit(BOARD_CELL_GPIO, BOARD_CELL_PWRKEY_PIN, &OUTTRUE);
+  PORT_SetPinMux(BOARD_CELL_PIN_PORT, BOARD_CELL_PWRKEY_PIN, kPORT_MuxAsGpio);
+  GPIO_PinInit(BOARD_CELL_PIN_GPIO, BOARD_CELL_PWRKEY_PIN, &OUTTRUE);
 
-  // the ring identifier is optional, only use if a pin and port
+  // the ring identifier is optional, only use if a pin and port exists
 #if BOARD_CELL_RI_PIN
-  PORT_SetPinMux(BOARD_CELL_PORT, BOARD_CELL_RI_PIN, kPORT_MuxAsGpio);
-  GPIO_PinInit(BOARD_CELL_GPIO, BOARD_CELL_RI_PIN, &IN);
+  PORT_SetPinMux(BOARD_CELL_PIN_PORT, BOARD_CELL_RI_PIN, kPORT_MuxAsGpio);
+  GPIO_PinInit(BOARD_CELL_PIN_GPIO, BOARD_CELL_RI_PIN, &IN);
 #endif
 
 #if BOARD_CELL_PWR_DOMAIN
@@ -159,12 +162,22 @@ bool sim800h_enable() {
 
   if (!len) {
     CSTDEBUG("GSM #### !! trigger PWRKEY\r\n");
+
+#if defined(BOARD_CELL_TYPE_SIMCOM)
     // power on the SIM800H
-    GPIO_WritePinOutput(BOARD_CELL_GPIO, BOARD_CELL_PWRKEY_PIN, true);
+    GPIO_WritePinOutput(BOARD_CELL_PIN_GPIO, BOARD_CELL_PWRKEY_PIN, true);
     delay(10); //10ms
-    GPIO_WritePinOutput(BOARD_CELL_GPIO, BOARD_CELL_PWRKEY_PIN, false);
+    GPIO_WritePinOutput(BOARD_CELL_PIN_GPIO, BOARD_CELL_PWRKEY_PIN, false);
     delay(1100); // 1.1s
-    GPIO_WritePinOutput(BOARD_CELL_GPIO, BOARD_CELL_PWRKEY_PIN, true);
+    GPIO_WritePinOutput(BOARD_CELL_PIN_GPIO, BOARD_CELL_PWRKEY_PIN, true);
+#else
+    // power on the cell phone chip
+    GPIO_WritePinOutput(BOARD_CELL_PIN_GPIO, BOARD_CELL_PWRKEY_PIN, false);
+    delay(10); //10ms
+    GPIO_WritePinOutput(BOARD_CELL_PIN_GPIO, BOARD_CELL_PWRKEY_PIN, true);
+    delay(1100); // 1.1s
+    GPIO_WritePinOutput(BOARD_CELL_PIN_GPIO, BOARD_CELL_PWRKEY_PIN, false);
+#endif
   } else {
     CSTDEBUG("GSM #### !! already on\r\n");
   }

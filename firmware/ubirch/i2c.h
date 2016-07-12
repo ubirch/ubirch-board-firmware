@@ -64,7 +64,7 @@ const i2c_config_t i2c_config_default = {
   .SCL = BOARD_I2C_SCL_PIN,
   .SDA = BOARD_I2C_SDA_PIN,
   .mux = BOARD_I2C_ALT,
-  .baud = I2C_FULL_SPEED
+  .baud = I2C_STANDARD
 };
 
 /*!

@@ -53,6 +53,7 @@ bool sim800h_register(const uint32_t timeout) {
 bool sim800h_gprs_attach(const char *apn, const char *user, const char *password, const uint32_t timeout) {
   timer_set_timeout(timeout * 1000);
 
+#if defined(BOARD_CELL_TYPE_SIMCOM)
   // shut down any previous GPRS connection
   sim800h_send("AT+CIPSHUT");
   if (!sim800h_expect("SHUT OK", uTimer_Remaining)) return false;
@@ -64,6 +65,7 @@ bool sim800h_gprs_attach(const char *apn, const char *user, const char *password
   // enable manual receive mode
   sim800h_send("AT+CIPRXGET=1");
   if (!sim800h_expect_OK(uTimer_Remaining)) return false;
+#endif
 
   // attach to the network
   bool attached = false;

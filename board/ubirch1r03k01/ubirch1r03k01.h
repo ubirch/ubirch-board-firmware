@@ -24,8 +24,8 @@
 
 #include "cell.h"
 
-#ifndef _UBIRCH1R01_BOARD_H_
-#define _UBIRCH1R01_BOARD_H_
+#ifndef _UBIRCH1R03_BOARD_H_
+#define _UBIRCH1R03_BOARD_H_
 
 //! @{
 
@@ -44,7 +44,6 @@
 #define BOARD_LED0_PORT_CLOCK   kCLOCK_PortD
 #define BOARD_LED0_PIN          4U
 
-#define BOARD_LED1              0
 #define BOARD_LED1_PORT         PORTA
 #define BOARD_LED1_GPIO         GPIOA
 #define BOARD_LED1_PORT_CLOCK   kCLOCK_PortA
@@ -53,7 +52,7 @@
 
 #define BOARD_LED0(on)          GPIO_WritePinOutput(BOARD_LED0_GPIO, BOARD_LED0_PIN, (on))
 #define BOARD_LED1(on)          board_rgb_led(BOARD_LED1, (on?255:0), (on?255:0), (on?255:0))
-#define BOARD_LED1(r, g, b)     board_rgb_led(BOARD_LED1, r, g, b)
+//#define BOARD_LED1(r, g, b)     board_rgb_led(BOARD_LED1, r, g, b)
 
 // on-board button (PTD0)
 #define BOARD_BUTTON0_PORT      PORTD
@@ -75,11 +74,11 @@
 #define BOARD_PWR_EN_PIN        5
 
 // I2C configuration
-#define BOARD_I2C               I2C2
-#define BOARD_I2C_CLOCK         I2C2_CLK_SRC
-#define BOARD_I2C_PORT          PORTB
-#define BOARD_I2C_PORT_CLOCK    kCLOCK_PortB
-#define BOARD_I2C_ALT           kPORT_MuxAlt4
+#define BOARD_I2C               I2C1
+#define BOARD_I2C_CLOCK         I2C1_CLK_SRC
+#define BOARD_I2C_PORT          PORTC
+#define BOARD_I2C_PORT_CLOCK    kCLOCK_PortC
+#define BOARD_I2C_ALT           kPORT_MuxAlt2
 #define BOARD_I2C_SCL_PIN       10U
 #define BOARD_I2C_SDA_PIN       11U
 
@@ -120,4 +119,4 @@
 
 //! @}
 
-#endif // _UBIRCH1R01_BOARD_H_
+#endif // _UBIRCH1R03_BOARD_H_
