@@ -27,6 +27,15 @@
 #ifndef UBIRCH_BOARD_TEST_SUPPORT_H
 #define UBIRCH_BOARD_TEST_SUPPORT_H
 
+enum {
+    enable_input = true,
+    enable_test_audio = false,
+    enable_test_gpio = false,
+    enable_test_quectel = false,
+    enable_test_rgb = false,
+    enable_test_touch = true,
+};
+
 #include <stdbool.h>
 
 typedef void (*systick_callback_t)(bool on);
@@ -37,7 +46,8 @@ void ok(char *prefix, bool r);
 
 void test_audio(void);
 void test_rgb(void);
-void test_quectel();
-void test_gpio();
+void test_quectel(void);
+void test_gpio(void);
+void test_touch(void);
 
 #endif //UBIRCH_BOARD_TEST_SUPPORT_H

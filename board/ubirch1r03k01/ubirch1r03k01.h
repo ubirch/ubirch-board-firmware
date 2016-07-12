@@ -51,7 +51,7 @@
 #define BOARD_LED1_PIN          14U
 
 #define BOARD_LED0(on)          GPIO_WritePinOutput(BOARD_LED0_GPIO, BOARD_LED0_PIN, (on))
-#define BOARD_LED1(on)          board_rgb_led(BOARD_LED1, (on?255:0), (on?255:0), (on?255:0))
+#define BOARD_LED1(on)          board_rgb_led(1, (on?255:0), (on?255:0), (on?255:0))
 //#define BOARD_LED1(r, g, b)     board_rgb_led(BOARD_LED1, r, g, b)
 
 // on-board button (PTD0)

@@ -29,6 +29,7 @@
 #include <stdio.h>
 #include <malloc.h>
 #include <fsl_debug_console.h>
+#include "support.h"
 
 void enter(char *fmt, ...) {
   va_list ap;
@@ -40,21 +41,26 @@ void enter(char *fmt, ...) {
   free(msg);
   va_end(ap);
 
-  int c;
-  while ((c = GETCHAR()) != '\r' && c != '\n') PRINTF("%02x", c);
+  if (enable_input) {
+    int c;
+    while ((c = GETCHAR()) != '\r' && c != '\n') PRINTF("%02x", c);
+  }
   PRINTF("\r\n");
 }
 
 bool yesno(char *prompt) {
   PRINTF(prompt);
   PRINTF(" (y/n)");
-  int c;
-  while ((c = GETCHAR()) != 'y' && c != 'n');
-  PRINTF("\r\n");
-  return c == 'y';
+  if (enable_input) {
+    int c;
+    while ((c = GETCHAR()) != 'y' && c != 'n');
+    PRINTF("\r\n");
+    return c == 'y';
+  }
+  return true;
 }
 
 void ok(char *prefix, bool r) {
   PRINTF("%s: ", prefix);
-  if(r) PRINTF("OK\r\n"); else PRINTF("FAIL\r\n");
+  if (r) PRINTF("OK\r\n"); else PRINTF("FAIL\r\n");
 }

@@ -7,6 +7,7 @@ if (BOARD MATCHES "ubirch1r03k01")
     test_gpio.c
     test_rgb.c
     test_quectel.c
+    test_touch.c
     support.c
     )
   target_include_directories(test_board PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}})

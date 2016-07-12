@@ -50,7 +50,7 @@ systick_callback_t callback;
 
 void SysTick_Handler() {
   if (++cnt % state == 0) on = !on;
-  if(callback != NULL) {
+  if (callback != NULL) {
     callback(on);
   }
   LED(on);
@@ -69,10 +69,11 @@ int main(void) {
 //  enter("Press Enter to test debug console input: ");
 //  PRINTF("OK\r\n");
 
-  test_audio();
-  test_quectel();
-  test_gpio();
-
+  if(enable_test_audio) test_audio();
+  if(enable_test_quectel) test_quectel();
+  if(enable_test_gpio) test_gpio();
+  if(enable_test_rgb) test_rgb();
+  if(enable_test_touch) test_touch();
 
   PRINTF("DONE\r\n");
   while (true);
