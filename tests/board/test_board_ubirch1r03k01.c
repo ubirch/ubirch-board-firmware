@@ -42,13 +42,15 @@
 #endif
 
 
-volatile static int state = 100;
+volatile static int state = 1000;
 volatile static bool on = false;
 volatile static int cnt = 0;
 
-systick_callback_t callback;
+volatile uint32_t milliseconds = 0;
+systick_callback_t callback = NULL;
 
 void SysTick_Handler() {
+  milliseconds++;
   if (++cnt % state == 0) on = !on;
   if (callback != NULL) {
     callback(on);
@@ -63,7 +65,7 @@ int main(void) {
   board_console_init(BOARD_DEBUG_BAUD);
 
   // 100ms led blink, only works if setup for LED was correct
-  SysTick_Config(BOARD_SYSTICK_100MS);
+  SysTick_Config(BOARD_SYSTICK_1MS);
 
 //  PRINTF(BOARD "\r\n");
 //  enter("Press Enter to test debug console input: ");
@@ -74,7 +76,11 @@ int main(void) {
   if(enable_test_gpio) test_gpio();
   if(enable_test_rgb) test_rgb();
   if(enable_test_touch) test_touch();
-
+  if(enable_test_pir) test_pir();
+  if(enable_test_sdcard) test_sdhc();
   PRINTF("DONE\r\n");
-  while (true);
+
+  while (true) {
+    __ASM("NOP");
+  };
 }

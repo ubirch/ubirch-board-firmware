@@ -28,10 +28,11 @@
 #ifndef _UBIRCH_CELL_BOARD_H_
 #define _UBIRCH_CELL_BOARD_H_
 
+
+
 // cell phone chip config
-#define BOARD_CELL_PORT             PORTE                         //!< cell modem port used
-#define BOARD_CELL_GPIO             GPIOE                         //!< gpio port for (ri, status etc)
-#define BOARD_CELL_PORT_CLOCK       kCLOCK_PortE                  //!< port clock
+#define BOARD_CELL_UART_PORT        PORTE                         //!< cell modem port used
+#define BOARD_CELL_UART_PORT_CLOCK  kCLOCK_PortE                  //!< port clock
 #define BOARD_CELL_PORT_CLOCK_FREQ  (CLOCK_GetPllFllSelClkFreq()) //!< port clock frequency
 #define BOARD_CELL_UART_TX_PIN      4U                            //!< TX pin number
 #define BOARD_CELL_UART_TX_ALT      kPORT_MuxAlt3                 //!< TX pin mux
@@ -40,6 +41,10 @@
 #define BOARD_CELL_UART             LPUART3                       //!< uart the cell modem is connected to
 #define BOARD_CELL_UART_IRQ         LPUART3_IRQn                  //!< uart irq
 #define BOARD_CELL_UART_IRQ_HANDLER LPUART3_IRQHandler            //!< uart irq handler
+
+#define BOARD_CELL_PIN_PORT         PORTE
+#define BOARD_CELL_PIN_PORT_CLOCK   kCLOCK_PortE
+#define BOARD_CELL_PIN_GPIO         GPIOE
 #define BOARD_CELL_STATUS_PIN       6U                            //!< status pin number
 #define BOARD_CELL_RESET_PIN        7U                            //!< reset pin number
 #define BOARD_CELL_PWRKEY_PIN       8U                            //!< pwrkey pin number

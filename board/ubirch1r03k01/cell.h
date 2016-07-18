@@ -44,7 +44,7 @@
 
 #define BOARD_CELL_PIN_PORT         PORTE
 #define BOARD_CELL_PIN_PORT_CLOCK   kCLOCK_PortE
-#define BOARD_CELL_PIN_GPIO      GPIOE
+#define BOARD_CELL_PIN_GPIO         GPIOE
 #define BOARD_CELL_STATUS_PIN       6U                            //!< status pin number
 #define BOARD_CELL_PWRKEY_PIN       8U                            //!< pwrkey pin number
 #define BOARD_CELL_RI_PIN           9U                            //!< ri (ring indicator) pin number
@@ -65,12 +65,5 @@
 #define BOARD_CELL_PWR_EN_GPIO      GPIOD         //!< gpio to switch the power domain
 #define BOARD_CELL_PWR_EN_PIN       7U            //!< gpio pin number for the power domain switch
 #define BOARD_CELL_PWR_EN_CLOCK     kCLOCK_PortD  //!< port clock (for enabling port)
-
-
-// special AT commands, chip specific
-
-#define AT_CON_CLOSE               "QICLOSE"
-#define AT_MUX_MODE                "QIMUX"
-#define AT_RECEIVE_MODE            "QINDI"
 
 #endif // _UBIRCH_CELL_BOARD_H_

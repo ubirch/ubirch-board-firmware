@@ -1,4 +1,4 @@
-# ubirch#1 r0.3 k0.1 (Kokeshi) board specific implementation
+# ubirch#1 r0.3-k (Kokeshi) board specific implementation
 
 This is the ubirch#1 board revision 0.3 (special version k0.1, Kokeshi).
 This board contains almost the same components as the r0.2 with a different cell-chip (Quectel M66)

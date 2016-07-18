@@ -57,6 +57,7 @@ bool yesno(char *prompt) {
     PRINTF("\r\n");
     return c == 'y';
   }
+  PRINTF("\r\n");
   return true;
 }
 
