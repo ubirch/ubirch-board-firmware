@@ -94,9 +94,6 @@ bool EVENT_Create(event_t eventType)
 
 bool EVENT_Wait(event_t eventType, uint32_t timeoutMilliseconds)
 {
-  uint32_t startTime;
-  uint32_t elapsedTime;
-
   volatile uint32_t *event = EVENT_GetInstance(eventType);
 
   if (timeoutMilliseconds && event)
