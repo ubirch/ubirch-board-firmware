@@ -31,9 +31,9 @@ enum {
     enable_input = false,
     enable_test_audio = false,
     enable_test_gpio = false,
-    enable_test_pir = false,
+    enable_test_pir = true,
     enable_test_quectel = false,
-    enable_test_rgb = true,
+    enable_test_rgb = false,
     enable_test_touch = false,
     enable_test_sdcard = false
 };
