@@ -1,5 +1,5 @@
 /*
- * ubirch#1 SIM800H cell core functionality.
+ * ubirch#1 M66 cell core functionality.
  *
  * @author Matthias L. Jugel
  * @date 2016-04-09
@@ -24,9 +24,9 @@
 #include <drivers/fsl_lpuart.h>
 #include <ubirch/timer.h>
 #include <ctype.h>
-#include "sim800h_core.h"
-#include "sim800h_parser.h"
-#include "sim800h_debug.h"
+#include "m66_core.h"
+#include "m66_parser.h"
+#include "m66_debug.h"
 
 #ifndef BOARD_CELL_UART_PORT
 #  error "No PORT found for cell phone chip. please configure ports/pins/clocks!"
@@ -55,7 +55,7 @@ void BOARD_CELL_UART_IRQ_HANDLER(void) {
   }
 }
 
-void sim800h_init() {
+void m66_init() {
   const gpio_pin_config_t OUTTRUE = {kGPIO_DigitalOutput, true};
   const gpio_pin_config_t IN = {kGPIO_DigitalInput, false};
 
@@ -91,7 +91,7 @@ void sim800h_init() {
 #endif
 
 
-  // configure uart driver connected to the SIM800H
+  // configure uart driver connected to the M66
   lpuart_config_t lpuart_config;
   LPUART_GetDefaultConfig(&lpuart_config);
   lpuart_config.baudRate_Bps = 115200;
@@ -131,7 +131,7 @@ void sim800h_init() {
 //  return val;
 //}
 
-bool sim800h_enable() {
+bool m66_enable() {
   char response[10];
   size_t len;
 
@@ -141,46 +141,33 @@ bool sim800h_enable() {
   // TODO check that power has come up correctly
 #endif
 
-
-  // after enabling power, power on the SIM800
-  while (sim800h_read() != -1) /* clear buffer */;
+  // after enabling power, power on the M66
+  while (m66_read() != -1) /* clear buffer */;
 
   // we need to identify if the chip is already on by sending AT commands
   // send AT and just ignore the echo and OK to get into a stable state
   // sometimes there is initial noise on the serial line
-  sim800h_send("AT");
-  len = sim800h_readline(response, 9, 500);
+  m66_send("AT");
+  len = m66_readline(response, 9, 500);
   CIODEBUG("GSM (%02d) -> '%s'\r\n", len, response);
-  len = sim800h_readline(response, 9, 500);
+  len = m66_readline(response, 9, 500);
   CIODEBUG("GSM (%02d) -> '%s'\r\n", len, response);
 
   // now identify if the chip is actually on, by issue AT and expecting something
   // if we can't read a response, either AT or OK, we need to run the power on sequence
-  sim800h_send("AT");
-  len = sim800h_readline(response, 9, 1000);
+  m66_send("AT");
+  len = m66_readline(response, 9, 1000);
   CIODEBUG("GSM (%02d) -> '%s'\r\n", len, response);
 
   if (!len) {
     CSTDEBUG("GSM #### !! trigger PWRKEY\r\n");
 
-#if defined(BOARD_UBIRCH_1R02)
-    // there is a bug in the circuit on the board which does not use an extra
-    // transistor to switch the PWRKEY pin, so the signals are reversed
-
-    // power on the SIM800H
-    GPIO_WritePinOutput(BOARD_CELL_PIN_GPIO, BOARD_CELL_PWRKEY_PIN, true);
-    delay(10); //10ms
-    GPIO_WritePinOutput(BOARD_CELL_PIN_GPIO, BOARD_CELL_PWRKEY_PIN, false);
-    delay(1100); // 1.1s
-    GPIO_WritePinOutput(BOARD_CELL_PIN_GPIO, BOARD_CELL_PWRKEY_PIN, true);
-#else
     // power on the cell phone chip
     GPIO_WritePinOutput(BOARD_CELL_PIN_GPIO, BOARD_CELL_PWRKEY_PIN, false);
     delay(10); //10ms
     GPIO_WritePinOutput(BOARD_CELL_PIN_GPIO, BOARD_CELL_PWRKEY_PIN, true);
     delay(1100); // 1.1s
     GPIO_WritePinOutput(BOARD_CELL_PIN_GPIO, BOARD_CELL_PWRKEY_PIN, false);
-#endif
   } else {
     CSTDEBUG("GSM #### !! already on\r\n");
   }
@@ -188,19 +175,19 @@ bool sim800h_enable() {
   bool is_on = false;
   // wait for the chip to boot and react to commands
   for (int i = 0; i < 5; i++) {
-    sim800h_send("ATE0");
+    m66_send("ATE0");
     // if we still have echo on, this fails and falls through to the next OK
-    if ((is_on = sim800h_expect_OK(1000))) break;
-    if ((is_on = sim800h_expect_OK(1000))) break;
+    if ((is_on = m66_expect_OK(1000))) break;
+    if ((is_on = m66_expect_OK(1000))) break;
   }
 
   return is_on;
 }
 
-void sim800h_disable() {
-  // try to power down the SIM800, then switch off power domain
-  sim800h_send("AT+CPOWD=1");
-  sim800h_expect_urc(14, 7000);
+void m66_disable() {
+  // try to power down the M66, then switch off power domain
+  m66_send("AT+CPOWD=1");
+  m66_expect_urc(14, 7000);
 
 #if ((defined BOARD_CELL_PWR_EN_GPIO) && (defined BOARD_CELL_PWR_EN_PIN))
   CSTDEBUG("GSM #### -- power off\r\n");
@@ -208,19 +195,19 @@ void sim800h_disable() {
 #endif
 }
 
-int sim800h_read() {
+int m66_read() {
   if ((gsmRxHead % GSM_RINGBUFFER_SIZE) == gsmRxIndex) return -1;
   int c = gsmUartRingBuffer[gsmRxHead++];
   gsmRxHead %= GSM_RINGBUFFER_SIZE;
   return c;
 }
 
-size_t sim800h_read_binary(uint8_t *buffer, size_t max, uint32_t timeout) {
+size_t m66_read_binary(uint8_t *buffer, size_t max, uint32_t timeout) {
   timer_set_timeout(timeout * 1000);
   size_t idx = 0;
   while (idx < max) {
     if (!timer_timeout_remaining()) break;
-    int c = sim800h_read();
+    int c = m66_read();
     if (c == -1) {
       // nothing in the buffer, allow some sleep
       __WFI();
@@ -232,13 +219,13 @@ size_t sim800h_read_binary(uint8_t *buffer, size_t max, uint32_t timeout) {
   return idx;
 }
 
-size_t sim800h_readline(char *buffer, size_t max, uint32_t timeout) {
+size_t m66_readline(char *buffer, size_t max, uint32_t timeout) {
   timer_set_timeout(timeout * 1000);
   size_t idx = 0;
   while (idx < max) {
     if (!timer_timeout_remaining()) break;
 
-    int c = sim800h_read();
+    int c = m66_read();
     if (c == -1) {
       // nothing in the buffer, allow some sleep
       __WFI();
@@ -260,12 +247,12 @@ size_t sim800h_readline(char *buffer, size_t max, uint32_t timeout) {
   return idx;
 }
 
-void sim800h_write(const uint8_t *buffer, size_t size) {
+void m66_write(const uint8_t *buffer, size_t size) {
   LPUART_WriteBlocking(BOARD_CELL_UART, buffer, size);
 }
 
-void sim800h_writeline(const char *buffer) {
-  sim800h_write((const uint8_t *) buffer, strlen(buffer));
-  sim800h_write((const uint8_t *) "\r\n", 2);
+void m66_writeline(const char *buffer) {
+  m66_write((const uint8_t *) buffer, strlen(buffer));
+  m66_write((const uint8_t *) "\r\n", 2);
 }
 

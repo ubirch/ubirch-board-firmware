@@ -29,7 +29,7 @@
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <ubirch/sim800h.h>
+#include <ubirch/modem.h>
 #include "config.h"
 #include "support.h"
 
