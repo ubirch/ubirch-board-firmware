@@ -23,6 +23,7 @@
 
 // this is necessary when using the arm-none-eabi-gcc from launchpad
 #define _GNU_SOURCE
+
 #include <string.h>
 #include <stdlib.h>
 #include <fsl_rtc.h>
@@ -76,6 +77,7 @@ bool sim800h_gprs_attach(const char *apn, const char *user, const char *password
   } while (!attached && timer_timeout_remaining());
   if (!attached) return false;
 
+#if defined(BOARD_CELL_TYPE_SIMCOM)
   // configure connection
   sim800h_send("AT+SAPBR=3,1,\"CONTYPE\",\"GPRS\"");
   if (!sim800h_expect_OK(uTimer_Remaining)) return false;
@@ -105,6 +107,23 @@ bool sim800h_gprs_attach(const char *apn, const char *user, const char *password
     if(!sim800h_expect_OK(uTimer_Remaining)) return false;
     delay(1000);
   } while (opened != 1 && timer_timeout_remaining());
+#endif
+
+#if defined(BOARD_CELL_TYPE_M66)
+  sim800h_send("AT+QIFGCNT=0");
+  if (!sim800h_expect_OK(uTimer_Remaining)) return false;
+
+  if (apn) {
+    sim800h_send("AT+QICSGP=1,\"%s\",\"%s\",\"%s\"", apn, user, password);
+    if (!sim800h_expect_OK(uTimer_Remaining)) return false;
+  }
+
+  sim800h_send("AT+QIREGAPP", uTimer_Remaining);
+  if (!sim800h_expect_OK(uTimer_Remaining)) return false;
+
+  sim800h_send("AT+QIACT", uTimer_Remaining);
+  if (!sim800h_expect_OK(uTimer_Remaining)) return false;
+#endif
 
   return attached;
 }
@@ -132,10 +151,11 @@ bool sim800h_battery(status_t *status, int *level, int *voltage, const uint32_t 
 bool sim800h_location(status_t *status, double *lat, double *lon, rtc_datetime_t *datetime, const uint32_t timeout) {
   char response[60];
 
+#if defined(BOARD_CELL_TYPE_SIMCOM)
   sim800h_send("AT+CIPGSMLOC=1,1");
   sim800h_expect_scan("+CIPGSMLOC: %d,%s", timeout, &status, response);
 
-  if(status == 0) {
+  if (status == 0) {
     *lon = atof(strtok(response, ","));
     *lat = atof(strtok(NULL, ","));
 
@@ -146,8 +166,17 @@ bool sim800h_location(status_t *status, double *lat, double *lon, rtc_datetime_t
     datetime->minute = (uint8_t) atoi(strtok(NULL, ":"));
     datetime->second = (uint8_t) atoi(strtok(NULL, ":"));
   }
+#endif
 
-  return sim800h_expect_OK(500) && status == 0;
+#if defined(BOARD_CELL_TYPE_M66)
+  sim800h_send("AT+QENG=2");
+  sim800h_expect_OK(uTimer_Remaining);
+  sim800h_expect_scan("%s", uTimer_Remaining, response);
+  sim800h_send("AT+QENG=0");
+  sim800h_expect_OK(uTimer_Remaining);
+#endif
+
+  return sim800h_expect_OK(uTimer_Remaining) && status == 0;
 }
 
 bool sim800h_imei(char *imei, const uint32_t timeout) {

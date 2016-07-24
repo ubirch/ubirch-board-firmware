@@ -42,7 +42,7 @@
 #endif
 
 
-volatile static int state = 1000;
+volatile int state = 1000;
 volatile static bool on = false;
 volatile static int cnt = 0;
 
