@@ -100,6 +100,13 @@ void init_flexio() {
 
   FLEXIO0->CTRL = FLEXIO_CTRL_FLEXEN(1);
 
+  //NVIC_EnableIRQ(FLEXIO0_IRQn);
+}
+
+void transmit(uint32_t color) {
+  while (FLEXIO0->TIMSTAT & FLEXIO_TIMSTAT_TSF(0)) {}
+  FLEXIO0->TIMSTAT |= FLEXIO_TIMSTAT_TSF(0);
+  FLEXIO0->SHIFTBUFBIS[0] = color;
 }
 
 void test_rgb_uart(void) {
@@ -125,11 +132,9 @@ void test_rgb_uart(void) {
       uint8_t green = (uint8_t) (sin(frequency * i + 2 + phase) * width + center);
       uint8_t blue = (uint8_t) (sin(frequency * i + 4 + phase) * width + center);
 
-      // BBRRBB00
-      uint32_t color = blue << 24 | red << 16 | green << 8;
-      while (FLEXIO0->TIMSTAT & FLEXIO_TIMSTAT_TSF(0)) {}
-      FLEXIO0->TIMSTAT |= FLEXIO_TIMSTAT_TSF(0);
-      FLEXIO0->SHIFTBUFBIS[0] = color;
+      // BBRRBB00 - we transmit 24+1 most significant bits
+      transmit(blue << 24 | red << 16 | green << 8);
+
       delay(50);
     }
   }
