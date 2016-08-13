@@ -22,7 +22,7 @@ if (BOARD MATCHES "ubirch1r03k01")
 endif ()
 
 add_executable(test_board ${SRCS})
-target_compile_definitions(-DARM_MATH_CM4)
+target_compile_definitions(test_board PRIVATE -DARM_MATH_CM4)
 
 target_include_directories(test_board PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_include_directories(test_board PUBLIC ${FATFS_MIDDLEWARE_INC})
