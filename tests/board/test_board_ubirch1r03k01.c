@@ -74,10 +74,12 @@ int main(void) {
   if(enable_test_audio) test_audio();
   if(enable_test_quectel) test_quectel();
   if(enable_test_gpio) test_gpio();
-  if(enable_test_rgb) test_rgb();
+  if(enable_test_rgb_dma) test_rgb_dma();
+  if(enable_test_rgb_uart) test_rgb_uart();
   if(enable_test_touch) test_touch();
   if(enable_test_pir) test_pir();
   if(enable_test_sdcard) test_sdhc();
+  if(enable_test_i2s) test_i2s();
   PRINTF("DONE\r\n");
 
   while (true) {

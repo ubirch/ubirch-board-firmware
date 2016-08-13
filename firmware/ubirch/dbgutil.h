@@ -25,6 +25,9 @@
 #ifndef _UBIRCH_DEBUG_H_
 #define _UBIRCH_DEBUG_H_
 
+#include <stdint.h>
+#include <stddef.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
