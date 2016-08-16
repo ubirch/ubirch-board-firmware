@@ -19,14 +19,19 @@
 #define FIO_CLOCK_PIN   3
 #define WS2812B_DIN_PIN 20
 
+// calculate count from nanoseconds
+// (!) can't use USEC_TO_COUNT with floats as the the value is cast to uint64_t)
+#define NSEC_TO_COUNT(ns, frq)  (USEC_TO_COUNT(ns, (frq))/1000U)
 
 void init_flexio() {
   // signal 0 and 1 high/low counter values,
-  const uint32_t T0H = (uint32_t) (0.375 * FLEXIO_SRC_CLOCK_FRQ / 1000000U);
-  const uint32_t T0L = (uint32_t) (0.875 * FLEXIO_SRC_CLOCK_FRQ / 1000000U);
-  const uint32_t T1H = (uint32_t) (0.75 * FLEXIO_SRC_CLOCK_FRQ / 1000000U);
-  const uint32_t T1L = (uint32_t) (0.50 * FLEXIO_SRC_CLOCK_FRQ / 1000000U);
-  const uint32_t LTC = (uint32_t) (50 * FLEXIO_SRC_CLOCK_FRQ / 1000000U);
+  const uint32_t T0H = (uint32_t) NSEC_TO_COUNT(375, FLEXIO_SRC_CLOCK_FRQ);
+  const uint32_t T0L = (uint32_t) NSEC_TO_COUNT(875, FLEXIO_SRC_CLOCK_FRQ);
+  const uint32_t T1H = (uint32_t) NSEC_TO_COUNT(750, FLEXIO_SRC_CLOCK_FRQ);
+  const uint32_t T1L = (uint32_t) NSEC_TO_COUNT(500, FLEXIO_SRC_CLOCK_FRQ);
+
+  PRINTF("T0H=%d T0L=%d T1H=%d T1L=%d\r\n", T0H, T0L, T1H, T1L);
+//  const uint32_t LTC = (uint32_t) (50 * FLEXIO_SRC_CLOCK_FRQ / 1000000U);
 
   CLOCK_SetFlexio0Clock(FLEXIO_SRC_CLOCK);
   CLOCK_EnableClock(kCLOCK_Flexio0);
@@ -155,7 +160,7 @@ void test_rgb_uart(void) {
   delay(1000);
 
   int phase = 0;
-  int length = 128;
+  int length = 1024;
   int center = 128, width = 127;
   float frequency = PI * 2 / length;
 
