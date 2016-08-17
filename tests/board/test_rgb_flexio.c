@@ -8,7 +8,7 @@
 #define FLEXIO_SRC_CLOCK      kCLOCK_CoreSysClk
 #define FLEXIO_SRC_CLOCK_FRQ  CLOCK_GetFreq(FLEXIO_SRC_CLOCK)
 #define FLEXIO_CLOCK_DIVIDER  (FLEXIO_SRC_CLOCK_FRQ/WS2812B_PROT_CLOCK_FREQ)
-
+#define FLEXIO_SHIFT_BITS(n)  ((((n) * 2 - 1) << 8) | ((FLEXIO_CLOCK_DIVIDER / 2) - 1))
 
 #define FIO_SHIFTER     0
 #define FIO_CLOCK       0
@@ -25,103 +25,103 @@
 
 void init_flexio() {
   // signal 0 and 1 high/low counter values,
-  const uint32_t T0H = (uint32_t) NSEC_TO_COUNT(375, FLEXIO_SRC_CLOCK_FRQ);
-  const uint32_t T0L = (uint32_t) NSEC_TO_COUNT(875, FLEXIO_SRC_CLOCK_FRQ);
-  const uint32_t T1H = (uint32_t) NSEC_TO_COUNT(750, FLEXIO_SRC_CLOCK_FRQ);
-  const uint32_t T1L = (uint32_t) NSEC_TO_COUNT(500, FLEXIO_SRC_CLOCK_FRQ);
+  const uint32_t T0H = (uint32_t) NSEC_TO_COUNT(375, FLEXIO_SRC_CLOCK_FRQ) - 1;
+  const uint32_t T0L = (uint32_t) NSEC_TO_COUNT(875, FLEXIO_SRC_CLOCK_FRQ) - 1;
+  const uint32_t T1H = (uint32_t) NSEC_TO_COUNT(750, FLEXIO_SRC_CLOCK_FRQ) - 1;
+  const uint32_t T1L = (uint32_t) NSEC_TO_COUNT(500, FLEXIO_SRC_CLOCK_FRQ) - 1;
 
   PRINTF("T0H=%d T0L=%d T1H=%d T1L=%d\r\n", T0H, T0L, T1H, T1L);
-//  const uint32_t LTC = (uint32_t) (50 * FLEXIO_SRC_CLOCK_FRQ / 1000000U);
 
   CLOCK_SetFlexio0Clock(FLEXIO_SRC_CLOCK);
   CLOCK_EnableClock(kCLOCK_Flexio0);
 
   FLEXIO_Reset(FLEXIO0);
 
-  FLEXIO0->CTRL = 0;
-
   // shifter
-  FLEXIO0->SHIFTCTL[FIO_SHIFTER] = 0;
-  FLEXIO0->SHIFTCFG[FIO_SHIFTER] = FLEXIO_SHIFTCFG_INSRC(0) |
-                                   FLEXIO_SHIFTCFG_SSTOP(kFLEXIO_ShifterStopBitDisable) |
-                                   FLEXIO_SHIFTCFG_SSTART(kFLEXIO_ShifterStartBitDisabledLoadDataOnShift);
-  FLEXIO0->SHIFTCTL[FIO_SHIFTER] = FLEXIO_SHIFTCTL_TIMSEL(FIO_CLOCK) |
-                                   FLEXIO_SHIFTCTL_TIMPOL(kFLEXIO_ShifterTimerPolarityOnPositive) |
-                                   FLEXIO_SHIFTCTL_PINCFG(kFLEXIO_PinConfigOutput) |
-                                   FLEXIO_SHIFTCTL_PINSEL(FIO_SHIFTER_PIN) |
-                                   FLEXIO_SHIFTCTL_PINPOL(kFLEXIO_PinActiveHigh) |
-                                   FLEXIO_SHIFTCTL_SMOD(kFLEXIO_ShifterModeTransmit);
+  const flexio_shifter_config_t shifter_config = {
+    .inputSource = kFLEXIO_ShifterInputFromPin,
+    .shifterStop = kFLEXIO_ShifterStopBitDisable,
+    .shifterStart = kFLEXIO_ShifterStartBitDisabledLoadDataOnShift,
+    .timerSelect = FIO_CLOCK,
+    .timerPolarity = kFLEXIO_ShifterTimerPolarityOnPositive,
+    .pinConfig = kFLEXIO_PinConfigOutput,
+    .pinSelect = FIO_SHIFTER_PIN,
+    .pinPolarity = kFLEXIO_PinActiveHigh,
+    .shifterMode = kFLEXIO_ShifterModeTransmit
+  };
+  FLEXIO_SetShifterConfig(FLEXIO0, FIO_SHIFTER, &shifter_config);
 
   // clock generator
-  FLEXIO0->TIMCTL[FIO_CLOCK] = 0;
-  FLEXIO0->TIMCMP[FIO_CLOCK] = ((24 * 2 - 1) << 8) | ((FLEXIO_CLOCK_DIVIDER / 2) - 1);
-  FLEXIO0->TIMCFG[FIO_CLOCK] =
-    FLEXIO_TIMCFG_TIMOUT(kFLEXIO_TimerOutputZeroNotAffectedByReset) |
-    FLEXIO_TIMCFG_TIMDEC(kFLEXIO_TimerDecSrcOnFlexIOClockShiftTimerOutput) |
-    FLEXIO_TIMCFG_TIMRST(kFLEXIO_TimerResetNever) |
-    FLEXIO_TIMCFG_TIMDIS(kFLEXIO_TimerDisableOnTimerCompare) |
-    FLEXIO_TIMCFG_TIMENA(kFLEXIO_TimerEnableOnTriggerHigh) |
-    FLEXIO_TIMCFG_TSTOP(kFLEXIO_TimerStopBitDisabled) |
-    FLEXIO_TIMCFG_TSTART(kFLEXIO_TimerStartBitDisabled);
-  FLEXIO0->TIMCTL[FIO_CLOCK] =
-    FLEXIO_TIMCTL_TRGSEL(FLEXIO_TIMER_TRIGGER_SEL_SHIFTnSTAT(FIO_SHIFTER)) | // shifter 0 status flag
-    FLEXIO_TIMCTL_TRGPOL(kFLEXIO_TimerTriggerPolarityActiveLow) |
-    FLEXIO_TIMCTL_TRGSRC(kFLEXIO_TimerTriggerSourceInternal) |
-    FLEXIO_TIMCTL_PINCFG(kFLEXIO_PinConfigOutput) |
-    FLEXIO_TIMCTL_PINSEL(FIO_CLOCK_PIN) |
-    FLEXIO_TIMCTL_PINPOL(kFLEXIO_PinActiveHigh) |
-    FLEXIO_TIMCTL_TIMOD(kFLEXIO_TimerModeDual8BitBaudBit);
+  const flexio_timer_config_t timer_clock_config = {
+    .timerCompare = FLEXIO_SHIFT_BITS(24),
+    .timerOutput = kFLEXIO_TimerOutputZeroNotAffectedByReset,
+    .timerDecrement = kFLEXIO_TimerDecSrcOnFlexIOClockShiftTimerOutput,
+    .timerReset = kFLEXIO_TimerResetNever,
+    .timerDisable = kFLEXIO_TimerDisableOnTimerCompare,
+    .timerEnable = kFLEXIO_TimerEnableOnTriggerHigh,
+    .timerStop = kFLEXIO_TimerStopBitDisabled,
+    .timerStart = kFLEXIO_TimerStartBitDisabled,
+    .triggerSelect = FLEXIO_TIMER_TRIGGER_SEL_SHIFTnSTAT(FIO_SHIFTER),
+    .triggerPolarity = kFLEXIO_TimerTriggerPolarityActiveLow,
+    .triggerSource = kFLEXIO_TimerTriggerSourceInternal,
+    .pinConfig = kFLEXIO_PinConfigOutput,
+    .pinSelect = FIO_CLOCK_PIN,
+    .pinPolarity = kFLEXIO_PinActiveHigh,
+    .timerMode = kFLEXIO_TimerModeDual8BitBaudBit,
+  };
+  FLEXIO_SetTimerConfig(FLEXIO0, FIO_CLOCK, &timer_clock_config);
 
   // timer to generate the 0 wave form (short pulse), triggered by clock
-  FLEXIO0->TIMCTL[FIO_0_TIMER] = 0;
-  FLEXIO0->TIMCMP[FIO_0_TIMER] = ((T0L - 1) << 8) | (T0H - 1);
-  FLEXIO0->TIMCFG[FIO_0_TIMER] =
-    FLEXIO_TIMCFG_TIMOUT(kFLEXIO_TimerOutputOneNotAffectedByReset) |
-    FLEXIO_TIMCFG_TIMDEC(kFLEXIO_TimerDecSrcOnFlexIOClockShiftTimerOutput) |
-    FLEXIO_TIMCFG_TIMRST(kFLEXIO_TimerResetNever) |
-    FLEXIO_TIMCFG_TIMDIS(kFLEXIO_TimerDisableOnTimerCompare) |
-    FLEXIO_TIMCFG_TIMENA(kFLEXIO_TimerEnableOnTriggerRisingEdge) |
-    FLEXIO_TIMCFG_TSTOP(kFLEXIO_TimerStopBitDisabled) |
-    FLEXIO_TIMCFG_TSTART(kFLEXIO_TimerStartBitDisabled);
-  FLEXIO0->TIMCTL[FIO_0_TIMER] =
-    FLEXIO_TIMCTL_TRGSEL(FLEXIO_TIMER_TRIGGER_SEL_PININPUT(FIO_CLOCK_PIN)) | // pin 19 (9*2+1) from clock
-    FLEXIO_TIMCTL_TRGPOL(kFLEXIO_TimerTriggerPolarityActiveHigh) |
-    FLEXIO_TIMCTL_TRGSRC(kFLEXIO_TimerTriggerSourceInternal) |
-    FLEXIO_TIMCTL_PINCFG(kFLEXIO_PinConfigOutput) |
-    FLEXIO_TIMCTL_PINSEL(WS2812B_DIN_PIN) |
-    FLEXIO_TIMCTL_PINPOL(kFLEXIO_PinActiveHigh) |
-    FLEXIO_TIMCTL_TIMOD(kFLEXIO_TimerModeDual8BitPWM);
+  const flexio_timer_config_t timer_t0_config = {
+    .timerCompare = (T0L << 8) | T0H,
+    .timerOutput = kFLEXIO_TimerOutputOneNotAffectedByReset,
+    .timerDecrement = kFLEXIO_TimerDecSrcOnFlexIOClockShiftTimerOutput,
+    .timerReset = kFLEXIO_TimerResetNever,
+    .timerDisable = kFLEXIO_TimerDisableOnTimerCompare,
+    .timerEnable = kFLEXIO_TimerEnableOnTriggerRisingEdge,
+    .timerStop = kFLEXIO_TimerStopBitDisabled,
+    .timerStart = kFLEXIO_TimerStartBitDisabled,
+    .triggerSelect = FLEXIO_TIMER_TRIGGER_SEL_PININPUT(FIO_CLOCK_PIN),
+    .triggerPolarity = kFLEXIO_TimerTriggerPolarityActiveHigh,
+    .triggerSource = kFLEXIO_TimerTriggerSourceInternal,
+    .pinConfig = kFLEXIO_PinConfigOutput,
+    .pinSelect = WS2812B_DIN_PIN,
+    .pinPolarity = kFLEXIO_PinActiveHigh,
+    .timerMode = kFLEXIO_TimerModeDual8BitPWM,
+  };
+  FLEXIO_SetTimerConfig(FLEXIO0, FIO_0_TIMER, &timer_t0_config);
 
   // timer to generate the 1 wave form (long pulse), triggered by shifter
-  FLEXIO0->TIMCTL[FIO_1_TIMER] = 0;
-  FLEXIO0->TIMCMP[FIO_1_TIMER] = ((T1L - 1) << 8) | (T1H - 1);
-  FLEXIO0->TIMCFG[FIO_1_TIMER] =
-    FLEXIO_TIMCFG_TIMOUT(kFLEXIO_TimerOutputOneNotAffectedByReset) |
-    FLEXIO_TIMCFG_TIMDEC(kFLEXIO_TimerDecSrcOnFlexIOClockShiftTimerOutput) |
-    FLEXIO_TIMCFG_TIMRST(kFLEXIO_TimerResetNever) |
-    FLEXIO_TIMCFG_TIMDIS(kFLEXIO_TimerDisableOnTriggerFallingEdge) |
-    FLEXIO_TIMCFG_TIMENA(kFLEXIO_TimerEnableOnTriggerRisingEdge) |
-    FLEXIO_TIMCFG_TSTOP(kFLEXIO_TimerStopBitDisabled) |
-    FLEXIO_TIMCFG_TSTART(kFLEXIO_TimerStartBitDisabled);
-  FLEXIO0->TIMCTL[FIO_1_TIMER] =
-    FLEXIO_TIMCTL_TRGSEL(FLEXIO_TIMER_TRIGGER_SEL_PININPUT(FIO_SHIFTER_PIN)) | // pin 18 (9*2) - from shifter
-    FLEXIO_TIMCTL_TRGPOL(kFLEXIO_TimerTriggerPolarityActiveHigh) |
-    FLEXIO_TIMCTL_TRGSRC(kFLEXIO_TimerTriggerSourceInternal) |
-    FLEXIO_TIMCTL_PINCFG(kFLEXIO_PinConfigOutput) |
-    FLEXIO_TIMCTL_PINSEL(WS2812B_DIN_PIN) |
-    FLEXIO_TIMCTL_PINPOL(kFLEXIO_PinActiveHigh) |
-    FLEXIO_TIMCTL_TIMOD(kFLEXIO_TimerModeDual8BitPWM);
+  const flexio_timer_config_t timer_t1_config = {
+    .timerCompare = (T1L << 8) | T1H,
+    .timerOutput = kFLEXIO_TimerOutputOneNotAffectedByReset,
+    .timerDecrement = kFLEXIO_TimerDecSrcOnFlexIOClockShiftTimerOutput,
+    .timerReset = kFLEXIO_TimerResetNever,
+    .timerDisable = kFLEXIO_TimerDisableOnTriggerFallingEdge,
+    .timerEnable = kFLEXIO_TimerEnableOnTriggerRisingEdge,
+    .timerStop = kFLEXIO_TimerStopBitDisabled,
+    .timerStart = kFLEXIO_TimerStartBitDisabled,
+    .triggerSelect = FLEXIO_TIMER_TRIGGER_SEL_PININPUT(FIO_SHIFTER_PIN),
+    .triggerPolarity = kFLEXIO_TimerTriggerPolarityActiveHigh,
+    .triggerSource = kFLEXIO_TimerTriggerSourceInternal,
+    .pinConfig = kFLEXIO_PinConfigOutput,
+    .pinSelect = WS2812B_DIN_PIN,
+    .pinPolarity = kFLEXIO_PinActiveHigh,
+    .timerMode = kFLEXIO_TimerModeDual8BitPWM,
+  };
+  FLEXIO_SetTimerConfig(FLEXIO0, FIO_1_TIMER, &timer_t1_config);
 
-  FLEXIO0->CTRL = FLEXIO_CTRL_FLEXEN(1);
+  FLEXIO_Enable(FLEXIO0, true);
 
   //NVIC_EnableIRQ(FLEXIO0_IRQn);
 }
 
 void transmit(uint32_t *leds, int n) {
-  FLEXIO0->TIMCMP[FIO_CLOCK] = ((24 * 2 - 1) << 8) | ((FLEXIO_CLOCK_DIVIDER / 2) - 1);
+  FLEXIO0->TIMCMP[FIO_CLOCK] = FLEXIO_SHIFT_BITS(24);
   while (n--) {
     while (!(FLEXIO_GetShifterStatusFlags(FLEXIO0) & (1U << FIO_SHIFTER))) {}
-    if (!n) FLEXIO0->TIMCMP[FIO_CLOCK] = ((25 * 2 - 1) << 8) | ((FLEXIO_CLOCK_DIVIDER / 2) - 1);
+    // if this is the last junk of data, shift a single bit more than necessary to drive signal low
+    if (!n) FLEXIO0->TIMCMP[FIO_CLOCK] = FLEXIO_SHIFT_BITS(25);
     FLEXIO0->TIMSTAT |= FLEXIO_TIMSTAT_TSF(1U << FIO_CLOCK);
     // we use the bit swapped shift buffer to send data
     FLEXIO0->SHIFTBUFBIS[0] = (*leds++) << 8;
@@ -159,6 +159,7 @@ void test_rgb_uart(void) {
 
   delay(1000);
 
+  // do some rainbow coloring...
   int phase = 0;
   int length = 1024;
   int center = 128, width = 127;
