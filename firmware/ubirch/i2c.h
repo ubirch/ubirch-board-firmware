@@ -56,7 +56,7 @@ typedef struct {
 } i2c_config_t;
 
 //! Default I2C settings for this specific board
-const i2c_config_t i2c_config_default = {
+i2c_config_t i2c_config_default = {
   .i2c = BOARD_I2C,
   .port = BOARD_I2C_PORT,
   .i2c_clock = BOARD_I2C_CLOCK,
@@ -71,7 +71,7 @@ const i2c_config_t i2c_config_default = {
  * Initialize the I2C bus with a specific speed.
  * @param speed bus speed
  */
-void i2c_init(i2c_config_t speed);
+void i2c_init(i2c_config_t *config);
 
 /*!
  * Deinitialize I2C bus

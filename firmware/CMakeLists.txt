@@ -26,6 +26,7 @@ add_library(firmware
   ubirch/i2c/bme280.c
   ubirch/rtc.c
   ubirch/timer.c
+  ubirch/ws2812b.c
   ${CELLCHIP_SRCS}
   )
 target_include_directories(firmware PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})

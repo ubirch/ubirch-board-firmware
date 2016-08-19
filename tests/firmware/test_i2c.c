@@ -56,7 +56,7 @@ void reset_ssd1306() {
 }
 
 int test_i2c(void) {
-  i2c_init(i2c_config_default);
+  i2c_init(&i2c_config_default);
   ASSERT_EQUALS(i2c_ping(0x00), kStatus_Success);
 
   // do some basic initialization in case an OLED is attached

@@ -4,20 +4,20 @@
 #include <arm_math.h>
 #include "support.h"
 
-#define WS2812B_PROT_CLOCK_FREQ    800000U
+#define WS2812B_CLOCK_FREQ    800000U
 #define FLEXIO_SRC_CLOCK      kCLOCK_CoreSysClk
 #define FLEXIO_SRC_CLOCK_FRQ  CLOCK_GetFreq(FLEXIO_SRC_CLOCK)
-#define FLEXIO_CLOCK_DIVIDER  (FLEXIO_SRC_CLOCK_FRQ/WS2812B_PROT_CLOCK_FREQ)
+#define FLEXIO_CLOCK_DIVIDER  (FLEXIO_SRC_CLOCK_FRQ/WS2812B_CLOCK_FREQ)
 #define FLEXIO_SHIFT_BITS(n)  ((((n) * 2 - 1) << 8) | ((FLEXIO_CLOCK_DIVIDER / 2) - 1))
 
-#define FIO_SHIFTER     0
+#define FLEXIO_SHIFTER     0
 #define FIO_CLOCK       0
-#define FIO_0_TIMER     1
-#define FIO_1_TIMER     2
+#define FLEXIO_0_TIMER     1
+#define FLEXIO_1_TIMER     2
 
-#define FIO_SHIFTER_PIN 2
-#define FIO_CLOCK_PIN   3
-#define WS2812B_DIN_PIN 20
+#define FLEXIO_SHIFTER_PIN 2
+#define FLEXIO_CLOCK_PIN   3
+#define FLEXIO_DATA_PIN 20
 
 // calculate count from nanoseconds
 // (!) can't use USEC_TO_COUNT with floats as the the value is cast to uint64_t)
@@ -45,11 +45,11 @@ void init_flexio() {
     .timerSelect = FIO_CLOCK,
     .timerPolarity = kFLEXIO_ShifterTimerPolarityOnPositive,
     .pinConfig = kFLEXIO_PinConfigOutput,
-    .pinSelect = FIO_SHIFTER_PIN,
+    .pinSelect = FLEXIO_SHIFTER_PIN,
     .pinPolarity = kFLEXIO_PinActiveHigh,
     .shifterMode = kFLEXIO_ShifterModeTransmit
   };
-  FLEXIO_SetShifterConfig(FLEXIO0, FIO_SHIFTER, &shifter_config);
+  FLEXIO_SetShifterConfig(FLEXIO0, FLEXIO_SHIFTER, &shifter_config);
 
   // clock generator
   const flexio_timer_config_t timer_clock_config = {
@@ -61,11 +61,11 @@ void init_flexio() {
     .timerEnable = kFLEXIO_TimerEnableOnTriggerHigh,
     .timerStop = kFLEXIO_TimerStopBitDisabled,
     .timerStart = kFLEXIO_TimerStartBitDisabled,
-    .triggerSelect = FLEXIO_TIMER_TRIGGER_SEL_SHIFTnSTAT(FIO_SHIFTER),
+    .triggerSelect = FLEXIO_TIMER_TRIGGER_SEL_SHIFTnSTAT(FLEXIO_SHIFTER),
     .triggerPolarity = kFLEXIO_TimerTriggerPolarityActiveLow,
     .triggerSource = kFLEXIO_TimerTriggerSourceInternal,
     .pinConfig = kFLEXIO_PinConfigOutput,
-    .pinSelect = FIO_CLOCK_PIN,
+    .pinSelect = FLEXIO_CLOCK_PIN,
     .pinPolarity = kFLEXIO_PinActiveHigh,
     .timerMode = kFLEXIO_TimerModeDual8BitBaudBit,
   };
@@ -81,15 +81,15 @@ void init_flexio() {
     .timerEnable = kFLEXIO_TimerEnableOnTriggerRisingEdge,
     .timerStop = kFLEXIO_TimerStopBitDisabled,
     .timerStart = kFLEXIO_TimerStartBitDisabled,
-    .triggerSelect = FLEXIO_TIMER_TRIGGER_SEL_PININPUT(FIO_CLOCK_PIN),
+    .triggerSelect = FLEXIO_TIMER_TRIGGER_SEL_PININPUT(FLEXIO_CLOCK_PIN),
     .triggerPolarity = kFLEXIO_TimerTriggerPolarityActiveHigh,
     .triggerSource = kFLEXIO_TimerTriggerSourceInternal,
     .pinConfig = kFLEXIO_PinConfigOutput,
-    .pinSelect = WS2812B_DIN_PIN,
+    .pinSelect = FLEXIO_DATA_PIN,
     .pinPolarity = kFLEXIO_PinActiveHigh,
     .timerMode = kFLEXIO_TimerModeDual8BitPWM,
   };
-  FLEXIO_SetTimerConfig(FLEXIO0, FIO_0_TIMER, &timer_t0_config);
+  FLEXIO_SetTimerConfig(FLEXIO0, FLEXIO_0_TIMER, &timer_t0_config);
 
   // timer to generate the 1 wave form (long pulse), triggered by shifter
   const flexio_timer_config_t timer_t1_config = {
@@ -101,15 +101,15 @@ void init_flexio() {
     .timerEnable = kFLEXIO_TimerEnableOnTriggerRisingEdge,
     .timerStop = kFLEXIO_TimerStopBitDisabled,
     .timerStart = kFLEXIO_TimerStartBitDisabled,
-    .triggerSelect = FLEXIO_TIMER_TRIGGER_SEL_PININPUT(FIO_SHIFTER_PIN),
+    .triggerSelect = FLEXIO_TIMER_TRIGGER_SEL_PININPUT(FLEXIO_SHIFTER_PIN),
     .triggerPolarity = kFLEXIO_TimerTriggerPolarityActiveHigh,
     .triggerSource = kFLEXIO_TimerTriggerSourceInternal,
     .pinConfig = kFLEXIO_PinConfigOutput,
-    .pinSelect = WS2812B_DIN_PIN,
+    .pinSelect = FLEXIO_DATA_PIN,
     .pinPolarity = kFLEXIO_PinActiveHigh,
     .timerMode = kFLEXIO_TimerModeDual8BitPWM,
   };
-  FLEXIO_SetTimerConfig(FLEXIO0, FIO_1_TIMER, &timer_t1_config);
+  FLEXIO_SetTimerConfig(FLEXIO0, FLEXIO_1_TIMER, &timer_t1_config);
 
   FLEXIO_Enable(FLEXIO0, true);
 
@@ -119,7 +119,7 @@ void init_flexio() {
 void transmit(uint32_t *leds, int n) {
   FLEXIO0->TIMCMP[FIO_CLOCK] = FLEXIO_SHIFT_BITS(24);
   while (n--) {
-    while (!(FLEXIO_GetShifterStatusFlags(FLEXIO0) & (1U << FIO_SHIFTER))) {}
+    while (!(FLEXIO_GetShifterStatusFlags(FLEXIO0) & (1U << FLEXIO_SHIFTER))) {}
     // if this is the last junk of data, shift a single bit more than necessary to drive signal low
     if (!n) FLEXIO0->TIMCMP[FIO_CLOCK] = FLEXIO_SHIFT_BITS(25);
     FLEXIO0->TIMSTAT |= FLEXIO_TIMSTAT_TSF(1U << FIO_CLOCK);

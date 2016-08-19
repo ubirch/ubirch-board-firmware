@@ -24,31 +24,25 @@
 
 #include "cell.h"
 
-#ifndef _UBIRCH1R03K01_BOARD_H_
-#define _UBIRCH1R03K01_BOARD_H_
+#ifndef _UBIRCH1R03_BOARD_H_
+#define _UBIRCH1R03_BOARD_H_
 
 //! @{
 
-#define BOARD_UBIRCH_1R03K01
-#define BOARD                   "ubirch1r03k01"
+#define BOARD_UBIRCH_1R03
+#define BOARD                   "ubirch1r03"
 
 #define BOARD_SYSTICK_1MS       (SystemCoreClock / 1000 - 1)
 #define BOARD_SYSTICK_100MS     (SystemCoreClock / 100 - 1)
 
 // amount of LEDs available on the board
-#define BOARD_LEDS              2
+#define BOARD_LEDS              1
 
 // default on-board LED (PTD4)
 #define BOARD_LED0_PORT         PORTD
 #define BOARD_LED0_GPIO         GPIOD
 #define BOARD_LED0_PORT_CLOCK   kCLOCK_PortD
 #define BOARD_LED0_PIN          4U
-
-#define BOARD_LED1_PORT         PORTA
-#define BOARD_LED1_GPIO         GPIOA
-#define BOARD_LED1_PORT_CLOCK   kCLOCK_PortA
-#define BOARD_LED1_ALT          kPORT_MuxAlt3
-#define BOARD_LED1_PIN          14U
 
 #define BOARD_LED0(on)          GPIO_WritePinOutput(BOARD_LED0_GPIO, BOARD_LED0_PIN, (on))
 
@@ -58,8 +52,7 @@
 #define BOARD_RGBS_PORT_CLOCK   kCLOCK_PortA
 #define BOARD_RGBS_ALT          kPORT_MuxAlt5
 #define BOARD_RGBS_PIN          14U
-#define BOARD_RGBS_FLEXIO_PIN   20
-#define BOARD_RGBS_LEN          2
+#define BOARD_RGBS_LEN          1
 
 // on-board button (PTD0)
 #define BOARD_BUTTON0_PORT      PORTD
@@ -126,4 +119,4 @@
 
 //! @}
 
-#endif // _UBIRCH1R03K01_BOARD_H_
+#endif // _UBIRCH1R03_BOARD_H_

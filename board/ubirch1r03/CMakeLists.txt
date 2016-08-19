@@ -1,5 +1,5 @@
 #!
-# ubirch#1 r0.3k0.1 specific library cmake declarations
+# ubirch#1 r0.3 specific library cmake declarations
 #
 # @author Matthias L. Jugel
 # @date 2016-05-01

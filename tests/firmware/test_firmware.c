@@ -34,6 +34,8 @@ int test_timer();
 
 int test_rtc();
 
+int test_ws2812b();
+
 #if defined(BOARD_FRDM_KL82Z) || defined(BOARD_FRDM_K82F)
 #  define LED BOARD_LED1
 #elif defined(BOARD_UBIRCH_1R02)
@@ -60,6 +62,7 @@ int main(void) {
 
   PRINTF("Testing Board and Firmware: " BOARD "\r\n\r\n");
 
+  TEST("WS2812B", test_ws2812b());
   TEST("I2C", test_i2c());
   TEST("TIMER", test_timer());
   TEST("RTC", test_rtc());

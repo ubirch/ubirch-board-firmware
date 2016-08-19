@@ -29,9 +29,9 @@ target_include_directories(test_board PUBLIC ${FATFS_MIDDLEWARE_INC})
 target_link_libraries(test_board ubirch::${BOARD}::board)
 target_link_libraries(test_board ubirch::${BOARD}::firmware)
 target_link_libraries(test_board KinetisSDK::${MCU}::sdmmc)
-#prepare_flash(TARGET test_board)
+prepare_flash(TARGET test_board)
 #  prepare_flash(TARGET test_board JLINK DEVICE MKL82Z128xxx7)
-  prepare_flash(TARGET test_board JLINK DEVICE MK82FN256xxx15)
+#  prepare_flash(TARGET test_board JLINK DEVICE MK82FN256xxx15)
 
 # copy the config.h.template to config.h in case it is not there; it is ignored by .git!
 if (NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/config.h")

@@ -41,7 +41,7 @@
 #include <utilities/fsl_debug_console.h>
 
 // board specific includes
-#include "ubirch1r03k01.h"
+#include "ubirch1r03.h"
 #include "clock_config.h"
 
 /*!
