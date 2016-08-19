@@ -128,8 +128,8 @@ void transmit(uint32_t *leds, int n) {
   }
 }
 
-void test_rgb_uart(void) {
-  if (!yesno("RGB (UART) test?")) return;
+void test_rgb_flexio(void) {
+  if (!yesno("RGB (FlexIO) test?")) return;
 
   CLOCK_EnableClock(kCLOCK_PortA);
   CLOCK_EnableClock(kCLOCK_PortB);

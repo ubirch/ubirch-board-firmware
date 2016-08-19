@@ -2,22 +2,22 @@
 
 set(SRCS
   test_board_ubirch1r03k01.c
-  test_audio.c
   test_gpio.c
-  test_rgb_dma.c
   test_rgb_flexio.c
   test_touch.c
-  test_i2s.c
   support.c
-  ${FATFS_MIDDLEWARE_SRCS}
-  ffconf.c
   )
 
 if (BOARD MATCHES "ubirch1r03k01")
   set(SRCS ${SRCS}
+    test_rgb_dma.c
+    test_audio.c
     test_pir.c
     test_quectel.c
     test_sdcard.c
+    test_i2s.c
+    ffconf.c
+    ${FATFS_MIDDLEWARE_SRCS}
     )
 endif ()
 
@@ -28,7 +28,9 @@ target_include_directories(test_board PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_include_directories(test_board PUBLIC ${FATFS_MIDDLEWARE_INC})
 target_link_libraries(test_board ubirch::${BOARD}::board)
 target_link_libraries(test_board ubirch::${BOARD}::firmware)
-target_link_libraries(test_board KinetisSDK::${MCU}::sdmmc)
+if (BOARD MATCHES "ubirch1r03k01")
+  target_link_libraries(test_board KinetisSDK::${MCU}::sdmmc)
+endif ()
 prepare_flash(TARGET test_board)
 #  prepare_flash(TARGET test_board JLINK DEVICE MKL82Z128xxx7)
 #  prepare_flash(TARGET test_board JLINK DEVICE MK82FN256xxx15)

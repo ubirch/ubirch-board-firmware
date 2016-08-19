@@ -96,7 +96,7 @@ void test_sdhc(void) {
   SDHC_Init(SDHC, sdhcConfig);
 
   sd.host.base = SDHC;
-  sd.host.sourceClock_Hz = CLOCK_GetFreq(kCLOCK_CoreSysClk);
+  sd.host.sourceClock_Hz = CLOCK_GetFreq(kCLOCK_BusClk);
   sd.host.transfer = sdhc_transfer_function;
 
 

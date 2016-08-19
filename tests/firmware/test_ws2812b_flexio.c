@@ -3,6 +3,10 @@
 #include <stdlib.h>
 #include <fsl_flexio.h>
 
+#ifndef BOARD_RGBS_LEN
+#  define BOARD_RGBS_LEN  1
+#endif
+
 #define RANGE 1000
 
 int test_ws2812b(void) {

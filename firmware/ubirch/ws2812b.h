@@ -57,7 +57,9 @@ ws2812b_config_t ws2812b_config_default = {
   .flexio_t1_timer = WS2812B_FLEXIO_1_TIMER,
   .flexio_shifter_pin = WS2812B_FLEXIO_SHIFTER_PIN,
   .flexio_clk_timer_pin = WS2812B_FLEXIO_CLOCK_PIN,
+#if defined(BOARD_RGBS_FLEXIO_PIN)
   .flexio_data_pin = BOARD_RGBS_FLEXIO_PIN,
+#endif
 };
 
 /*!

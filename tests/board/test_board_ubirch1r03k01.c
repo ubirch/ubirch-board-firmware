@@ -75,11 +75,13 @@ int main(void) {
   if(enable_test_quectel) test_quectel();
   if(enable_test_gpio) test_gpio();
   if(enable_test_rgb_dma) test_rgb_dma();
-  if(enable_test_rgb_uart) test_rgb_uart();
+  if(enable_test_rgb_flexio) test_rgb_flexio();
   if(enable_test_touch) test_touch();
+#if defined(BOARD_UBIRCH_1R03K01)
   if(enable_test_pir) test_pir();
   if(enable_test_sdcard) test_sdhc();
   if(enable_test_i2s) test_i2s();
+#endif
   PRINTF("DONE\r\n");
 
   while (true) {

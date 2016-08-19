@@ -82,7 +82,7 @@ void test_audio(void) {
   GPIO_WritePinOutput(GPIOC, 12, true);
   GPIO_WritePinOutput(GPIOC, 13, true);
 
-  i2c_init(i2c_config_default);
+  i2c_init(&i2c_config_default);
 
   uint8_t cmd[1] = {0b00001111};
   send_cmd(cmd, sizeof(cmd));
