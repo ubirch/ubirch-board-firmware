@@ -92,11 +92,14 @@ static inline void board_init() {
   // installs a bootloader hook
   board_install_bootloader_hook();
 
-  // enable NMI handler, use it to call the bootloader
+  // ensure the LEDS stay off
+  CLOCK_EnableClock(BOARD_RGBS_PORT_CLOCK);
+  PORT_SetPinMux(BOARD_RGBS_PORT, BOARD_RGBS_PIN, BOARD_RGBS_ALT);
+  GPIO_PinInit(BOARD_RGBS_GPIO, BOARD_RGBS_PIN, &OUTFALSE);
+
+    // enable NMI handler, use it to call the bootloader
   SCB->SHCSR = SCB_ICSR_NMIPENDSET_Msk;
 }
-
-void board_rgb_led(int n, short r, short g, short b);
 
 /*!
  * @brief Disable NMI for this board (PTA4) and make it work as a normal input pin.
