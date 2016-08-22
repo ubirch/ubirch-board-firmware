@@ -2,18 +2,19 @@
 #include <fsl_sdhc.h>
 #include <fsl_debug_console.h>
 #include <fsl_port.h>
-#include <diskio.h>
 #include <fsl_gpio.h>
 #include <ubirch/timer.h>
 #include <fsl_card.h>
+#include <fsl_mpu.h>
+#include <diskio.h>
 #include "sdhc_config.h"
 
-FATFS g_fileSystem;
-FIL g_fileObject;
-
 #define BUFFER_SIZE 255
-char g_bufferWrite[BUFFER_SIZE];
-char g_bufferRead[BUFFER_SIZE];
+static FATFS g_fileSystem; /* File system object */
+static FIL g_fileObject;   /* File object */
+
+static uint8_t g_bufferWrite[BUFFER_SIZE]; /* Write buffer */
+static uint8_t g_bufferRead[BUFFER_SIZE];  /* Read buffer */
 
 void init_sdhc_pins() {
   port_pin_config_t config = {0};
@@ -49,79 +50,123 @@ status_t sdhc_transfer_function(SDHC_Type *base, sdhc_transfer_t *content) {
 
 void status_messages(status_t s) {
   switch (s) {
-    case kStatus_SDMMC_NotSupportYet: { PRINTF("Haven't supported\r\n"); break; }
-    case kStatus_SDMMC_TransferFailed: { PRINTF("Send command failed\r\n"); break; }
-    case kStatus_SDMMC_SetCardBlockSizeFailed: { PRINTF("Set block size failed\r\n"); break; }
-    case kStatus_SDMMC_HostNotSupport: { PRINTF("Host doesn't support\r\n"); break; }
-    case kStatus_SDMMC_CardNotSupport: { PRINTF("Card doesn't support\r\n"); break; }
-    case kStatus_SDMMC_AllSendCidFailed: { PRINTF("Send CID failed\r\n"); break; }
-    case kStatus_SDMMC_SendRelativeAddressFailed: { PRINTF("Send relative address failed\r\n"); break; }
-    case kStatus_SDMMC_SendCsdFailed: { PRINTF("Send CSD failed\r\n"); break; }
-    case kStatus_SDMMC_SelectCardFailed: { PRINTF("Select card failed\r\n"); break; }
-    case kStatus_SDMMC_SendScrFailed: { PRINTF("Send SCR failed\r\n"); break; }
-    case kStatus_SDMMC_SetDataBusWidthFailed: { PRINTF("Set bus width failed\r\n"); break; }
-    case kStatus_SDMMC_GoIdleFailed: { PRINTF("Go idle failed\r\n"); break; }
-    case kStatus_SDMMC_HandShakeOperationConditionFailed: { PRINTF("Send Operation Condition failed\r\n"); break; }
-    case kStatus_SDMMC_SendApplicationCommandFailed: { PRINTF("Send application command failed\r\n"); break; }
-    case kStatus_SDMMC_SwitchFailed: { PRINTF("Switch command failed\r\n"); break; }
-    case kStatus_SDMMC_StopTransmissionFailed: { PRINTF("Stop transmission failed\r\n"); break; }
-    case kStatus_SDMMC_WaitWriteCompleteFailed: { PRINTF("Wait write complete failed\r\n"); break; }
-    case kStatus_SDMMC_SetBlockCountFailed: { PRINTF("Set block count failed\r\n"); break; }
-    case kStatus_SDMMC_SetRelativeAddressFailed: { PRINTF("Set relative address failed\r\n"); break; }
-    case kStatus_SDMMC_SwitchHighSpeedFailed: { PRINTF("Switch high speed failed\r\n"); break; }
-    case kStatus_SDMMC_SendExtendedCsdFailed: { PRINTF("Send EXT_CSD failed\r\n"); break; }
-    case kStatus_SDMMC_ConfigureBootFailed: { PRINTF("Configure boot failed\r\n"); break; }
-    case kStatus_SDMMC_ConfigureExtendedCsdFailed: { PRINTF("Configure EXT_CSD failed\r\n"); break; }
-    case kStatus_SDMMC_EnableHighCapacityEraseFailed: { PRINTF("Enable high capacity erase failed\r\n"); break; }
-    case kStatus_SDMMC_SendTestPatternFailed: { PRINTF("Send test pattern failed\r\n"); break; }
-    case kStatus_SDMMC_ReceiveTestPatternFailed: { PRINTF("Receive test pattern failed\r\n"); break; }
-    case kStatus_Success: { PRINTF("OK"); break; }
-    default: { PRINTF("??? 0x%x\r\n", s); break; }
+    case kStatus_SDMMC_NotSupportYet: {
+      PRINTF("Haven't supported\r\n");
+      break;
+    }
+    case kStatus_SDMMC_TransferFailed: {
+      PRINTF("Send command failed\r\n");
+      break;
+    }
+    case kStatus_SDMMC_SetCardBlockSizeFailed: {
+      PRINTF("Set block size failed\r\n");
+      break;
+    }
+    case kStatus_SDMMC_HostNotSupport: {
+      PRINTF("Host doesn't support\r\n");
+      break;
+    }
+    case kStatus_SDMMC_CardNotSupport: {
+      PRINTF("Card doesn't support\r\n");
+      break;
+    }
+    case kStatus_SDMMC_AllSendCidFailed: {
+      PRINTF("Send CID failed\r\n");
+      break;
+    }
+    case kStatus_SDMMC_SendRelativeAddressFailed: {
+      PRINTF("Send relative address failed\r\n");
+      break;
+    }
+    case kStatus_SDMMC_SendCsdFailed: {
+      PRINTF("Send CSD failed\r\n");
+      break;
+    }
+    case kStatus_SDMMC_SelectCardFailed: {
+      PRINTF("Select card failed\r\n");
+      break;
+    }
+    case kStatus_SDMMC_SendScrFailed: {
+      PRINTF("Send SCR failed\r\n");
+      break;
+    }
+    case kStatus_SDMMC_SetDataBusWidthFailed: {
+      PRINTF("Set bus width failed\r\n");
+      break;
+    }
+    case kStatus_SDMMC_GoIdleFailed: {
+      PRINTF("Go idle failed\r\n");
+      break;
+    }
+    case kStatus_SDMMC_HandShakeOperationConditionFailed: {
+      PRINTF("Send Operation Condition failed\r\n");
+      break;
+    }
+    case kStatus_SDMMC_SendApplicationCommandFailed: {
+      PRINTF("Send application command failed\r\n");
+      break;
+    }
+    case kStatus_SDMMC_SwitchFailed: {
+      PRINTF("Switch command failed\r\n");
+      break;
+    }
+    case kStatus_SDMMC_StopTransmissionFailed: {
+      PRINTF("Stop transmission failed\r\n");
+      break;
+    }
+    case kStatus_SDMMC_WaitWriteCompleteFailed: {
+      PRINTF("Wait write complete failed\r\n");
+      break;
+    }
+    case kStatus_SDMMC_SetBlockCountFailed: {
+      PRINTF("Set block count failed\r\n");
+      break;
+    }
+    case kStatus_SDMMC_SetRelativeAddressFailed: {
+      PRINTF("Set relative address failed\r\n");
+      break;
+    }
+    case kStatus_SDMMC_SwitchHighSpeedFailed: {
+      PRINTF("Switch high speed failed\r\n");
+      break;
+    }
+    case kStatus_SDMMC_SendExtendedCsdFailed: {
+      PRINTF("Send EXT_CSD failed\r\n");
+      break;
+    }
+    case kStatus_SDMMC_ConfigureBootFailed: {
+      PRINTF("Configure boot failed\r\n");
+      break;
+    }
+    case kStatus_SDMMC_ConfigureExtendedCsdFailed: {
+      PRINTF("Configure EXT_CSD failed\r\n");
+      break;
+    }
+    case kStatus_SDMMC_EnableHighCapacityEraseFailed: {
+      PRINTF("Enable high capacity erase failed\r\n");
+      break;
+    }
+    case kStatus_SDMMC_SendTestPatternFailed: {
+      PRINTF("Send test pattern failed\r\n");
+      break;
+    }
+    case kStatus_SDMMC_ReceiveTestPatternFailed: {
+      PRINTF("Receive test pattern failed\r\n");
+      break;
+    }
+    case kStatus_Success: {
+      PRINTF("OK");
+      break;
+    }
+    default: {
+      PRINTF("??? 0x%x\r\n", s);
+      break;
+    }
   }
 
 }
 
-void test_sdhc(void) {
-  init_sdhc_pins();
-
-  sd_card_t sd;
-  sdhc_config_t *sdhcConfig = &(sd.host.config);
-
-  /* Initializes the SDHC. */
-  sdhcConfig->cardDetectDat3 = false;
-  sdhcConfig->endianMode = kSDHC_EndianModeLittle;
-  sdhcConfig->dmaMode = kSDHC_DmaModeAdma2;
-  sdhcConfig->readWatermarkLevel = 0x80U;
-  sdhcConfig->writeWatermarkLevel = 0x80U;
-  SDHC_Init(SDHC, sdhcConfig);
-
-  sd.host.base = SDHC;
-  sd.host.sourceClock_Hz = CLOCK_GetFreq(kCLOCK_BusClk);
-  sd.host.transfer = sdhc_transfer_function;
-
-
-  status_messages(SD_Init(&sd));
-
-  uint8_t buffer[512];
-  memset(buffer, 0b10101010, sizeof(buffer));
-
-  PRINTF("\r\nRead/Write/Erase the card\r\n");
-  status_messages(SD_WriteBlocks(&sd, buffer, 0, 1));
-  memset(buffer, 0, sizeof(buffer));
-  status_messages(SD_ReadBlocks(&sd, buffer, 0, 1));
-//  for(int i = 0; i < 512; i++) {
-//    if(buffer[i] != 0b10101010) PRINTF("%d: data error [%08b]", i, buffer[i]);
-//  }
-  status_messages(SD_EraseBlocks(&sd, 0, 1));
-  status_messages(SD_ReadBlocks(&sd, buffer, 0, 1));
-//  memset(buffer, 0xff, sizeof(buffer));
-//  for(int i = 0; i < 512; i++) {
-//    if(buffer[i] != 0) PRINTF("%d: data error [%08b]", i, buffer[i]);
-//  }
-  SD_Deinit(&sd);
-}
-
-void test_sdcard(void) {
+int test_sdhc(void) {
   init_sdhc_pins();
 
   FRESULT error;
@@ -133,12 +178,14 @@ void test_sdcard(void) {
   bool failedFlag = false;
   char ch = '0';
 
+  MPU_Enable(MPU, false);
 
   PRINTF("\r\nFATFS example to demonstrate how to use FATFS with SD card.\r\n");
 
   PRINTF("\r\nPlease insert a card into board.\r\n");
 /* Wait the card to be inserted. */
-  while (!GPIO_ReadPinInput(GPIOE, 7U)) {
+  while (!(GPIO_ReadPinInput(GPIOE, 7U)))
+  {
   }
   PRINTF("Detected SD card inserted.\r\n");
   /* Delat some time to make card stable. */
@@ -146,24 +193,24 @@ void test_sdcard(void) {
 
   if (f_mount(&g_fileSystem, driverNumberBuffer, 0U)) {
     PRINTF("Mount volume failed.\r\n");
-    return;
+    return -1;
   }
 
 #if (_FS_RPATH >= 2U)
   error = f_chdrive((char const *) &driverNumberBuffer[0U]);
   if (error) {
     PRINTF("Change drive failed.\r\n");
-    return;
+    return -1;
   }
 #endif
 
 #if _USE_MKFS
     PRINTF("\r\nMake file system......The time may be long if the card capacity is big.\r\n");
-    if (f_mkfs(driverNumberBuffer, 1U, 0U))
-    {
+  if (f_mkfs(driverNumberBuffer, 1U, 0U))
+  {
       PRINTF("Make file system failed.\r\n");
-      return;
-    }
+      return -1;
+  }
 #endif /* _USE_MKFS */
 
   PRINTF("\r\nCreate directory......\r\n");
@@ -171,10 +218,9 @@ void test_sdcard(void) {
   if (error) {
     if (error == FR_EXIST) {
       PRINTF("Directory exists.\r\n");
-    }
-    else {
+    } else {
       PRINTF("Make directory failed.\r\n");
-      return;
+      return -1;
     }
   }
 
@@ -183,10 +229,9 @@ void test_sdcard(void) {
   if (error) {
     if (error == FR_EXIST) {
       PRINTF("File exists.\r\n");
-    }
-    else {
+    } else {
       PRINTF("Open file failed.\r\n");
-      return;
+      return -1;
     }
   }
 
@@ -195,17 +240,16 @@ void test_sdcard(void) {
   if (error) {
     if (error == FR_EXIST) {
       PRINTF("Directory exists.\r\n");
-    }
-    else {
+    } else {
       PRINTF("Directory creation failed.\r\n");
-      return;
+      return -1;
     }
   }
 
   PRINTF("\r\nList the file in that directory......\r\n");
   if (f_opendir(&directory, "/dir_1")) {
     PRINTF("Open directory failed.\r\n");
-    return;
+    return -1;
   }
 
   for (;;) {
@@ -220,8 +264,7 @@ void test_sdcard(void) {
     }
     if (fileInformation.fattrib & AM_DIR) {
       PRINTF("Directory file : %s.\r\n", fileInformation.fname);
-    }
-    else {
+    } else {
       PRINTF("General file : %s.\r\n", fileInformation.fname);
     }
   }
@@ -276,10 +319,9 @@ void test_sdcard(void) {
 
   if (f_close(&g_fileObject)) {
     PRINTF("\r\nClose file failed.\r\n");
-    return;
+    return -1;
   }
 
   while (true) {
   }
-
 }

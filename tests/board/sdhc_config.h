@@ -34,10 +34,12 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include "fsl_sdhc.h"
-#include "board.h"
+#include <board.h>
 
-#define BOARD_SDHC_BASEADDR SDHC
-#define BOARD_SDHC_CLKSRC   kCLOCK_BusClk
+/* SDHC base address, clock and card detection pin */
+#define BOARD_SDHC_BASEADDR     SDHC
+#define BOARD_SDHC_CLKSRC       kCLOCK_CoreSysClk
+#define BOARD_SDHC_IRQ          SDHC_IRQn
 
 /*!
  * @addtogroup SDHC Configure
@@ -49,7 +51,6 @@
  ******************************************************************************/
 /* Card detection way is GPIO not other ways. */
 #define SDHC_CARD_DETECT_USING_GPIO
-#define BOARD_SDHC_CD_LOGIC_RISING
 
 /* Endian mode. */
 #define SDHC_ENDIAN_MODE kSDHC_EndianModeLittle

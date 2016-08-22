@@ -2,7 +2,7 @@
 
 This is the ubirch#1 board revision 0.3 (special version k0.1, Kokeshi).
 This board contains almost the same components as the r0.2 with a different cell-chip (Quectel M66)
-and no extra ECC chip. Additionally components, such as extra LEDs, a PIR and audio hardware.
+and no extra ECC chip. Additionally components, such as extra LEDs, a PIR, SDHC slot, and audio hardware.
 
 * programmable via USB or JTAG (SWD, JLink Debug Probe)
 * serial debug console is configured on PTB16 (RX) and PTB17 (TX)
@@ -28,14 +28,14 @@ These commands, erase flash, write the binary and reset the board.
 
 ## Connectors
 
-Debug console output can be found on pins 6 (RX) and 7 (TX). If the SIM800H chip is on the bottom right
-corner of the board, the pins are as follows:
+Debug console output can be found on pins 6 (RX) and 7 (TX). If the USB port is at the bottom,
+then pin 1 is in the top right corner of the board
 
 ```
-2  4  6  8  10 12 14 16 18 20 22 24 26
+25 23 21 19 17 15 13 11 9  5  3  3  1
+o  o  o  o  o  o  o  o  o  o  o  o  ⚀
 o  o  o  o  o  o  o  o  o  o  o  o  o
-⚀  o  o  o  o  o  o  o  o  o  o  o  o
-1  3  5  7  9  11 13 15 17 19 21 23 25
+26 24 22 20 18 16 14 12 10 8  6  4  2
 ```
 
 The pin configuration is as follows:
@@ -55,3 +55,5 @@ The pin configuration is as follows:
 23 = SPI0_MISO  PTC7   | 24 = permanent   VDD
 25 = GND               | 26 = switchable  VDD
 ```
+
+![ubirch#1 r0.3k0.1](ubirch1r03k01.png)

@@ -3,8 +3,6 @@
 #include <fsl_gpio.h>
 #include <fsl_debug_console.h>
 #include <fsl_sai.h>
-#include <fsl_sai_edma.h>
-#include <ubirch/timer.h>
 
 bool isFinished = false;
 uint32_t temp[3 * 2048];
