@@ -183,9 +183,9 @@ int test_sdhc(void) {
   PRINTF("\r\nFATFS example to demonstrate how to use FATFS with SD card.\r\n");
 
   PRINTF("\r\nPlease insert a card into board.\r\n");
-/* Wait the card to be inserted. */
-  while (!(GPIO_ReadPinInput(GPIOE, 7U)))
-  {
+
+  /* Wait the card to be inserted. */
+  while (!(GPIO_ReadPinInput(GPIOE, 7U))) {
   }
   PRINTF("Detected SD card inserted.\r\n");
   /* Delat some time to make card stable. */
@@ -205,13 +205,37 @@ int test_sdhc(void) {
 #endif
 
 #if _USE_MKFS
-    PRINTF("\r\nMake file system......The time may be long if the card capacity is big.\r\n");
-  if (f_mkfs(driverNumberBuffer, 1U, 0U))
-  {
-      PRINTF("Make file system failed.\r\n");
-      return -1;
-  }
+  PRINTF("\r\nMake file system......The time may be long if the card capacity is big.\r\n");
+if (f_mkfs(driverNumberBuffer, 1U, 0U))
+{
+    PRINTF("Make file system failed.\r\n");
+    return -1;
+}
 #endif /* _USE_MKFS */
+
+  FIL testFileObject;
+  PRINTF("\r\nRead from static test file\r\n");
+  error = f_open(&testFileObject, _T("/test.txt"), FA_READ);
+  if (error) {
+    PRINTF("Open file failed.\r\n");
+    return -1;
+  }
+
+  memset(g_bufferRead, 0U, sizeof(g_bufferRead));
+  error = f_read(&testFileObject, g_bufferRead, sizeof(g_bufferRead), &bytesRead);
+  if (error) {
+    PRINTF("Read file failed. \r\n");
+  }
+  PRINTF("bytes read: %d\r\n", bytesRead);
+  PRINTF("----\r\n");
+  PRINTF("%s", g_bufferRead);
+  PRINTF("----\r\n");
+
+
+  if (f_close(&testFileObject)) {
+    PRINTF("\r\nClose file failed.\r\n");
+    return -1;
+  }
 
   PRINTF("\r\nCreate directory......\r\n");
   error = f_mkdir(_T("/dir_1"));
@@ -273,55 +297,45 @@ int test_sdhc(void) {
   g_bufferWrite[BUFFER_SIZE - 2U] = '\r';
   g_bufferWrite[BUFFER_SIZE - 1U] = '\n';
 
-  PRINTF("\r\nWrite/read file until encounters error......\r\n");
-  while (true) {
-    if (failedFlag || (ch == 'q')) {
-      break;
-    }
+  PRINTF("\r\nWrite/read file ...\r\n");
 
-    PRINTF("\r\nWrite to above created file.\r\n");
-    error = f_write(&g_fileObject, g_bufferWrite, sizeof(g_bufferWrite), &bytesWritten);
-    if ((error) || (bytesWritten != sizeof(g_bufferWrite))) {
-      PRINTF("Write file failed. \r\n");
-      failedFlag = true;
-      continue;
-    }
-
-    /* Move the file pointer */
-    if (f_lseek(&g_fileObject, 0U)) {
-      PRINTF("Set file pointer position failed. \r\n");
-      failedFlag = true;
-      continue;
-    }
-
-    PRINTF("Read from above created file.\r\n");
-    memset(g_bufferRead, 0U, sizeof(g_bufferRead));
-    error = f_read(&g_fileObject, g_bufferRead, sizeof(g_bufferRead), &bytesRead);
-    if ((error) || (bytesRead != sizeof(g_bufferRead))) {
-      PRINTF("Read file failed. \r\n");
-      failedFlag = true;
-      continue;
-    }
-
-    PRINTF("Compare the read/write content......\r\n");
-    if (memcmp(g_bufferWrite, g_bufferRead, sizeof(g_bufferWrite))) {
-      PRINTF("Compare read/write content isn't consistent.\r\n");
-      failedFlag = true;
-      continue;
-    }
-    PRINTF("The read/write content is consistent.\r\n");
-
-    PRINTF("\r\nInput 'q' to quit read/write.\r\nInput other char to read/write file again.\r\n");
-    ch = GETCHAR();
-    PUTCHAR(ch);
+  PRINTF("\r\nWrite to above created file.\r\n");
+  error = f_write(&g_fileObject, g_bufferWrite, sizeof(g_bufferWrite), &bytesWritten);
+  if ((error) || (bytesWritten != sizeof(g_bufferWrite))) {
+    PRINTF("Write file failed. \r\n");
+    failedFlag = true;
+    return -1;
   }
+
+  /* Move the file pointer */
+  if (f_lseek(&g_fileObject, 0U)) {
+    PRINTF("Set file pointer position failed. \r\n");
+    failedFlag = true;
+    return -1;
+  }
+
+  PRINTF("Read from above created file.\r\n");
+  memset(g_bufferRead, 0U, sizeof(g_bufferRead));
+  error = f_read(&g_fileObject, g_bufferRead, sizeof(g_bufferRead), &bytesRead);
+  if ((error) || (bytesRead != sizeof(g_bufferRead))) {
+    PRINTF("Read file failed. \r\n");
+    failedFlag = true;
+    return -1;
+  }
+
+  PRINTF("Compare the read/write content......\r\n");
+  if (memcmp(g_bufferWrite, g_bufferRead, sizeof(g_bufferWrite))) {
+    PRINTF("Compare read/write content isn't consistent.\r\n");
+    failedFlag = true;
+    return -1;
+  }
+  PRINTF("The read/write content is consistent.\r\n");
+
+
   PRINTF("\r\nThe example will not read/write file again.\r\n");
 
   if (f_close(&g_fileObject)) {
     PRINTF("\r\nClose file failed.\r\n");
     return -1;
-  }
-
-  while (true) {
   }
 }

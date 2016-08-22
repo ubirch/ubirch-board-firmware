@@ -36,8 +36,8 @@ enum {
     enable_test_rgb_dma = false,
     enable_test_rgb_flexio = false,
     enable_test_touch = false,
-    enable_test_sdcard = false,
-    enable_test_i2s = true,
+    enable_test_sdcard = true,
+    enable_test_i2s = false,
 };
 
 #include <stdbool.h>
