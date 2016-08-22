@@ -5,7 +5,8 @@ This board contains almost the same components as the r0.2 with a different cell
 ([Quectel M66](http://www.quectel.com/product/prodetail.aspx?id=73)) and no extra ECC chip. This board is minimal with 
 an extra environment sensor. A speciality of this board is the SO-DIMM header on one side. An extra adapter is
 required to access the SWD port and other ports that were available as pin headers bevore. This board
-has an SDHC slot.
+has an SDHC slot and features a sub-1GHz RF module.
+
 
 * programmable via USB or JTAG (SWD, JLink Debug Probe)
 * serial debug console is configured on PTB16 (RX) and PTB17 (TX)

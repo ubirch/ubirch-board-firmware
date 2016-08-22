@@ -3,6 +3,7 @@
 This is the ubirch#1 board revision 0.3 (special version k0.1, Kokeshi).
 This board contains almost the same components as the r0.2 with a different cell-chip (Quectel M66)
 and no extra ECC chip. Additionally components, such as extra LEDs, a PIR, SDHC slot, and audio hardware.
+This board also features a sub-1GHz RF module.
 
 * programmable via USB or JTAG (SWD, JLink Debug Probe)
 * serial debug console is configured on PTB16 (RX) and PTB17 (TX)
@@ -56,4 +57,4 @@ The pin configuration is as follows:
 25 = GND               | 26 = switchable  VDD
 ```
 
-![ubirch#1 r0.3k0.1](ubirch1r03k01.png)
+![ubirch#1 r0.3k0.1](ubirch1r03k01.jpg)
