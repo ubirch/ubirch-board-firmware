@@ -99,6 +99,25 @@
 #define BOARD_RTC_CLOCK         RTC_CR_OSCE_MASK
 #define BOARD_RTC_IRQ           RTC_IRQn
 
+// board sdhc slot (SDHC0)
+#define BOARD_SDHC              SDHC
+#define BOARD_SDHC_CLOCK        kCLOCK_CoreSysClk
+#define BOARD_SDHC_IRQ          SDHC_IRQn
+#define BOARD_SDHC_PORT         PORTE
+#define BOARD_SDHC_PORT_CLOCK   kCLOCK_PortE
+#define BOARD_SDHC_ALT          kPORT_MuxAlt4
+#define BOARD_SDHC_PIN_D0       1U
+#define BOARD_SDHC_PIN_D1       0U
+#define BOARD_SDHC_PIN_D2       5U
+#define BOARD_SDHC_PIN_D3       4U
+#define BOARD_SDHC_PIN_DCLK     2U
+#define BOARD_SDHC_PIN_CMD      3U
+#define BOARD_SDHC_DET_PORT     PORTE
+#define BOARD_SDHC_DET_GPIO     GPIOE
+#define BOARD_SDHC_DET_CLOCK    kCLOCK_PortE
+#define BOARD_SDHC_DET_PIN      7U
+#define BOARD_SDHC_DET_HANDLER  PORTE_IRQHandler
+
 // on-board Qi charger socket
 #define BOARD_QI_CHG_PORT       PORTA
 #define BOARD_QI_CHG_GPIO       GPIOA

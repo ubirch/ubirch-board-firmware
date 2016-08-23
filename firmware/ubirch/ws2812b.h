@@ -30,8 +30,6 @@
 #include <board.h>
 #include "ws2812b.h"
 
-#define WS2812B_FLEXIO_SRC_CLOCK    kCLOCK_CoreSysClk //!< default flexio src clock
-
 #define WS2812B_FLEXIO_SHIFTER      0
 #define WS2812B_FLEXIO_CLOCK_TIMER  0
 #define WS2812B_FLEXIO_0_TIMER      1
@@ -39,6 +37,10 @@
 
 #define WS2812B_FLEXIO_SHIFTER_PIN  2
 #define WS2812B_FLEXIO_CLOCK_PIN    3
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 typedef struct {
     uint8_t flexio_shifter;
@@ -108,5 +110,9 @@ void ws2812b_init(ws2812b_config_t *config);
  * @param num_leds the number of LEDs that need to be driven
  */
 void ws2812b_send(uint32_t *data, unsigned int num_leds);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif // _UBIRCH_WS2812B_H_
