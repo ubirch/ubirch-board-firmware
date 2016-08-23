@@ -1,7 +1,7 @@
 #include <board.h>
 
 // we only need this if there is an SDHC port on the chip
-#if defined(FSL_FEATURE_SOC_SDHC_COUNT) && FSL_FEATURE_SOC_SDHC_COUNT > 0
+#if defined(BOARD_SDHC)
 
 #include <ubirch/timer.h>
 #include <ubirch/sdhc.h>
