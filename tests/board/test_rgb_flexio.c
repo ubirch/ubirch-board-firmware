@@ -19,6 +19,8 @@
 #define FLEXIO_CLOCK_PIN   3
 #define FLEXIO_DATA_PIN 20
 
+#define LEDS 8
+
 // calculate count from nanoseconds
 // (!) can't use USEC_TO_COUNT with floats as the the value is cast to uint64_t)
 #define NSEC_TO_COUNT(ns, frq)  (USEC_TO_COUNT(ns, (frq))/1000U)
@@ -142,46 +144,47 @@ void test_rgb_flexio(void) {
   init_flexio();
 
   // colors off
-  uint32_t colors[2] = {0, 0};
-  transmit(colors, 2);
+  uint32_t colors[LEDS] = {0, 0, 0, 0, 0, 0, 0, 0};
+  transmit(colors, LEDS);
+  delay(10);
 
-  // swap blue and green (left/right)
-  colors[0] = 0x550000;
-  colors[1] = 0x000055;
-  transmit(colors, 2);
-  for (int i = 0; i < 5; i++) {
-    delay(500);
-    uint32_t tmp = colors[0];
-    colors[0] = colors[1];
-    colors[1] = tmp;
-    transmit(colors, 2);
+
+  transmit(colors, LEDS);
+  for(int k = 0; k < 10; k++) {
+    for (int i = 0; i < LEDS; i++) {
+      memset(colors, 0, sizeof(colors));
+      colors[i] = 0x005500;
+      transmit(colors, LEDS);
+      delay(40);
+    }
+    for (int i = LEDS - 1; i >= 0; i--) {
+      memset(colors, 0, sizeof(colors));
+      colors[i] = 0x005500;
+      transmit(colors, LEDS);
+      delay(40);
+    }
+    delay(1);
   }
-
   delay(1000);
 
   // do some rainbow coloring...
   int phase = 0;
-  int length = 1024;
+  int length = 8;
   int center = 128, width = 127;
   float frequency = PI * 2 / length;
 
   while (true) {
     for (int i = 0; i < length; ++i) {
-      uint8_t r0 = (uint8_t) (sin(frequency * i + 0 + phase) * width + center);
-      uint8_t g0 = (uint8_t) (sin(frequency * i + 2 + phase) * width + center);
-      uint8_t b0 = (uint8_t) (sin(frequency * i + 4 + phase) * width + center);
-      // double frequency (second LED)
-      uint8_t r1 = (uint8_t) (sin(frequency * 2 * i + 0 + phase) * width + center);
-      uint8_t g1 = (uint8_t) (sin(frequency * 2 * i + 2 * phase) * width + center);
-      uint8_t b1 = (uint8_t) (sin(frequency * 2 * i + 4 * phase) * width + center);
+      for(int l = 0; l < 8; l++) {
+        uint8_t r = (uint8_t) (sin(frequency * (i+l) + 0 + phase) * width + center);
+        uint8_t g = (uint8_t) (sin(frequency * (i+l) + 2 + phase) * width + center);
+        uint8_t b = (uint8_t) (sin(frequency * (i+l) + 4 + phase) * width + center);
+        colors[l] = g << 16 | r << 8 | b;
+      }
 
+      transmit(colors, 8);
 
-      colors[0] = g0 << 16 | r0 << 8 | b0;
-      colors[1] = g1 << 16 | r1 << 8 | b1;
-
-      transmit(colors, 2);
-
-      delay(20);
+      delay(100);
     }
   }
 }

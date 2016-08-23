@@ -55,7 +55,6 @@ void test_quectel(void);
 void test_gpio(void);
 void test_pir(void);
 void test_touch(void);
-void test_sdcard(void);
 void test_sdhc(void);
 void test_i2s(void);
 
