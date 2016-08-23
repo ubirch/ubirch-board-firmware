@@ -28,10 +28,11 @@
 #ifndef _UBIRCH_CELL_BOARD_H_
 #define _UBIRCH_CELL_BOARD_H_
 
+
+
 // cell phone chip config
-#define BOARD_CELL_PORT             PORTD                      //!< cell modem port used
-#define BOARD_CELL_GPIO             GPIOD                      //!< gpio port for (ri, status etc)
-#define BOARD_CELL_PORT_CLOCK       kCLOCK_PortD               //!< port clock
+#define BOARD_CELL_UART_PORT        PORTD                      //!< cell modem port used
+#define BOARD_CELL_UART_PORT_CLOCK  kCLOCK_PortD               //!< port clock
 #define BOARD_CELL_PORT_CLOCK_FREQ  (CLOCK_GetOsc0ErClkFreq()) //!< port clock frequency
 #define BOARD_CELL_UART_TX_PIN      3U                         //!< TX pin number
 #define BOARD_CELL_UART_TX_ALT      kPORT_MuxAlt3              //!< TX pin mux
@@ -40,11 +41,16 @@
 #define BOARD_CELL_UART             LPUART2                    //!< uart the cell modem is connected to
 #define BOARD_CELL_UART_IRQ         LPUART2_IRQn               //!< uart irq
 #define BOARD_CELL_UART_IRQ_HANDLER LPUART2_IRQHandler         //!< uart irq handler
+
+#define BOARD_CELL_PIN_PORT         PORTD
+#define BOARD_CELL_PIN_PORT_CLOCK   kCLOCK_PortD
+#define BOARD_CELL_PIN_GPIO         GPIOD
 #define BOARD_CELL_STATUS_PIN       4U                         //!< status pin number
 #define BOARD_CELL_RESET_PIN        1U                         //!< reset pin number
 #define BOARD_CELL_PWRKEY_PIN       0U                         //!< pwrkey pin number
-//#define BOARD_CELL_RI_PIN           9U                       //!< ri (ring indicator) pin number
 
+
+// set uart speed if not defined elsewhere
 #ifndef BOARD_CELL_UART_BAUD
 # define BOARD_CELL_UART_BAUD       57600  //!< cell modem uart speed if not set elsewhere
 #endif

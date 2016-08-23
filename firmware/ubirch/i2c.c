@@ -25,9 +25,9 @@
 #include <utilities/fsl_debug_console.h>
 #include "i2c.h"
 
-static i2c_config_t _config;
+static i2c_config_t *_config;
 
-void i2c_init(i2c_config_t config) {
+void i2c_init(i2c_config_t *config) {
   _config = config;
 
   port_pin_config_t pinConfig;
@@ -38,22 +38,22 @@ void i2c_init(i2c_config_t config) {
   pinConfig.passiveFilterEnable = kPORT_PassiveFilterDisable;
   pinConfig.openDrainEnable = kPORT_OpenDrainEnable;
   pinConfig.driveStrength = kPORT_LowDriveStrength;
-  pinConfig.mux = _config.mux;
+  pinConfig.mux = _config->mux;
 
-  CLOCK_EnableClock(_config.port_clock);
-  PORT_SetPinConfig(_config.port, _config.SCL, &pinConfig);
-  PORT_SetPinConfig(_config.port, _config.SDA, &pinConfig);
+  CLOCK_EnableClock(_config->port_clock);
+  PORT_SetPinConfig(_config->port, _config->SCL, &pinConfig);
+  PORT_SetPinConfig(_config->port, _config->SDA, &pinConfig);
 
   // configure I2C
   i2c_master_config_t i2c_config;
   I2C_MasterGetDefaultConfig(&i2c_config);
-  i2c_config.baudRate_Bps = config.baud;
-  I2C_MasterInit(_config.i2c, &i2c_config, CLOCK_GetFreq(_config.i2c_clock));
+  i2c_config.baudRate_Bps = config->baud;
+  I2C_MasterInit(_config->i2c, &i2c_config, CLOCK_GetFreq(_config->i2c_clock));
 }
 
 void i2c_deinit() {
-  I2C_MasterDeinit(_config.i2c);
-  CLOCK_DisableClock(_config.port_clock);
+  I2C_MasterDeinit(_config->i2c);
+  CLOCK_DisableClock(_config->port_clock);
 }
 
 status_t i2c_ping(uint8_t address) {
@@ -63,8 +63,8 @@ status_t i2c_ping(uint8_t address) {
   transfer.slaveAddress = address;
   transfer.direction = kI2C_Write;
   transfer.flags = kI2C_TransferDefaultFlag;
-  status_t status = I2C_MasterTransferBlocking(_config.i2c, &transfer);
-  I2C_MasterStop(_config.i2c);
+  status_t status = I2C_MasterTransferBlocking(_config->i2c, &transfer);
+  I2C_MasterStop(_config->i2c);
   return status;
 }
 
@@ -80,7 +80,7 @@ status_t i2c_write(uint8_t address, uint8_t reg, uint8_t *data, size_t size) {
   transfer.dataSize = size;
   transfer.flags = kI2C_TransferDefaultFlag;
 
-  status_t status = I2C_MasterTransferBlocking(_config.i2c, &transfer);
+  status_t status = I2C_MasterTransferBlocking(_config->i2c, &transfer);
 #ifndef NDEBUG
   if (status != kStatus_Success) {
     PRINTF("I2C write(%02d) <= %02x\r\n", reg, *data);
@@ -89,7 +89,7 @@ status_t i2c_write(uint8_t address, uint8_t reg, uint8_t *data, size_t size) {
 #endif
 
   if (!size && status == kStatus_Success)
-    status = I2C_MasterStop(_config.i2c);
+    status = I2C_MasterStop(_config->i2c);
 
   return status;
 }
@@ -106,13 +106,13 @@ status_t i2c_read(uint8_t address, uint8_t reg, uint8_t *data, size_t size) {
   transfer.data = data;
   transfer.dataSize = size;
   transfer.flags = kI2C_TransferDefaultFlag;
-  status_t status = I2C_MasterTransferBlocking(_config.i2c, &transfer);
+  status_t status = I2C_MasterTransferBlocking(_config->i2c, &transfer);
 
 #ifndef NDEBUG
   if (status != kStatus_Success) {
     PRINTF("I2C read(%02d) => %d byte\r\n", reg, transfer.dataSize);
     i2c_error("read (address)", status);
-    I2C_MasterStop(_config.i2c);
+    I2C_MasterStop(_config->i2c);
   }
 #endif
 

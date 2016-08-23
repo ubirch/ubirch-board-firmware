@@ -5,3 +5,4 @@ add_library(ubirch::${BOARD}::firmware ALIAS firmware)
 add_library(ubirch::${BOARD}::board ALIAS board)
 
 add_subdirectory(firmware)
+add_subdirectory(board)

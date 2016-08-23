@@ -23,6 +23,7 @@
 
 // this is necessary when using the arm-none-eabi-gcc from launchpad
 #define _GNU_SOURCE
+
 #include <string.h>
 #include <stdlib.h>
 #include <fsl_rtc.h>
@@ -145,12 +146,12 @@ bool sim800h_location(status_t *status, double *lat, double *lon, rtc_datetime_t
     datetime->second = (uint8_t) atoi(strtok(NULL, ":"));
   }
 
-  return sim800h_expect_OK(500) && status == 0;
+  return sim800h_expect_OK(uTimer_Remaining) && status == 0;
 }
 
 bool sim800h_imei(char *imei, const uint32_t timeout) {
   sim800h_send("AT+GSN");
   sim800h_readline(imei, 15, timeout);
   CIODEBUG("GSM (%02d) -> '%s'\r\n", strnlen(imei, 15), imei);
-  return sim800h_expect_OK(500);
+  return sim800h_expect_OK(uTimer_Remaining);
 }

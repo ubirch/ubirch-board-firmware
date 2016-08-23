@@ -1,6 +1,6 @@
 /*!
  * @file
- * @brief debug helpers.
+ * @brief M66 debug helpers.
  *
  * @author Matthias L. Jugel
  * @date 2016-04-09
@@ -22,34 +22,42 @@
  * ```
  */
 
-#ifndef _UBIRCH_DEBUG_H_
-#define _UBIRCH_DEBUG_H_
+#ifndef _UBIRCH_M66_DEBUG_
+#define _UBIRCH_M66_DEBUG_
 
-#include <stdint.h>
-#include <stddef.h>
+#include <fsl_debug_console.h>
+#include <ubirch/dbgutil.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-/*!
- * @brief Dump the buffer in hex and ascii format.
- * @param prefix printed in front of the array lines
- * @param b the byte array
- * @param size the length of the array
- */
-void dbg_dump(const char *prefix, const uint8_t *b, size_t size);
+#ifdef NCIODEBUG
+#  define CIODEBUG(...)
+#  define CIODUMP(...)
+#else
+#  define CIODEBUG(...)  PRINTF(__VA_ARGS__)                  /*!< Debug I/O message (AT commands) */
+#  define CIODUMP(buffer, size) dbg_dump("GSM", buffer, size) /*!< Debug and dump a buffer */
+#endif
 
-/*!
- * @brief Dump the buffer in hex format readable by xxd.
- * @param prefix printed in front of the array lines
- * @param b the byte array
- * @param size the length of the array
- */
-void dbg_xxd(const char *prefix, const uint8_t *b, size_t size);
+#ifdef NCSTDEBUG
+#  define CSTDEBUG(...)
+#else
+#  define CSTDEBUG(...)  PRINTF(__VA_ARGS__)                  /*!< Standard debug message (info) */
+#endif
+
+//! textual representation of the registration status
+const char *reg_status[6] = {
+  "NOT SEARCHING",
+  "HOME",
+  "SEARCHING",
+  "DENIED",
+  "UNKNOWN",
+  "ROAMING"
+};
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif // _UBIRCH_DEBUG_H_
+#endif // _UBIRCH_M66_DEBUG_

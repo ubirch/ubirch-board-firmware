@@ -1,12 +1,8 @@
 /*!
  * @file
- * @brief SIM800H cell phone chip driver.
+ * @brief Modem driver.
  *
- * This is the SIM800H driver for the cell phone chip on the ubirch#1.
- * As the SIM800H is hard-wired to the LPUART1 all the configuration
- * is wrapped away from the user. This driver provides the functionality
- * to power on/off the chip and has low-level functionality for
- * communicating with the SIM800H using the AT command set.
+ * Modem driver code. Necessary for cell phone connectivity.
  *
  * @author Matthias L. Jugel
  * @date 2016-04-09
@@ -28,7 +24,16 @@
  * ```
  */
 
-#include "sim800h/sim800h_core.h"
-#include "sim800h/sim800h_parser.h"
-#include "sim800h/sim800h_ops.h"
-#include "sim800h/sim800h_http.h"
+#include <cell.h>
+
+#if defined(BOARD_CELL_TYPE_M66)
+  #include "m66/m66_core.h"
+  #include "m66/m66_parser.h"
+  #include "m66/m66_ops.h"
+  #include "m66/m66_http.h"
+#else
+  #include "sim800h/sim800h_core.h"
+  #include "sim800h/sim800h_parser.h"
+  #include "sim800h/sim800h_ops.h"
+  #include "sim800h/sim800h_http.h"
+#endif

@@ -24,7 +24,7 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <ubirch/timer.h>
-#include "ubirch/sim800h.h"
+#include "ubirch/modem.h"
 #include "sim800h_debug.h"
 
 int sim800h_http_prepare(const char *url, uint32_t timeout) {

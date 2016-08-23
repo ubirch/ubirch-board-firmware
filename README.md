@@ -7,6 +7,7 @@ You will have to select the specific board when running ```cmake``` (see below).
 
 See the board specific, including pin settings found here:
 
+* [ubirch#1 r0.3](board/ubirch1r03) (and [r0.3-k](board/ubirch1r03k01))
 * [ubirch#1 r0.2](board/ubirch1r02)
 * [FRDM-K82F](board/frdm_k82f)
 * [FRDM-KL82Z](board/frdm_kl82z)

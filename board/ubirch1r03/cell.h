@@ -1,6 +1,6 @@
 /*!
  * @file
- * @brief __ubirch#1 r0.2__ cell phone chip definitions
+ * @brief __ubirch#1 r0.3k0.1__ cell phone chip definitions
  *
  * The chip is on-board so we can define all the settings here as it is hardwired
  * to the MCU.
@@ -28,27 +28,27 @@
 #ifndef _UBIRCH_CELL_BOARD_H_
 #define _UBIRCH_CELL_BOARD_H_
 
-
+#define BOARD_CELL_TYPE_M66         1
 
 // cell phone chip config
-#define BOARD_CELL_UART_PORT        PORTE                         //!< cell modem port used
-#define BOARD_CELL_UART_PORT_CLOCK  kCLOCK_PortE                  //!< port clock
+#define BOARD_CELL_UART_PORT        PORTC                         //!< cell modem port used
+#define BOARD_CELL_UART_PORT_CLOCK  kCLOCK_PortC                  //!< port clock
 #define BOARD_CELL_PORT_CLOCK_FREQ  (CLOCK_GetPllFllSelClkFreq()) //!< port clock frequency
-#define BOARD_CELL_UART_TX_PIN      4U                            //!< TX pin number
+#define BOARD_CELL_UART_TX_PIN      15U                           //!< TX pin number
 #define BOARD_CELL_UART_TX_ALT      kPORT_MuxAlt3                 //!< TX pin mux
-#define BOARD_CELL_UART_RX_PIN      5U                            //!< RX pin number
+#define BOARD_CELL_UART_RX_PIN      14U                           //!< RX pin number
 #define BOARD_CELL_UART_RX_ALT      kPORT_MuxAlt3                 //!< RX pin mux
-#define BOARD_CELL_UART             LPUART3                       //!< uart the cell modem is connected to
-#define BOARD_CELL_UART_IRQ         LPUART3_IRQn                  //!< uart irq
-#define BOARD_CELL_UART_IRQ_HANDLER LPUART3_IRQHandler            //!< uart irq handler
+#define BOARD_CELL_UART             LPUART4                       //!< uart the cell modem is connected to
+#define BOARD_CELL_UART_IRQ         LPUART4_IRQn                  //!< uart irq
+#define BOARD_CELL_UART_IRQ_HANDLER LPUART4_IRQHandler            //!< uart irq handler
 
 #define BOARD_CELL_PIN_PORT         PORTE
 #define BOARD_CELL_PIN_PORT_CLOCK   kCLOCK_PortE
 #define BOARD_CELL_PIN_GPIO         GPIOE
 #define BOARD_CELL_STATUS_PIN       6U                            //!< status pin number
-#define BOARD_CELL_RESET_PIN        7U                            //!< reset pin number
 #define BOARD_CELL_PWRKEY_PIN       8U                            //!< pwrkey pin number
 #define BOARD_CELL_RI_PIN           9U                            //!< ri (ring indicator) pin number
+#define BOARD_CELL_DCD_PIN          10U
 
 // set uart speed if not defined elsewhere
 #ifndef BOARD_CELL_UART_BAUD

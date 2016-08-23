@@ -1,9 +1,15 @@
 /*!
  * @file
- * @brief debug helpers.
+ * @brief Initialize SDHC pins and clock to enable the SDHC slot.
+ *
+ * This is not actually driver code. All it does is initialize the SDHC pins
+ * and enables required clocks. To use the SDHC slot and read memory cards
+ * it will be necessary to use a filesystem abstraction layer too.
+ *
+ * The Kinetis SDK contains fatfs middleware.
  *
  * @author Matthias L. Jugel
- * @date 2016-04-09
+ * @date 2016-04-06
  *
  * @copyright &copy; 2015 ubirch GmbH (https://ubirch.com)
  *
@@ -21,35 +27,25 @@
  * limitations under the License.
  * ```
  */
+#ifndef _UBIRCH_SDHC_H_
+#define _UBIRCH_SDHC_H_
 
-#ifndef _UBIRCH_DEBUG_H_
-#define _UBIRCH_DEBUG_H_
-
-#include <stdint.h>
-#include <stddef.h>
+#include <fsl_common.h>
+#include <fsl_sdhc.h>
+#include "sdhc/sdhc_config.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 /*!
- * @brief Dump the buffer in hex and ascii format.
- * @param prefix printed in front of the array lines
- * @param b the byte array
- * @param size the length of the array
+ * @brief Initialize SDHC port.
+ * @return kStatus_Success if the port was initialized, kStatus_Fail if not available or error
  */
-void dbg_dump(const char *prefix, const uint8_t *b, size_t size);
-
-/*!
- * @brief Dump the buffer in hex format readable by xxd.
- * @param prefix printed in front of the array lines
- * @param b the byte array
- * @param size the length of the array
- */
-void dbg_xxd(const char *prefix, const uint8_t *b, size_t size);
+status_t sdhc_init(void);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif // _UBIRCH_DEBUG_H_
+#endif // _UBIRCH_SDHC_H_
