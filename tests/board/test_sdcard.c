@@ -58,8 +58,6 @@ int test_sdhc(void) {
   UINT bytesWritten;
   UINT bytesRead;
   const TCHAR driverNumberBuffer[3U] = {SDDISK + '0', ':', '/'};
-  bool failedFlag = false;
-  char ch = '0';
 
   MPU_Enable(MPU, false);
 
@@ -100,7 +98,7 @@ if (f_mkfs(driverNumberBuffer, 1U, 0U))
   PRINTF("\r\nRead from static test file\r\n");
   error = f_open(&testFileObject, _T("/test.txt"), FA_READ);
   if (error) {
-    PRINTF("Open file failed.\r\n");
+    PRINTF("Open file failed (%d).\r\n", error);
     return -1;
   }
 
@@ -186,14 +184,12 @@ if (f_mkfs(driverNumberBuffer, 1U, 0U))
   error = f_write(&g_fileObject, g_bufferWrite, sizeof(g_bufferWrite), &bytesWritten);
   if ((error) || (bytesWritten != sizeof(g_bufferWrite))) {
     PRINTF("Write file failed. \r\n");
-    failedFlag = true;
     return -1;
   }
 
   /* Move the file pointer */
   if (f_lseek(&g_fileObject, 0U)) {
     PRINTF("Set file pointer position failed. \r\n");
-    failedFlag = true;
     return -1;
   }
 
@@ -202,14 +198,12 @@ if (f_mkfs(driverNumberBuffer, 1U, 0U))
   error = f_read(&g_fileObject, g_bufferRead, sizeof(g_bufferRead), &bytesRead);
   if ((error) || (bytesRead != sizeof(g_bufferRead))) {
     PRINTF("Read file failed. \r\n");
-    failedFlag = true;
     return -1;
   }
 
   PRINTF("Compare the read/write content......\r\n");
   if (memcmp(g_bufferWrite, g_bufferRead, sizeof(g_bufferWrite))) {
     PRINTF("Compare read/write content isn't consistent.\r\n");
-    failedFlag = true;
     return -1;
   }
   PRINTF("The read/write content is consistent.\r\n");
@@ -221,4 +215,6 @@ if (f_mkfs(driverNumberBuffer, 1U, 0U))
     PRINTF("\r\nClose file failed.\r\n");
     return -1;
   }
+
+  return 0;
 }
