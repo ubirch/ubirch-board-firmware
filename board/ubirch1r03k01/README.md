@@ -33,7 +33,7 @@ Debug console output can be found on pins 6 (RX) and 7 (TX). If the USB port is 
 then pin 1 is in the top right corner of the board
 
 ```
-25 23 21 19 17 15 13 11 9  5  3  3  1
+25 23 21 19 17 15 13 11 9  7  5  3  1
 o  o  o  o  o  o  o  o  o  o  o  o  ⚀
 o  o  o  o  o  o  o  o  o  o  o  o  o
 26 24 22 20 18 16 14 12 10 8  6  4  2
