@@ -4,8 +4,6 @@
 #include <fsl_tsi_v4.h>
 #include <fsl_debug_console.h>
 #include "support.h"
-#include <board.h>
-#include <ubirch/timer.h>
 #include <fsl_lptmr.h>
 
 tsi_calibration_data_t buffer;

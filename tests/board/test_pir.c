@@ -2,10 +2,7 @@
 #include <fsl_gpio.h>
 #include <fsl_debug_console.h>
 #include <fsl_port.h>
-#include <board.h>
 #include "support.h"
-
-#include "fsl_adc16.h"
 
 volatile bool motion_detected = false;
 

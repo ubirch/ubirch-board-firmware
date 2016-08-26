@@ -16,7 +16,6 @@ if (BOARD MATCHES "ubirch1r03k01")
     test_quectel.c
     test_sdcard.c
     test_i2s.c
-    ffconf.c
     ${FATFS_MIDDLEWARE_SRCS}
     )
 endif ()
@@ -24,8 +23,8 @@ endif ()
 add_executable(test_board ${SRCS})
 target_compile_definitions(test_board PRIVATE -DARM_MATH_CM4)
 
-target_include_directories(test_board PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-target_include_directories(test_board PUBLIC ${FATFS_MIDDLEWARE_INC})
+target_include_directories(test_board PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(test_board PRIVATE ${FATFS_MIDDLEWARE_INC})
 target_link_libraries(test_board ubirch::${BOARD}::board)
 target_link_libraries(test_board ubirch::${BOARD}::firmware)
 if (BOARD MATCHES "ubirch1r03k01")

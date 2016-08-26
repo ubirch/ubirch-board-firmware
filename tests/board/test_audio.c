@@ -30,7 +30,6 @@
 
 #include <fsl_ftm.h>
 #include <ubirch/i2c.h>
-#include <ubirch/timer.h>
 #include <math.h>
 #include <stdlib.h>
 #include "support.h"

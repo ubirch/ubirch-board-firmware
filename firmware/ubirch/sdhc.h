@@ -27,12 +27,13 @@
  * limitations under the License.
  * ```
  */
-#ifndef _UBIRCH_SDHC_H_
-#define _UBIRCH_SDHC_H_
-
 #include <fsl_common.h>
 #include <fsl_sdhc.h>
 #include "sdhc/sdhc_config.h"
+
+
+#ifndef _UBIRCH_SDHC_H_
+#define _UBIRCH_SDHC_H_
 
 #ifdef __cplusplus
 extern "C" {

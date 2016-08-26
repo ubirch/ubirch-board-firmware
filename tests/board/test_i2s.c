@@ -1,8 +1,8 @@
-#include <ubirch/dbgutil.h>
 #include <fsl_port.h>
 #include <fsl_gpio.h>
 #include <fsl_debug_console.h>
 #include <fsl_sai.h>
+#include <ubirch/dbgutil.h>
 
 bool isFinished = false;
 uint32_t temp[3 * 2048];

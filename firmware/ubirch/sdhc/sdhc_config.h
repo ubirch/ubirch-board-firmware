@@ -39,6 +39,7 @@
 #define SDHC_READ_WATERMARK_LEVEL   (0x80U)
 #define SDHC_WRITE_WATERMARK_LEVEL  (0x80U)
 #define SDHC_ADMA_TABLE_WORDS       (8U)
+#define SDHC_CARD_DETECT_USING_GPIO
 
 #define EVENT_TIMEOUT_TRANSFER_COMPLETE (1000U)
 
@@ -46,7 +47,7 @@
 extern "C" {
 #endif
 
-/*! @brief SDHC event type */
+///*! @brief SDHC event type */
 typedef enum {
     kEVENT_TransferComplete = 0U, /*!< Transfer complete event */
 } event_t;
@@ -89,4 +90,4 @@ void EVENT_Delete(event_t eventType);
 }
 #endif
 
-#endif /* _SDHC_CONFIG_H_ */
+#endif /* _UBIRCH_SDHC_CONFIG_H_ */

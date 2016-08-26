@@ -7,7 +7,7 @@
 #  define BOARD_RGBS_LEN  1
 #endif
 
-#define RANGE 1000
+#define RANGE 50
 
 int test_ws2812b(void) {
   // initialize FlexIO

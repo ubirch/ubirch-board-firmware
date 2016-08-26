@@ -29,10 +29,9 @@
 
 status_t sdhc_init(void) {
 #if  defined(FSL_FEATURE_SOC_SDHC_COUNT) && FSL_FEATURE_SOC_SDHC_COUNT > 0
-  const gpio_pin_config_t IN = {kGPIO_DigitalInput, false};
-
-  // enable port clock for SDHC ports
+  // enable port clocks for SDHC ports
   CLOCK_EnableClock(BOARD_SDHC_PORT_CLOCK);
+  CLOCK_EnableClock(BOARD_SDHC_DET_CLOCK);
 
   port_pin_config_t config = {0};
   config.pullSelect = kPORT_PullUp;
@@ -48,8 +47,7 @@ status_t sdhc_init(void) {
   PORT_SetPinConfig(BOARD_SDHC_PORT, BOARD_SDHC_PIN_DCLK, &config);
 
   // SD card detect pin
-  CLOCK_EnableClock(BOARD_SDHC_DET_CLOCK);
-
+  const gpio_pin_config_t IN = {kGPIO_DigitalInput, false};
   config.driveStrength = kPORT_LowDriveStrength;
   config.mux = kPORT_MuxAsGpio;
   PORT_SetPinConfig(BOARD_SDHC_DET_PORT, BOARD_SDHC_DET_PIN, &config);
@@ -65,11 +63,6 @@ status_t sdhc_init(void) {
 // CODE necessary for SDHC file transfer
 // ===============================================================================================
 static volatile uint32_t sdhc_transfer_complete;
-static uint32_t sdhc_adma_table[SDHC_ADMA_TABLE_WORDS];
-
-status_t sdhc_transfer_function(SDHC_Type *base, sdhc_transfer_t *content) {
-  return SDHC_TransferBlocking(base, sdhc_adma_table, SDHC_ADMA_TABLE_WORDS, content);
-}
 
 extern void EVENT_InitTimer(void);
 

@@ -26,11 +26,8 @@
 
 #include <stdint.h>
 #include <board.h>
-#include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <ubirch/modem.h>
-#include "config.h"
 #include "support.h"
 
 #if defined(BOARD_FRDM_KL82Z) || defined(BOARD_FRDM_K82F)

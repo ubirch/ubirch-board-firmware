@@ -4,10 +4,8 @@
 #include <fsl_port.h>
 #include <fsl_gpio.h>
 #include <ubirch/timer.h>
-#include <fsl_card.h>
 #include <fsl_mpu.h>
 #include <diskio.h>
-#include "sdhc_config.h"
 
 #define BUFFER_SIZE 255
 static FATFS g_fileSystem; /* File system object */
@@ -40,15 +38,6 @@ void init_sdhc_pins() {
   GPIO_PinInit(GPIOE, 7U, &IN);
 }
 
-static uint32_t g_sdhcAdmaTable[SDHC_ADMA_TABLE_WORDS];
-
-status_t sdhc_transfer_function(SDHC_Type *base, sdhc_transfer_t *content) {
-  status_t error = kStatus_Success;
-  error = SDHC_TransferBlocking(base, g_sdhcAdmaTable, SDHC_ADMA_TABLE_WORDS, content);
-  return error;
-}
-
-
 int test_sdhc(void) {
   init_sdhc_pins();
 
@@ -78,7 +67,7 @@ int test_sdhc(void) {
   }
 
 #if (_FS_RPATH >= 2U)
-  error = f_chdrive((char const *) &driverNumberBuffer[0U]);
+  error = f_chdrive(&driverNumberBuffer[0U]);
   if (error) {
     PRINTF("Change drive failed.\r\n");
     return -1;

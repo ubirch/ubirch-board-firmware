@@ -1,7 +1,6 @@
 #include <ubirch/modem.h>
 #include <fsl_debug_console.h>
 #include <ubirch/timer.h>
-#include <ubirch/dbgutil.h>
 #include "support.h"
 #include "config.h"
 

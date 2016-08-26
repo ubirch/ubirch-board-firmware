@@ -1,6 +1,6 @@
 #include <fsl_port.h>
 #include <fsl_flexio_uart.h>
-#include <ubirch/timer.h>
+#include <fsl_debug_console.h>
 #include <arm_math.h>
 #include "support.h"
 

@@ -1,15 +1,13 @@
 #include <fsl_lptmr.h>
 #include <fsl_ftm.h>
-#include <fsl_debug_console.h>
 #include <fsl_port.h>
-#include <ubirch/timer.h>
 #include <fsl_edma.h>
 #include <fsl_dmamux.h>
 #include <malloc.h>
-#include <ubirch/dbgutil.h>
-#include <MK82F25615.h>
 #include <fsl_tsi_v4.h>
+#include <fsl_gpio.h>
 #include "support.h"
+#include "../../firmware/ubirch/dbgutil.h"
 
 
 #define TCH_ELECTRODE   0U
