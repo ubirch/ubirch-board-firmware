@@ -1,3 +1,28 @@
+// TODO: This code does not work as expected. A possible debugging help shown below.
+
+// The first batch of data is sent correctly
+// but the second batch breaks because the first bit is triggered to early and stretched out
+// until the timer kicks in. After asking in the NXP forums I got this answer, which I
+// still have to try:
+
+/*
+  Hi, Jugel,
+
+  In the end, I see your application. But for the unexpected high logic from A1 to A2, I have not idea which source set the pin and clear the pin.
+  But I think you can use code to read the GPIOD5 pin so that you can know the instruction which sets the pin.
+  You can connect the RGB_DIN signal to another GPIO pin and configure the pin in GPIO and Input mode, you can read the pin logic, if it is 1, stop to debug
+  instruction;
+  if(GPIOx_PDIR&1<<pin_index)
+  {
+  __asm("nop");  //set a break here
+  }
+  In  this way, you can know which instruction leads to the GPIO set.
+  BTW, even if you configure the GPIOD5 as GPIO output mode, you still can read the pin logic via GPIOD_PDIR register I think.
+  Hope it can help you.
+  BR
+  XiangJun Rong
+ */
+
 #include <fsl_lptmr.h>
 #include <fsl_ftm.h>
 #include <fsl_port.h>
