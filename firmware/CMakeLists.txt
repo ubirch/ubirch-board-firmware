@@ -29,7 +29,7 @@ add_library(firmware
   ubirch/i2c/bosch_sensortec/bmp180.c
   ubirch/i2c/bmp180.c
   ubirch/i2c/bme280.c
-  ubirch/i2c/tmp112.c
+#  ubirch/i2c/tmp112.c
   ubirch/rtc.c
   ubirch/timer.c
   ubirch/ws2812b.c
