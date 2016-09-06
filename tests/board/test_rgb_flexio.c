@@ -2,6 +2,7 @@
 #include <fsl_flexio_uart.h>
 #include <fsl_debug_console.h>
 #include <arm_math.h>
+#include <ubirch/timer.h>
 #include "support.h"
 
 #define WS2812B_CLOCK_FREQ    800000U

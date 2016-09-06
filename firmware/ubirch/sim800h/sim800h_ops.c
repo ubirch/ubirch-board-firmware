@@ -32,18 +32,18 @@
 #include "sim800h_core.h"
 #include "sim800h_debug.h"
 
-bool sim800h_register(const uint32_t timeout) {
+bool modem_register(const uint32_t timeout) {
   timer_set_timeout(timeout * 1000);
 
   bool registered = false;
   while (!registered && timer_timeout_remaining()) {
     int bearer = 0, status = 0;
-    sim800h_send("AT+CREG?");
-    const int matched = sim800h_expect_scan("+CREG: %d,%d", uTimer_Remaining, &bearer, &status);
+    modem_send("AT+CREG?");
+    const int matched = modem_expect_scan("+CREG: %d,%d", uTimer_Remaining, &bearer, &status);
     if (matched == 2) {
       CSTDEBUG("GSM INFO !! [%02d] %s\r\n", status, status < 6 ? reg_status[status] : "???");
       registered = ((status == CREG_HOME) || (status == CREG_ROAMING));
-      sim800h_expect_OK(uTimer_Remaining);
+      modem_expect_OK(uTimer_Remaining);
     }
     if (!registered) delay(2000);
   }
@@ -51,88 +51,88 @@ bool sim800h_register(const uint32_t timeout) {
   return registered;
 }
 
-bool sim800h_gprs_attach(const char *apn, const char *user, const char *password, const uint32_t timeout) {
+bool modem_gprs_attach(const char *apn, const char *user, const char *password, const uint32_t timeout) {
   timer_set_timeout(timeout * 1000);
 
   // shut down any previous GPRS connection
-  sim800h_send("AT+CIPSHUT");
-  if (!sim800h_expect("SHUT OK", uTimer_Remaining)) return false;
+  modem_send("AT+CIPSHUT");
+  if (!modem_expect("SHUT OK", uTimer_Remaining)) return false;
 
   // enable multiplex mode (TODO check it necessary, I read somewhere multiplex mode is more stable)
-  sim800h_send("AT+CIPMUX=1");
-  if (!sim800h_expect_OK(uTimer_Remaining)) return false;
+  modem_send("AT+CIPMUX=1");
+  if (!modem_expect_OK(uTimer_Remaining)) return false;
 
   // enable manual receive mode
-  sim800h_send("AT+CIPRXGET=1");
-  if (!sim800h_expect_OK(uTimer_Remaining)) return false;
+  modem_send("AT+CIPRXGET=1");
+  if (!modem_expect_OK(uTimer_Remaining)) return false;
 
   // attach to the network
   bool attached = false;
   do {
-    sim800h_send("AT+CGATT=1");
-    attached = sim800h_expect_OK(uTimer_Remaining);
+    modem_send("AT+CGATT=1");
+    attached = modem_expect_OK(uTimer_Remaining);
     if (!attached) delay(1000);
   } while (!attached && timer_timeout_remaining());
   if (!attached) return false;
 
   // configure connection
-  sim800h_send("AT+SAPBR=3,1,\"CONTYPE\",\"GPRS\"");
-  if (!sim800h_expect_OK(uTimer_Remaining)) return false;
+  modem_send("AT+SAPBR=3,1,\"CONTYPE\",\"GPRS\"");
+  if (!modem_expect_OK(uTimer_Remaining)) return false;
 
   // set bearer profile access point name
   if (apn) {
-    sim800h_send("AT+SAPBR=3,1,\"APN\",\"%s\"", apn);
-    if (!sim800h_expect_OK(uTimer_Remaining)) return false;
+    modem_send("AT+SAPBR=3,1,\"APN\",\"%s\"", apn);
+    if (!modem_expect_OK(uTimer_Remaining)) return false;
     if (user) {
-      sim800h_send("AT+SAPBR=3,1,\"USER\",\"%s\"", user);
-      if (!sim800h_expect_OK(uTimer_Remaining)) return false;
+      modem_send("AT+SAPBR=3,1,\"USER\",\"%s\"", user);
+      if (!modem_expect_OK(uTimer_Remaining)) return false;
     }
     if (password) {
-      sim800h_send("AT+SAPBR=3,1,\"PWD\",\"%s\"", password);
-      if (!sim800h_expect_OK(uTimer_Remaining)) return false;
+      modem_send("AT+SAPBR=3,1,\"PWD\",\"%s\"", password);
+      if (!modem_expect_OK(uTimer_Remaining)) return false;
     }
   }
 
   // open GPRS context
-  sim800h_send("AT+SAPBR=1,1");
-  sim800h_expect_OK(uTimer_Remaining);
+  modem_send("AT+SAPBR=1,1");
+  modem_expect_OK(uTimer_Remaining);
 
   int opened;
   do {
-    sim800h_send("AT+SAPBR=2,1");
-    sim800h_expect_scan("+SAPBR: 1,%d", uTimer_Remaining, &opened);
-    if(!sim800h_expect_OK(uTimer_Remaining)) return false;
+    modem_send("AT+SAPBR=2,1");
+    modem_expect_scan("+SAPBR: 1,%d", uTimer_Remaining, &opened);
+    if(!modem_expect_OK(uTimer_Remaining)) return false;
     delay(1000);
   } while (opened != 1 && timer_timeout_remaining());
 
   return attached;
 }
 
-bool sim800h_gprs_detach(uint32_t timeout) {
+bool modem_gprs_detach(uint32_t timeout) {
   timer_set_timeout(timeout * 1000);
 
-  sim800h_send("AT+CIPSHUT");
-  if (!sim800h_expect("SHUT OK", uTimer_Remaining)) return false;
+  modem_send("AT+CIPSHUT");
+  if (!modem_expect("SHUT OK", uTimer_Remaining)) return false;
 
-  sim800h_send("AT+SAPBR=0,1");
-  if (!sim800h_expect_OK(uTimer_Remaining)) return false;
+  modem_send("AT+SAPBR=0,1");
+  if (!modem_expect_OK(uTimer_Remaining)) return false;
 
-  sim800h_send("AT+CGATT=0");
-  return sim800h_expect_OK(uTimer_Remaining);
+  modem_send("AT+CGATT=0");
+  return modem_expect_OK(uTimer_Remaining);
 }
 
 
-bool sim800h_battery(status_t *status, int *level, int *voltage, const uint32_t timeout) {
-  sim800h_send("AT+CBC");
-  sim800h_expect_scan("+CBC: %d,%d,%d", timeout, status, level, voltage);
-  return sim800h_expect_OK(500);
+bool modem_battery(status_t *status, int *level, int *voltage, const uint32_t timeout) {
+  modem_send("AT+CBC");
+  modem_expect_scan("+CBC: %d,%d,%d", timeout, status, level, voltage);
+  return modem_expect_OK(500);
 }
 
-bool sim800h_location(status_t *status, double *lat, double *lon, rtc_datetime_t *datetime, const uint32_t timeout) {
+bool modem_location(status_t *status, double *lat, double *lon, rtc_datetime_t *datetime, const uint32_t timeout) {
   char response[60];
 
-  sim800h_send("AT+CIPGSMLOC=1,1");
-  sim800h_expect_scan("+CIPGSMLOC: %d,%s", timeout, &status, response);
+  modem_send("AT+CIPGSMLOC=1,1");
+  modem_expect_scan("+CIPGSMLOC: %d,%s", timeout, &status, response);
 
   if(status == 0) {
     *lon = atof(strtok(response, ","));
@@ -146,12 +146,12 @@ bool sim800h_location(status_t *status, double *lat, double *lon, rtc_datetime_t
     datetime->second = (uint8_t) atoi(strtok(NULL, ":"));
   }
 
-  return sim800h_expect_OK(uTimer_Remaining) && status == 0;
+  return modem_expect_OK(uTimer_Remaining) && status == 0;
 }
 
-bool sim800h_imei(char *imei, const uint32_t timeout) {
-  sim800h_send("AT+GSN");
-  sim800h_readline(imei, 15, timeout);
+bool modem_imei(char *imei, const uint32_t timeout) {
+  modem_send("AT+GSN");
+  modem_readline(imei, 15, timeout);
   CIODEBUG("GSM (%02d) -> '%s'\r\n", strnlen(imei, 15), imei);
-  return sim800h_expect_OK(uTimer_Remaining);
+  return modem_expect_OK(uTimer_Remaining);
 }

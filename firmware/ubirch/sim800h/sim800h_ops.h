@@ -41,7 +41,7 @@ enum sim800_battery_status {
 };
 
 //! SIM800 GPS location status codes
-enum sim800h_location_status {
+enum modem_location_status {
     loc_Success = 0,          //!< GPS localization successful
     loc_NotFound = 404,       //!< GPS location could not be found
     loc_RequestTimeout = 408, //!< Request timeout locating
@@ -56,7 +56,7 @@ enum sim800h_location_status {
  * @brief Register to the cell network.
  * @param timeout how long to wait until registration
  */
-bool sim800h_register(uint32_t timeout);
+bool modem_register(uint32_t timeout);
 
 /*!
  * @brief Attach to the GPRS network.
@@ -65,13 +65,13 @@ bool sim800h_register(uint32_t timeout);
  * @param password the apn password
  * @param timeout how long to wait in ms
  */
-bool sim800h_gprs_attach(const char *apn, const char *user, const char *password, uint32_t timeout);
+bool modem_gprs_attach(const char *apn, const char *user, const char *password, uint32_t timeout);
 
 /*!
  * @brief Detach from GPRS.
  * @param timeout how long to wait in ms
  */
-bool sim800h_gprs_detach(uint32_t timeout);
+bool modem_gprs_detach(uint32_t timeout);
 
 /*!
  * @brief If connected, get status, current battery level, and voltage.
@@ -80,7 +80,7 @@ bool sim800h_gprs_detach(uint32_t timeout);
  * @param voltage where voltage is stored (in mV)
  * @param timeout how long to wait in ms
  */
-bool sim800h_battery(status_t *status, int *level, int *voltage, uint32_t timeout);
+bool modem_battery(status_t *status, int *level, int *voltage, uint32_t timeout);
 
 /*!
  * @brief Get GSM location information, as well as date and time.
@@ -90,14 +90,14 @@ bool sim800h_battery(status_t *status, int *level, int *voltage, uint32_t timeou
  * @param datetime date and time from the GSM network
  * @param timeout how long to wait in ms
  */
-bool sim800h_location(status_t *status, double *lat, double *lon, rtc_datetime_t *datetime, uint32_t timeout);
+bool modem_location(status_t *status, double *lat, double *lon, rtc_datetime_t *datetime, uint32_t timeout);
 
 /*!
  * @brief Get the IMEI number.
  * @param imei the IMEI
  * @param timeout how long to wait in ms
  */
-bool sim800h_imei(char *imei, const uint32_t timeout);
+bool modem_imei(char *imei, const uint32_t timeout);
 
 #ifdef __cplusplus
 }

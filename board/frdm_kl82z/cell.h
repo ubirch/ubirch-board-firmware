@@ -42,9 +42,9 @@
 #define BOARD_CELL_UART_IRQ         LPUART1_IRQn               //!< uart irq
 #define BOARD_CELL_UART_IRQ_HANDLER LPUART1_IRQHandler         //!< uart irq handler
 
-#define BOARD_CELL_PIN_PORT         PORTC
-#define BOARD_CELL_PIN_PORT_CLOCK   kCLOCK_PortC
-#define BOARD_CELL_PIN_GPIO         GPIOC
+#define BOARD_CELL_PIN_PORT         PORTC                      //!< cell modem pins port
+#define BOARD_CELL_PIN_PORT_CLOCK   kCLOCK_PortC               //!< cell modem pins clock
+#define BOARD_CELL_PIN_GPIO         GPIOC                      //!< cell modem gpio
 #define BOARD_CELL_STATUS_PIN       7U                         //!< status pin number
 #define BOARD_CELL_RESET_PIN        6U                         //!< reset pin number
 #define BOARD_CELL_PWRKEY_PIN       5U                         //!< pwrkey pin number

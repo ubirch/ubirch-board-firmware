@@ -29,7 +29,7 @@
 
 enum {
     enable_input = false,         //!< use serial console input to start/continue tests
-    enable_test_audio = true,
+    enable_test_audio = false,
     enable_test_gpio = false,
     enable_test_pir = false,
     enable_test_quectel = false,

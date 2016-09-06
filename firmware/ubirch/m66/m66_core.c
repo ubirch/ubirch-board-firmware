@@ -55,7 +55,7 @@ void BOARD_CELL_UART_IRQ_HANDLER(void) {
   }
 }
 
-void m66_init() {
+void modem_init() {
   const gpio_pin_config_t OUTTRUE = {kGPIO_DigitalOutput, true};
   const gpio_pin_config_t IN = {kGPIO_DigitalInput, false};
 
@@ -131,7 +131,7 @@ void m66_init() {
 //  return val;
 //}
 
-bool m66_enable() {
+bool modem_enable() {
   char response[10];
   size_t len;
 
@@ -142,21 +142,21 @@ bool m66_enable() {
 #endif
 
   // after enabling power, power on the M66
-  while (m66_read() != -1) /* clear buffer */;
+  while (modem_read() != -1) /* clear buffer */;
 
   // we need to identify if the chip is already on by sending AT commands
   // send AT and just ignore the echo and OK to get into a stable state
   // sometimes there is initial noise on the serial line
-  m66_send("AT");
-  len = m66_readline(response, 9, 500);
+  modem_send("AT");
+  len = modem_readline(response, 9, 500);
   CIODEBUG("GSM (%02d) -> '%s'\r\n", len, response);
-  len = m66_readline(response, 9, 500);
+  len = modem_readline(response, 9, 500);
   CIODEBUG("GSM (%02d) -> '%s'\r\n", len, response);
 
   // now identify if the chip is actually on, by issue AT and expecting something
   // if we can't read a response, either AT or OK, we need to run the power on sequence
-  m66_send("AT");
-  len = m66_readline(response, 9, 1000);
+  modem_send("AT");
+  len = modem_readline(response, 9, 1000);
   CIODEBUG("GSM (%02d) -> '%s'\r\n", len, response);
 
   if (!len) {
@@ -175,19 +175,19 @@ bool m66_enable() {
   bool is_on = false;
   // wait for the chip to boot and react to commands
   for (int i = 0; i < 5; i++) {
-    m66_send("ATE0");
+    modem_send("ATE0");
     // if we still have echo on, this fails and falls through to the next OK
-    if ((is_on = m66_expect_OK(1000))) break;
-    if ((is_on = m66_expect_OK(1000))) break;
+    if ((is_on = modem_expect_OK(1000))) break;
+    if ((is_on = modem_expect_OK(1000))) break;
   }
 
   return is_on;
 }
 
-void m66_disable() {
+void modem_disable() {
   // try to power down the M66, then switch off power domain
-  m66_send("AT+CPOWD=1");
-  m66_expect_urc(14, 7000);
+  modem_send("AT+CPOWD=1");
+  modem_expect_urc(14, 7000);
 
 #if ((defined BOARD_CELL_PWR_EN_GPIO) && (defined BOARD_CELL_PWR_EN_PIN))
   CSTDEBUG("GSM #### -- power off\r\n");
@@ -195,19 +195,19 @@ void m66_disable() {
 #endif
 }
 
-int m66_read() {
+int modem_read() {
   if ((gsmRxHead % GSM_RINGBUFFER_SIZE) == gsmRxIndex) return -1;
   int c = gsmUartRingBuffer[gsmRxHead++];
   gsmRxHead %= GSM_RINGBUFFER_SIZE;
   return c;
 }
 
-size_t m66_read_binary(uint8_t *buffer, size_t max, uint32_t timeout) {
+size_t modem_read_binary(uint8_t *buffer, size_t max, uint32_t timeout) {
   timer_set_timeout(timeout * 1000);
   size_t idx = 0;
   while (idx < max) {
     if (!timer_timeout_remaining()) break;
-    int c = m66_read();
+    int c = modem_read();
     if (c == -1) {
       // nothing in the buffer, allow some sleep
       __WFI();
@@ -219,13 +219,13 @@ size_t m66_read_binary(uint8_t *buffer, size_t max, uint32_t timeout) {
   return idx;
 }
 
-size_t m66_readline(char *buffer, size_t max, uint32_t timeout) {
+size_t modem_readline(char *buffer, size_t max, uint32_t timeout) {
   timer_set_timeout(timeout * 1000);
   size_t idx = 0;
   while (idx < max) {
     if (!timer_timeout_remaining()) break;
 
-    int c = m66_read();
+    int c = modem_read();
     if (c == -1) {
       // nothing in the buffer, allow some sleep
       __WFI();
@@ -247,12 +247,12 @@ size_t m66_readline(char *buffer, size_t max, uint32_t timeout) {
   return idx;
 }
 
-void m66_write(const uint8_t *buffer, size_t size) {
+void modem_write(const uint8_t *buffer, size_t size) {
   LPUART_WriteBlocking(BOARD_CELL_UART, buffer, size);
 }
 
-void m66_writeline(const char *buffer) {
-  m66_write((const uint8_t *) buffer, strlen(buffer));
-  m66_write((const uint8_t *) "\r\n", 2);
+void modem_writeline(const char *buffer) {
+  modem_write((const uint8_t *) buffer, strlen(buffer));
+  modem_write((const uint8_t *) "\r\n", 2);
 }
 

@@ -66,7 +66,7 @@ const char *M66_URC[] = {
 };
 
 //! registration status codes
-enum m66_creg_status {
+enum creg_status {
     CREG_NOT_SEARCHING = 0, /*!< not searching */
     CREG_HOME = 1,          /*!< registered home network */
     CREG_SEARCHING = 2,     /*!< searching network */
@@ -82,10 +82,10 @@ const char *RESPONSE_OK = "OK";
  * Check if this line is an unsolicited result code.
  * @return the code index or -1 if it is no known code
  */
-int check_urc(const char *line);
+int modem_check_urc(const char *line);
 
 /*! send a command */
-void m66_send(const char *pattern, ...);
+void modem_send(const char *pattern, ...);
 
 /*!
  * @brief Expect a specific URC, blocks until it is received or timeout.
@@ -93,7 +93,7 @@ void m66_send(const char *pattern, ...);
  * @param timeout how long to wait for the urc in ms
  * @return whether the URC has been matched
  */
-bool m66_expect_urc(int n, uint32_t timeout);
+bool modem_expect_urc(int n, uint32_t timeout);
 
 /*!
  * @brief Expect a certain response, blocks util the response received or timeout.
@@ -102,15 +102,15 @@ bool m66_expect_urc(int n, uint32_t timeout);
  * @param timeout how long to wait for the response in ms
  * @return true if received or false if not
  */
-bool m66_expect(const char *expected, uint32_t timeout);
+bool modem_expect(const char *expected, uint32_t timeout);
 
 /*!
  * Simply expect an "OK" response.
  * @param timeout how long to wait for OK
  * @returns true if OK else false
  */
-static inline bool m66_expect_OK(uint32_t timeout) {
-  return m66_expect(RESPONSE_OK, timeout);
+static inline bool modem_expect_OK(uint32_t timeout) {
+  return modem_expect(RESPONSE_OK, timeout);
 }
 
 
@@ -121,7 +121,7 @@ static inline bool m66_expect_OK(uint32_t timeout) {
  * @param timeout how long to wait for the response in ms
  * @return the number of matched elements
  */
-int m66_expect_scan(const char *pattern, uint32_t timeout, ...);
+int modem_expect_scan(const char *pattern, uint32_t timeout, ...);
 
 #ifdef __cplusplus
 }

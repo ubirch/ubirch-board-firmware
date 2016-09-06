@@ -41,23 +41,23 @@ extern "C" {
  * high enough to make the chip work.
  * @return true if the chip was enabled, false if there was a problem
  */
-bool m66_enable();
+bool modem_enable();
 
 /*! @brief Disable the power domain for the M66 */
-void m66_disable();
+void modem_disable();
 
 /*!
  * @brief Enable communication with the M66.
  * This actually configures the UART and powers/resets the chip to
  * start a fresh cycle.
  */
-void m66_init();
+void modem_init();
 
 /*!
  * @brief Read a single byte from the ringbuffer.
  * @return character or -1 if no data available
  */
-int m66_read();
+int modem_read();
 
 /*!
  * @brief Read binary data into a buffer
@@ -66,7 +66,7 @@ int m66_read();
  * @param timeout how long to wait
  * @return the amount of bytes read
  */
-size_t m66_read_binary(uint8_t *buffer, size_t max, uint32_t timeout);
+size_t modem_read_binary(uint8_t *buffer, size_t max, uint32_t timeout);
 
 /*!
  * @brief Read a single line from the M66
@@ -75,17 +75,17 @@ size_t m66_read_binary(uint8_t *buffer, size_t max, uint32_t timeout);
  * @param timeout how long to wait
  * @return the number of characters read
  */
-size_t m66_readline(char *buffer, size_t max, uint32_t timeout);
+size_t modem_readline(char *buffer, size_t max, uint32_t timeout);
 
 /*!
  * @brief write a number of bytes to the modem.
  * @param buffer byte buffer to write to
  * @param size amount of bytes to write
  */
-void m66_write(const uint8_t *buffer, size_t size);
+void modem_write(const uint8_t *buffer, size_t size);
 
 /*! @brief Write a line to the M66 and terminate it using CR LF */
-void m66_writeline(const char *buffer);
+void modem_writeline(const char *buffer);
 
 #ifdef __cplusplus
 }

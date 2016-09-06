@@ -30,28 +30,34 @@
 #include <board.h>
 #include "ws2812b.h"
 
-#define WS2812B_FLEXIO_SHIFTER      0
-#define WS2812B_FLEXIO_CLOCK_TIMER  0
-#define WS2812B_FLEXIO_0_TIMER      1
-#define WS2812B_FLEXIO_1_TIMER      2
+#define WS2812B_FLEXIO_SHIFTER      0              //!< FlexIO shifter used
+#define WS2812B_FLEXIO_CLOCK_TIMER  0              //!< FlexIO timer used for the base signal
+#define WS2812B_FLEXIO_0_TIMER      1              //!< FlexIO timer used for the 0-signal
+#define WS2812B_FLEXIO_1_TIMER      2              //!< FlexIO timer used for the 1-signal
 
-#define WS2812B_FLEXIO_SHIFTER_PIN  2
-#define WS2812B_FLEXIO_CLOCK_PIN    3
+#define WS2812B_FLEXIO_SHIFTER_PIN  2              //!< FlexIO shifter pin (outputs the bits, internal)
+#define WS2812B_FLEXIO_CLOCK_PIN    3              //!< FlexIO clock pin (outputs the base clock, internal)
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+/*!
+ * WS2812B configuration structure
+ */
 typedef struct {
-    uint8_t flexio_shifter;
-    uint8_t flexio_clk_timer;
-    uint8_t flexio_t0_timer;
-    uint8_t flexio_t1_timer;
-    uint32_t flexio_shifter_pin;
-    uint32_t flexio_clk_timer_pin;
-    uint32_t flexio_data_pin;
+    uint8_t flexio_shifter;                         //!< the FlexIO shifter to use
+    uint8_t flexio_clk_timer;                       //!< the FlexIO timer used for base signal
+    uint8_t flexio_t0_timer;                        //!< the FlexIO timer to use for the 0-signal
+    uint8_t flexio_t1_timer;                        //!< the FlexIO timer to use for the 1-signal
+    uint32_t flexio_shifter_pin;                    //!< the FlexIO shifter pin
+    uint32_t flexio_clk_timer_pin;                  //!< the FlexIO clock timer pin
+    uint32_t flexio_data_pin;                       //!< the FlexIO data pin for the target signal
 } ws2812b_config_t;
 
+/*!
+ * Default configuration for ubirch boards.
+ */
 ws2812b_config_t ws2812b_config_default = {
   .flexio_shifter = WS2812B_FLEXIO_SHIFTER,
   .flexio_clk_timer = WS2812B_FLEXIO_CLOCK_TIMER,
@@ -94,7 +100,6 @@ static inline uint32_t rgb(uint8_t r, uint8_t g, uint8_t b) {
  * @endcode
  *
  * @param config the flexio configuration for the LED driver
- * @param src_clk_freq source clock frequency
  */
 void ws2812b_init(ws2812b_config_t *config);
 

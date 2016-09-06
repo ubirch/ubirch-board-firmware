@@ -31,7 +31,7 @@
 #include <board.h>
 #include <ubirch/timer.h>
 
-int check_urc(const char *line) {
+int modem_check_urc(const char *line) {
   size_t len = strlen(line);
   for (int i = 0; M66_URC[i] != NULL; i++) {
     const char *urc = M66_URC[i];
@@ -44,12 +44,12 @@ int check_urc(const char *line) {
   return -1;
 }
 
-void m66_send(const char *pattern, ...) {
+void modem_send(const char *pattern, ...) {
   char cmd[BOARD_CELL_BUFSIZE];
 
   // cleanup the input buffer and check for URC messages
   uint32_t remaining = timer_timeout_remaining();
-  while (m66_readline(cmd, BOARD_CELL_BUFSIZE - 1, 100)) check_urc(cmd);
+  while (modem_readline(cmd, BOARD_CELL_BUFSIZE - 1, 100)) modem_check_urc(cmd);
   timer_set_timeout(remaining);
 
   cmd[0] = '\0';
@@ -60,16 +60,16 @@ void m66_send(const char *pattern, ...) {
   va_end(ap);
 
   CIODEBUG("GSM (%02d) <- '%s'\r\n", strlen(cmd), cmd);
-  m66_writeline(cmd);
+  modem_writeline(cmd);
 }
 
-bool m66_expect_urc(int n, uint32_t timeout) {
+bool modem_expect_urc(int n, uint32_t timeout) {
   char response[128] = {0};
   bool urc_found = false;
   do {
-    const size_t len = m66_readline(response, BOARD_CELL_BUFSIZE - 1, timeout);
+    const size_t len = modem_readline(response, BOARD_CELL_BUFSIZE - 1, timeout);
     if (!len) break;
-    int r = check_urc(response);
+    int r = modem_check_urc(response);
     urc_found = r == n;
 #ifndef NDEBUG
     if (r == 0 && !urc_found) {
@@ -82,24 +82,24 @@ bool m66_expect_urc(int n, uint32_t timeout) {
   return urc_found;
 }
 
-bool m66_expect(const char *expected, uint32_t timeout) {
+bool modem_expect(const char *expected, uint32_t timeout) {
   char response[255] = {0};
   size_t len, expected_len = strlen(expected);
   while (true) {
-    len = m66_readline(response, BOARD_CELL_BUFSIZE - 1, timeout);
+    len = modem_readline(response, BOARD_CELL_BUFSIZE - 1, timeout);
     if (len == 0) return false;
-    if (check_urc(response) >= 0) continue;
+    if (modem_check_urc(response) >= 0) continue;
     CIODEBUG("GSM (%02d) -> '%s'\r\n", len, response);
     return strncmp(expected, (const char *) response, MIN(len, expected_len)) == 0;
   }
 }
 
-int m66_expect_scan(const char *pattern, uint32_t timeout, ...) {
+int modem_expect_scan(const char *pattern, uint32_t timeout, ...) {
   char response[BOARD_CELL_BUFSIZE];
   va_list ap;
   do {
-    m66_readline(response, BOARD_CELL_BUFSIZE - 1, timeout);
-  } while (check_urc(response) != -1);
+    modem_readline(response, BOARD_CELL_BUFSIZE - 1, timeout);
+  } while (modem_check_urc(response) != -1);
   CIODEBUG("GSM (%02d) -> '%s'\r\n", strlen(response), response);
 
   va_start(ap, timeout);

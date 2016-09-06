@@ -28,7 +28,7 @@
 #ifndef _UBIRCH_CELL_BOARD_H_
 #define _UBIRCH_CELL_BOARD_H_
 
-#define BOARD_CELL_TYPE_M66         1
+#define BOARD_CELL_TYPE_M66         1                             //<! M66 modem
 
 // cell phone chip config
 #define BOARD_CELL_UART_PORT        PORTC                         //!< cell modem port used
@@ -42,13 +42,13 @@
 #define BOARD_CELL_UART_IRQ         LPUART4_IRQn                  //!< uart irq
 #define BOARD_CELL_UART_IRQ_HANDLER LPUART4_IRQHandler            //!< uart irq handler
 
-#define BOARD_CELL_PIN_PORT         PORTE
-#define BOARD_CELL_PIN_PORT_CLOCK   kCLOCK_PortE
-#define BOARD_CELL_PIN_GPIO         GPIOE
+#define BOARD_CELL_PIN_PORT         PORTE                         //!< cell modem pins port
+#define BOARD_CELL_PIN_PORT_CLOCK   kCLOCK_PortE                  //!< cell modem pins clock
+#define BOARD_CELL_PIN_GPIO         GPIOE                         //!< cell modem gpio
 #define BOARD_CELL_STATUS_PIN       6U                            //!< status pin number
 #define BOARD_CELL_PWRKEY_PIN       8U                            //!< pwrkey pin number
 #define BOARD_CELL_RI_PIN           9U                            //!< ri (ring indicator) pin number
-#define BOARD_CELL_DCD_PIN          10U
+#define BOARD_CELL_DCD_PIN          10U                           //!< DCD pin number
 
 // set uart speed if not defined elsewhere
 #ifndef BOARD_CELL_UART_BAUD

@@ -31,17 +31,17 @@
 // CODE necessary for SDHC file transfer, taken from SDK examples
 // ===============================================================================================
 
-#define BOARD_SDHC_BASEADDR         BOARD_SDHC
-#define BOARD_SDHC_CLKSRC           BOARD_SDHC_CLOCK
+#define BOARD_SDHC_BASEADDR         BOARD_SDHC              //!< SHDC base port address
+#define BOARD_SDHC_CLKSRC           BOARD_SDHC_CLOCK        //!< SDHC base clock
 
-#define SDHC_ENDIAN_MODE            kSDHC_EndianModeLittle
-#define SDHC_DMA_MODE               kSDHC_DmaModeAdma2
-#define SDHC_READ_WATERMARK_LEVEL   (0x80U)
-#define SDHC_WRITE_WATERMARK_LEVEL  (0x80U)
-#define SDHC_ADMA_TABLE_WORDS       (8U)
-#define SDHC_CARD_DETECT_USING_GPIO
+#define SDHC_ENDIAN_MODE            kSDHC_EndianModeLittle  //!< SDHC endian mode
+#define SDHC_DMA_MODE               kSDHC_DmaModeAdma2      //!< SDHC DMA mode
+#define SDHC_READ_WATERMARK_LEVEL   (0x80U)                 //!< read watermark level
+#define SDHC_WRITE_WATERMARK_LEVEL  (0x80U)                 //!< write watermark level
+#define SDHC_ADMA_TABLE_WORDS       (8U)                    //!< SDHC DMA table size
+#define SDHC_CARD_DETECT_USING_GPIO                         //!< use GPIO to detect card insertion
 
-#define EVENT_TIMEOUT_TRANSFER_COMPLETE (1000U)
+#define EVENT_TIMEOUT_TRANSFER_COMPLETE (1000U)             //!< SDHC event timeout
 
 #ifdef __cplusplus
 extern "C" {

@@ -55,7 +55,7 @@ void BOARD_CELL_UART_IRQ_HANDLER(void) {
   }
 }
 
-void sim800h_init() {
+void modem_init() {
   const gpio_pin_config_t OUTTRUE = {kGPIO_DigitalOutput, true};
   const gpio_pin_config_t IN = {kGPIO_DigitalInput, false};
 
@@ -131,7 +131,7 @@ void sim800h_init() {
 //  return val;
 //}
 
-bool sim800h_enable() {
+bool modem_enable() {
   char response[10];
   size_t len;
 
@@ -143,21 +143,21 @@ bool sim800h_enable() {
 
 
   // after enabling power, power on the SIM800
-  while (sim800h_read() != -1) /* clear buffer */;
+  while (modem_read() != -1) /* clear buffer */;
 
   // we need to identify if the chip is already on by sending AT commands
   // send AT and just ignore the echo and OK to get into a stable state
   // sometimes there is initial noise on the serial line
-  sim800h_send("AT");
-  len = sim800h_readline(response, 9, 500);
+  modem_send("AT");
+  len = modem_readline(response, 9, 500);
   CIODEBUG("GSM (%02d) -> '%s'\r\n", len, response);
-  len = sim800h_readline(response, 9, 500);
+  len = modem_readline(response, 9, 500);
   CIODEBUG("GSM (%02d) -> '%s'\r\n", len, response);
 
   // now identify if the chip is actually on, by issue AT and expecting something
   // if we can't read a response, either AT or OK, we need to run the power on sequence
-  sim800h_send("AT");
-  len = sim800h_readline(response, 9, 1000);
+  modem_send("AT");
+  len = modem_readline(response, 9, 1000);
   CIODEBUG("GSM (%02d) -> '%s'\r\n", len, response);
 
   if (!len) {
@@ -188,19 +188,19 @@ bool sim800h_enable() {
   bool is_on = false;
   // wait for the chip to boot and react to commands
   for (int i = 0; i < 5; i++) {
-    sim800h_send("ATE0");
+    modem_send("ATE0");
     // if we still have echo on, this fails and falls through to the next OK
-    if ((is_on = sim800h_expect_OK(1000))) break;
-    if ((is_on = sim800h_expect_OK(1000))) break;
+    if ((is_on = modem_expect_OK(1000))) break;
+    if ((is_on = modem_expect_OK(1000))) break;
   }
 
   return is_on;
 }
 
-void sim800h_disable() {
+void modem_disable() {
   // try to power down the SIM800, then switch off power domain
-  sim800h_send("AT+CPOWD=1");
-  sim800h_expect_urc(14, 7000);
+  modem_send("AT+CPOWD=1");
+  modem_expect_urc(14, 7000);
 
 #if ((defined BOARD_CELL_PWR_EN_GPIO) && (defined BOARD_CELL_PWR_EN_PIN))
   CSTDEBUG("GSM #### -- power off\r\n");
@@ -208,19 +208,19 @@ void sim800h_disable() {
 #endif
 }
 
-int sim800h_read() {
+int modem_read() {
   if ((gsmRxHead % GSM_RINGBUFFER_SIZE) == gsmRxIndex) return -1;
   int c = gsmUartRingBuffer[gsmRxHead++];
   gsmRxHead %= GSM_RINGBUFFER_SIZE;
   return c;
 }
 
-size_t sim800h_read_binary(uint8_t *buffer, size_t max, uint32_t timeout) {
+size_t modem_read_binary(uint8_t *buffer, size_t max, uint32_t timeout) {
   timer_set_timeout(timeout * 1000);
   size_t idx = 0;
   while (idx < max) {
     if (!timer_timeout_remaining()) break;
-    int c = sim800h_read();
+    int c = modem_read();
     if (c == -1) {
       // nothing in the buffer, allow some sleep
       __WFI();
@@ -232,13 +232,13 @@ size_t sim800h_read_binary(uint8_t *buffer, size_t max, uint32_t timeout) {
   return idx;
 }
 
-size_t sim800h_readline(char *buffer, size_t max, uint32_t timeout) {
+size_t modem_readline(char *buffer, size_t max, uint32_t timeout) {
   timer_set_timeout(timeout * 1000);
   size_t idx = 0;
   while (idx < max) {
     if (!timer_timeout_remaining()) break;
 
-    int c = sim800h_read();
+    int c = modem_read();
     if (c == -1) {
       // nothing in the buffer, allow some sleep
       __WFI();
@@ -260,12 +260,12 @@ size_t sim800h_readline(char *buffer, size_t max, uint32_t timeout) {
   return idx;
 }
 
-void sim800h_write(const uint8_t *buffer, size_t size) {
+void modem_write(const uint8_t *buffer, size_t size) {
   LPUART_WriteBlocking(BOARD_CELL_UART, buffer, size);
 }
 
-void sim800h_writeline(const char *buffer) {
-  sim800h_write((const uint8_t *) buffer, strlen(buffer));
-  sim800h_write((const uint8_t *) "\r\n", 2);
+void modem_writeline(const char *buffer) {
+  modem_write((const uint8_t *) buffer, strlen(buffer));
+  modem_write((const uint8_t *) "\r\n", 2);
 }
 

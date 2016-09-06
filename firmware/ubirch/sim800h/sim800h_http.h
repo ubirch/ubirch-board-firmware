@@ -30,28 +30,28 @@ extern "C" {
 #endif
 
 //! supported HTTP methods
-typedef enum sim800h_http_methods {
+typedef enum modem_http_methods {
     HTTP_GET = 0,   /*!< HTTP GET */
     HTTP_POST = 1   /*!< HTTP POST */
-} sim800h_http_method_t;
+} modem_http_method_t;
 
 
 /*!
- * @brief Prepare a HTTP request. Used by sim800h_http().
+ * @brief Prepare a HTTP request. Used by modem_http().
  * @param url the URL to connect to
  * @param timeout how to wait for finishing the preparation
  * @return status of preparation
  */
-int sim800h_http_prepare(const char *url, uint32_t timeout);
+int modem_http_prepare(const char *url, uint32_t timeout);
 
 /*!
  * @brief Open HTTP connection using the specified method.
- * @param op the HTTP method (see ::sim800h_http_methods)
+ * @param op the HTTP method (see ::modem_http_methods)
  * @param res_size the size of the response
  * @param timeout how long to wait for the connection
  * @return connection status
  */
-int sim800h_http(sim800h_http_method_t op, size_t *res_size, uint32_t timeout);
+int modem_http(modem_http_method_t op, size_t *res_size, uint32_t timeout);
 
 /*!
  * @brief Write data to an opened HTTP connection.
@@ -60,7 +60,7 @@ int sim800h_http(sim800h_http_method_t op, size_t *res_size, uint32_t timeout);
  * @param timeout how long to wait for the connection
  * @return amount of data written
  */
-size_t sim800h_http_write(const uint8_t *buffer, size_t size, uint32_t timeout);
+size_t modem_http_write(const uint8_t *buffer, size_t size, uint32_t timeout);
 
 /*!
  * @brief Read data from a HTTP connection (the response).
@@ -73,7 +73,7 @@ size_t sim800h_http_write(const uint8_t *buffer, size_t size, uint32_t timeout);
  * @param timeout how long to wait for the connection
  * @return amount of data read
  */
-size_t sim800h_http_read(uint8_t *buffer, uint32_t start, size_t size, uint32_t timeout);
+size_t modem_http_read(uint8_t *buffer, uint32_t start, size_t size, uint32_t timeout);
 
 /*!
  * @brief Prepare and open a GET request.
@@ -82,7 +82,7 @@ size_t sim800h_http_read(uint8_t *buffer, uint32_t start, size_t size, uint32_t 
  * @param timeout how long to wait for the connection
  * @return the HTTP status
  */
-int sim800h_http_get(const char *url, size_t *res_size, uint32_t timeout);
+int modem_http_get(const char *url, size_t *res_size, uint32_t timeout);
 
 /*!
  * @brief Prepare and open a POST request.
@@ -93,7 +93,7 @@ int sim800h_http_get(const char *url, size_t *res_size, uint32_t timeout);
  * @param timeout how long to wait for the connection
  * @return the HTTP status
  */
-int sim800h_http_post(const char *url, size_t *res_size, uint8_t *request, size_t req_size, uint32_t timeout);
+int modem_http_post(const char *url, size_t *res_size, uint8_t *request, size_t req_size, uint32_t timeout);
 
 #ifdef __cplusplus
 }

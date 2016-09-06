@@ -68,7 +68,7 @@ const char *SIM800H_URC[] = {
 };
 
 //! registration status codes
-enum sim800h_creg_status {
+enum modem_creg_status {
     CREG_NOT_SEARCHING = 0, /*!< not searching */
     CREG_HOME = 1,          /*!< registered home network */
     CREG_SEARCHING = 2,     /*!< searching network */
@@ -87,7 +87,7 @@ const char *RESPONSE_OK = "OK";
 int check_urc(const char *line);
 
 /*! send a command */
-void sim800h_send(const char *pattern, ...);
+void modem_send(const char *pattern, ...);
 
 /*!
  * @brief Expect a specific URC, blocks until it is received or timeout.
@@ -95,7 +95,7 @@ void sim800h_send(const char *pattern, ...);
  * @param timeout how long to wait for the urc in ms
  * @return whether the URC has been matched
  */
-bool sim800h_expect_urc(int n, uint32_t timeout);
+bool modem_expect_urc(int n, uint32_t timeout);
 
 /*!
  * @brief Expect a certain response, blocks util the response received or timeout.
@@ -104,15 +104,15 @@ bool sim800h_expect_urc(int n, uint32_t timeout);
  * @param timeout how long to wait for the response in ms
  * @return true if received or false if not
  */
-bool sim800h_expect(const char *expected, uint32_t timeout);
+bool modem_expect(const char *expected, uint32_t timeout);
 
 /*!
  * Simply expect an "OK" response.
  * @param timeout how long to wait for OK
  * @returns true if OK else false
  */
-static inline bool sim800h_expect_OK(uint32_t timeout) {
-  return sim800h_expect(RESPONSE_OK, timeout);
+static inline bool modem_expect_OK(uint32_t timeout) {
+  return modem_expect(RESPONSE_OK, timeout);
 }
 
 
@@ -123,7 +123,7 @@ static inline bool sim800h_expect_OK(uint32_t timeout) {
  * @param timeout how long to wait for the response in ms
  * @return the number of matched elements
  */
-int sim800h_expect_scan(const char *pattern, uint32_t timeout, ...);
+int modem_expect_scan(const char *pattern, uint32_t timeout, ...);
 
 #ifdef __cplusplus
 }

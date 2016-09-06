@@ -69,7 +69,7 @@ i2c_config_t i2c_config_default = {
 
 /*!
  * Initialize the I2C bus with a specific speed.
- * @param speed bus speed
+ * @param config  pointer to the i2c configuration
  */
 void i2c_init(i2c_config_t *config);
 
