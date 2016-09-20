@@ -16,6 +16,7 @@ if (BOARD MATCHES "ubirch1r03k01")
     test_quectel.c
     test_sdcard.c
     test_i2s.c
+    test_uart.c
     ${FATFS_MIDDLEWARE_SRCS}
     )
 endif ()

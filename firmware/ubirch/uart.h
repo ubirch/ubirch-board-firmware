@@ -9,6 +9,11 @@
 
 #define UART2_BUFFER_SIZE 32 // set this to the sub-GHz chip buffer size
 
+// TODO: create a configuration struct to setup the uart
+//typedef struct {
+//    lpuart_config_t lpuart_config;
+//}   uart_config_t;
+
 lpuart_config_t lpuart_config_default =
 {
   .baudRate_Bps = 115200,

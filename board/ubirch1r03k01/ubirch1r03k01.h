@@ -91,9 +91,9 @@
 
 //UART2 Configurations
 // For now this is used by the MCU to communicate to the sub-GHz module
-#define BOARD_UART2_PORT        PORTC                           //!< port used
-#define BOARD_UART2_PORT_CLOCK  kCLOCK_PortC               //!< port clock
-#define BOARD_UART2_PORT_CLOCK_FREQ  (CLOCK_GetOsc0ErClkFreq()) //!< port clock frequency
+#define BOARD_UART2_PORT        PORTC                          //!< port used
+#define BOARD_UART2_PORT_CLOCK  kCLOCK_PortC                   //!< port clock
+#define BOARD_UART2_PORT_CLOCK_FREQ  (CLOCK_GetPllFllSelClkFreq()) //!< port clock frequency
 
 
 #define BOARD_UART2_TX_PIN      4U                         //!< TX pin number

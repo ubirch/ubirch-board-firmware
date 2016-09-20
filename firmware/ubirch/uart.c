@@ -3,20 +3,16 @@
 //
 
 #include "uart.h"
-#include <drivers/fsl_lpuart.h>
 #include <board.h>
 
 static uint8_t uart2_read_buffer[UART2_BUFFER_SIZE];
 
 
-void uart2_init() {
-//  const gpio_pin_config_t OUTTRUE = {kGPIO_DigitalOutput, true};
-//  const gpio_pin_config_t IN = {kGPIO_DigitalInput, false};
-
+void uart2_init(const uart_config_t *config) {
   // initialize Board UART pins
   CLOCK_EnableClock(BOARD_UART2_PORT_CLOCK);
-  PORT_SetPinMux(BOARD_UART2_PORT, BOARD_UART2_TX_PIN, BOARD_UART2_TX_ALT);
   PORT_SetPinMux(BOARD_UART2_PORT, BOARD_UART2_RX_PIN, BOARD_UART2_RX_ALT);
+  PORT_SetPinMux(BOARD_UART2_PORT, BOARD_UART2_TX_PIN, BOARD_UART2_TX_ALT);
 
   // configure uart driver connected to the sub-GHz transceiver
   lpuart_config_t lpuart_config;
