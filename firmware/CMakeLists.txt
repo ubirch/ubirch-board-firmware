@@ -35,7 +35,7 @@ add_library(firmware
   ubirch/ws2812b.c
   ${CELL_SRCS}
   ${SDHC_SRCS}
-  )
+        ubirch/uart.h ubirch/uart.c)
 target_include_directories(firmware PUBLIC
   ${FATFS_MIDDLEWARE_INC}
   ${CMAKE_CURRENT_SOURCE_DIR}/ubirch/sdhc

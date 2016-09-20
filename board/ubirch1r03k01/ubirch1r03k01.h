@@ -89,6 +89,27 @@
 #define BOARD_I2C_SCL_PIN       10U
 #define BOARD_I2C_SDA_PIN       11U
 
+//UART2 Configurations
+// For now this is used by the MCU to communicate to the sub-GHz module
+#define BOARD_UART2_PORT        PORTC                           //!< port used
+#define BOARD_UART2_PORT_CLOCK  kCLOCK_PortC               //!< port clock
+#define BOARD_UART2_PORT_CLOCK_FREQ  (CLOCK_GetOsc0ErClkFreq()) //!< port clock frequency
+
+
+#define BOARD_UART2_TX_PIN      4U                         //!< TX pin number
+#define BOARD_UART2_TX_ALT      kPORT_MuxAlt3              //!< TX pin mux
+#define BOARD_UART2_RX_PIN      3U                         //!< RX pin number
+#define BOARD_UART2_RX_ALT      kPORT_MuxAlt3              //!< RX pin mux
+
+#define BOARD_UART2             LPUART1
+#define BOARD_UART2_IRQ         LPUART1_IRQn               //!< uart-2 irq
+#define BOARD_UART2_IRQ_HANDLER LPUART1_IRQHandler         //!< uart-2 irq handler
+
+// set uart-2 speed if not defined elsewhere
+#ifndef BOARD_UART2_BAUD
+# define BOARD_UART2_BAUD       57600  //!< uart-2 speed if not set elsewhere
+#endif
+
 // timer interrupt (PIT)
 #define BOARD_TIMER             PIT
 #define BOARD_TIMER_IRQ         PIT3_IRQn
