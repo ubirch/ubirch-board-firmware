@@ -44,8 +44,10 @@ if (DOXYGEN_FOUND)
     COMMENT "Generating API documentation with Doxygen" VERBATIM
     )
   file(GLOB IMAGES ubirch-board-firmware/board/*/*.jpg)
-  add_custom_command(TARGET doc
-    POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy ${IMAGES} ${CMAKE_CURRENT_BINARY_DIR}/docs/html
-    )
+  if (IMAGES)
+    add_custom_command(TARGET doc
+      POST_BUILD
+      COMMAND ${CMAKE_COMMAND} -E copy ${IMAGES} ${CMAKE_CURRENT_BINARY_DIR}/docs/html
+      )
+  endif ()
 endif (DOXYGEN_FOUND)
