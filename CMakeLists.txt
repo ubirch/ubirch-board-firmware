@@ -43,11 +43,9 @@ if (DOXYGEN_FOUND)
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
     COMMENT "Generating API documentation with Doxygen" VERBATIM
     )
-  if (BOARD MATCHES "ubirch1r02")
-    add_custom_command(TARGET doc
-      POST_BUILD
-      COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/board/ubirch1r02/ubirch1r02-back.jpg ${CMAKE_CURRENT_BINARY_DIR}/docs/html
-      COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/board/ubirch1r02/ubirch1r02-front.jpg ${CMAKE_CURRENT_BINARY_DIR}/docs/html
-      )
-  endif ()
+  file(GLOB IMAGES ubirch-board-firmware/board/*/*.jpg)
+  add_custom_command(TARGET doc
+    POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy ${IMAGES} ${CMAKE_CURRENT_BINARY_DIR}/docs/html
+    )
 endif (DOXYGEN_FOUND)
