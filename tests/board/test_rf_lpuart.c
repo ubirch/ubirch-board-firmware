@@ -1,4 +1,4 @@
-#include <ubirch/sub-GHz/rf_lpuart.h>
+#include <ubirch/rf-sub-GHz/rf_lpuart.h>
 
 void test_uart(void) {
   rf_config_t *rf_config;

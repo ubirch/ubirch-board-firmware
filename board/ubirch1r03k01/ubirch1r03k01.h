@@ -90,7 +90,7 @@
 #define BOARD_I2C_SDA_PIN       11U
 
 //UART2 Configurations
-// For now this is used by the MCU to communicate to the sub-GHz module
+// For now this is used by the MCU to communicate to the rf-sub-GHz module
 #define BOARD_UART2_PORT        PORTC                          //!< port used
 #define BOARD_UART2_PORT_CLOCK  kCLOCK_PortC                  //!< port clock
 #define BOARD_UART2_CLKSRC      kCLOCK_Osc0ErClk //thsi si not needed as the clok_get finction
