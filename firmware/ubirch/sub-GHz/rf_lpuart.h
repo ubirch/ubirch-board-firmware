@@ -11,12 +11,14 @@
 
 #define UART2_BUFFER_SIZE 32 // set this to the sub-GHz chip buffer size
 
+/*!
+ * RF LPUART Configuration
+ */
 typedef struct {
     lpuart_config_t  lpuart_config;
     PORT_Type        *port;
     clock_name_t     lpuart_clock_src;           // or rename it to cloccksrc
     clock_ip_name_t  lpuart_port_clock;          // uart_clock_port uart_clock_port_freq
-    const uint32_t         lpuart_port_clock_frequency;
     LPUART_Type      *lpuart;
     uint32_t         tx_pin;
     uint32_t         rx_pin;
@@ -38,7 +40,6 @@ rf_config_t rf_config_default = {
 
   .port                        = BOARD_UART2_PORT,
   .lpuart_port_clock           = BOARD_UART2_PORT_CLOCK,
-//  .lpuart_port_clock_frequency = BOARD_UART2_PORT_CLOCK_FREQ,
   .lpuart                      = BOARD_UART2,
   .tx_pin                      = BOARD_UART2_TX_PIN,
   .tx_mux                      = BOARD_UART2_TX_ALT,
