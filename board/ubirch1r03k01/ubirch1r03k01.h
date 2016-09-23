@@ -93,9 +93,9 @@
 // For now this is used by the MCU to communicate to the sub-GHz module
 #define BOARD_UART2_PORT        PORTC                          //!< port used
 #define BOARD_UART2_PORT_CLOCK  kCLOCK_PortC                  //!< port clock
-#define BOARD_UART2_CLKSRC      kCLOCK_Osc0ErClk //thsi si not needed as the clok_get finction 
-                                 //gets the clock freq using kCLOCK_PortC - port clock freq 
-#define BOARD_UART2_PORT_CLOCK_FREQ  (CLOCK_GetPllFllSelClkFreq()) //!< port clock frequency
+#define BOARD_UART2_CLKSRC      kCLOCK_Osc0ErClk //thsi si not needed as the clok_get finction
+                                 //gets the clock freq using kCLOCK_PortC - port clock freq
+//#define BOARD_UART2_PORT_CLOCK_FREQ    CLOCK_GetPllFllSelClkFreq() //!< port clock frequency
 
 
 #define BOARD_UART2_TX_PIN      4U                         //!< TX pin number
@@ -135,7 +135,7 @@
 #define BOARD_SDHC_PIN_D3       4U
 #define BOARD_SDHC_PIN_DCLK     2U
 #define BOARD_SDHC_PIN_CMD      3U
-#define BOARD_SDHC_DET_PORT     PkCLOCK_PortCORTE
+#define BOARD_SDHC_DET_PORT     PORTE
 #define BOARD_SDHC_DET_GPIO     GPIOE
 #define BOARD_SDHC_DET_CLOCK    kCLOCK_PortE
 #define BOARD_SDHC_DET_PIN      7U
