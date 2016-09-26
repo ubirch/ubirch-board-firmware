@@ -89,27 +89,26 @@
 #define BOARD_I2C_SCL_PIN       10U
 #define BOARD_I2C_SDA_PIN       11U
 
-//UART2 Configurations
-// For now this is used by the MCU to communicate to the rf-sub-GHz module
-#define BOARD_UART2_PORT        PORTC                          //!< port used
-#define BOARD_UART2_PORT_CLOCK  kCLOCK_PortC                  //!< port clock
-#define BOARD_UART2_CLKSRC      kCLOCK_Osc0ErClk //thsi si not needed as the clok_get finction
-                                 //gets the clock freq using kCLOCK_PortC - port clock freq
-//#define BOARD_UART2_PORT_CLOCK_FREQ    CLOCK_GetPllFllSelClkFreq() //!< port clock frequency
+//LPUART2 Configurations
+// This is used by the MCU to communicate to the rf-sub-ghz module
+#define BOARD_LPUART2_PORT        PORTC                      //!< port used
+#define BOARD_LPUART2_PORT_CLOCK  kCLOCK_PortC               //!< port clock
+#define BOARD_LPUART2_CLKSRC      kCLOCK_Osc0ErClk           //!< port clock csource
+//#define BOARD_LPUART2_PORT_CLOCK_FREQ    CLOCK_GetPllFllSelClkFreq() //!< port clock frequency
 
 
-#define BOARD_UART2_TX_PIN      4U                         //!< TX pin number
-#define BOARD_UART2_TX_ALT      kPORT_MuxAlt3              //!< TX pin mux
-#define BOARD_UART2_RX_PIN      3U                         //!< RX pin number
-#define BOARD_UART2_RX_ALT      kPORT_MuxAlt3              //!< RX pin mux
+#define BOARD_LPUART2_TX_PIN      4U                         //!< TX pin number
+#define BOARD_LPUART2_TX_ALT      kPORT_MuxAlt3              //!< TX pin mux
+#define BOARD_LPUART2_RX_PIN      3U                         //!< RX pin number
+#define BOARD_LPUART2_RX_ALT      kPORT_MuxAlt3              //!< RX pin mux
 
-#define BOARD_UART2             LPUART1
-#define BOARD_UART2_IRQ         LPUART1_IRQn               //!< uart-2 irq
-#define BOARD_UART2_IRQ_HANDLER LPUART1_IRQHandler         //!< uart-2 irq handler
+#define BOARD_LPUART2             LPUART1
+#define BOARD_LPUART2_IRQ         LPUART1_IRQn               //!< lpuart-2 irq
+#define BOARD_LPUART2_IRQ_HANDLER LPUART1_IRQHandler         //!< lpuart-2 irq handler
 
 // set uart-2 speed if not defined elsewhere
-#ifndef BOARD_UART2_BAUD
-# define BOARD_UART2_BAUD       115200  //!< uart-2 speed if not set elsewhere
+#ifndef BOARD_LPUART2_BAUD
+# define BOARD_LPUART2_BAUD       115200  //!< uart-2 speed if not set elsewhere
 #endif
 
 // timer interrupt (PIT)

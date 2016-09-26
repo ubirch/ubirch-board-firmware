@@ -28,8 +28,11 @@
 #define UBIRCH_FIRMWARE_UART2_H
 
 #include <drivers/fsl_lpuart.h>
-
 #include <board.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #define UART2_BUFFER_SIZE 32                     //!< Set this to the sub-GHz chip buffer size
 
@@ -62,14 +65,14 @@ rf_config_t rf_config_default = {
     .enableTx     = true,
   },
 
-  .port                        = BOARD_UART2_PORT,
-  .lpuart_port_clock           = BOARD_UART2_PORT_CLOCK,
-  .lpuart                      = BOARD_UART2,
-  .tx_pin                      = BOARD_UART2_TX_PIN,
-  .tx_mux                      = BOARD_UART2_TX_ALT,
-  .rx_pin                      = BOARD_UART2_RX_PIN,
-  .rx_mux                      = BOARD_UART2_RX_ALT,
-  .lpuart_IRQ                  = BOARD_UART2_IRQ,
+  .port                        = BOARD_LPUART2_PORT,
+  .lpuart_port_clock           = BOARD_LPUART2_PORT_CLOCK,
+  .lpuart                      = BOARD_LPUART2,
+  .tx_pin                      = BOARD_LPUART2_TX_PIN,
+  .tx_mux                      = BOARD_LPUART2_TX_ALT,
+  .rx_pin                      = BOARD_LPUART2_RX_PIN,
+  .rx_mux                      = BOARD_LPUART2_RX_ALT,
+  .lpuart_IRQ                  = BOARD_LPUART2_IRQ,
 };
 
 /*!
@@ -79,7 +82,7 @@ rf_config_t rf_config_default = {
 void rf_init(rf_config_t *rf_config);
 
 /*
- * void rf_deinit() 
+ * void rf_deinit()
  * Do we need this function | if needed will add it in future
  * there is a JIRA ticket for this
  */
@@ -101,7 +104,7 @@ void rf_send(rf_config_t *rf_config, const uint8_t *buffer, size_t size);
 int32_t rf_read(rf_config_t *rf_config, uint8_t *buffer, size_t length);
 
 /*
- * void rf_error() 
+ * void rf_error()
  * Do we need this function | if needed will add it in future
  * there is a JIRA ticket for this
  */

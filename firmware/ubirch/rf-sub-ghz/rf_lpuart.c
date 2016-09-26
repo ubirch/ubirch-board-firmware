@@ -45,12 +45,6 @@ void rf_init(rf_config_t *rf_config) {
   new_rf_config = rf_config;
 }
 
-// Do we need deinit
- // void rf_deinit()
- // {
- //   ;
- // }
-
 void rf_send(rf_config_t *new_rf_config, const uint8_t *buffer, size_t size)
 {
   LPUART_WriteBlocking(new_rf_config->lpuart, buffer, size);
