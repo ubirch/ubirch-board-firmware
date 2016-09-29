@@ -27,7 +27,7 @@
 #ifndef UBIRCH_FIRMWARE_UART2_H
 #define UBIRCH_FIRMWARE_UART2_H
 
-#include <drivers/fsl_lpuart.h>
+#include <fsl_lpuart.h>
 #include <board.h>
 
 #ifdef __cplusplus
@@ -53,6 +53,7 @@ typedef struct {
 
 } rf_config_t;
 
+#if defined(BOARD_LPUART2_PORT)
 /*!
  * Default RF LPUART configuration for Ubirch boards
  */
@@ -74,6 +75,7 @@ rf_config_t rf_config_default = {
   .rx_mux                      = BOARD_LPUART2_RX_ALT,
   .lpuart_IRQ                  = BOARD_LPUART2_IRQ,
 };
+#endif
 
 /*!
  * @brief Initialize the LPUART driver for RF module

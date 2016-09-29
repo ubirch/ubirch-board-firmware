@@ -45,7 +45,3 @@ void board_install_bootloader_hook(void) {
 void NMI_Handler(void) {
   runBootloader(NULL);
 }
-
-void board_rgb_led(int n, short r, short g, short b) {
-  assert("NOT IMPLEMENTED" && false);
-}

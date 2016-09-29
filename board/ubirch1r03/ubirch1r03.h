@@ -52,6 +52,7 @@
 #define BOARD_RGBS_PORT_CLOCK   kCLOCK_PortA
 #define BOARD_RGBS_ALT          kPORT_MuxAlt5
 #define BOARD_RGBS_PIN          14U
+#define BOARD_RGBS_FLEXIO_PIN   20
 #define BOARD_RGBS_LEN          1
 
 // on-board button (PTD0)
@@ -82,6 +83,28 @@
 #define BOARD_I2C_SCL_PIN       10U
 #define BOARD_I2C_SDA_PIN       11U
 
+//LPUART2 Configurations
+// This is used by the MCU to communicate to the rf-sub-ghz module
+#define BOARD_LPUART2_PORT        PORTC                      //!< port used
+#define BOARD_LPUART2_PORT_CLOCK  kCLOCK_PortC               //!< port clock
+#define BOARD_LPUART2_CLKSRC      kCLOCK_Osc0ErClk           //!< port clock csource
+//#define BOARD_LPUART2_PORT_CLOCK_FREQ    CLOCK_GetPllFllSelClkFreq() //!< port clock frequency
+
+
+#define BOARD_LPUART2_TX_PIN      4U                         //!< TX pin number
+#define BOARD_LPUART2_TX_ALT      kPORT_MuxAlt3              //!< TX pin mux
+#define BOARD_LPUART2_RX_PIN      3U                         //!< RX pin number
+#define BOARD_LPUART2_RX_ALT      kPORT_MuxAlt3              //!< RX pin mux
+
+#define BOARD_LPUART2             LPUART1
+#define BOARD_LPUART2_IRQ         LPUART1_IRQn               //!< lpuart-2 irq
+#define BOARD_LPUART2_IRQ_HANDLER LPUART1_IRQHandler         //!< lpuart-2 irq handler
+
+// set uart-2 speed if not defined elsewhere
+#ifndef BOARD_LPUART2_BAUD
+# define BOARD_LPUART2_BAUD       115200  //!< uart-2 speed if not set elsewhere
+#endif
+
 // timer interrupt (PIT)
 #define BOARD_TIMER             PIT
 #define BOARD_TIMER_IRQ         PIT3_IRQn
@@ -91,6 +114,25 @@
 #define BOARD_RTC               RTC
 #define BOARD_RTC_CLOCK         RTC_CR_OSCE_MASK
 #define BOARD_RTC_IRQ           RTC_IRQn
+
+// board sdhc slot (SDHC0)
+#define BOARD_SDHC              SDHC
+#define BOARD_SDHC_CLOCK        kCLOCK_CoreSysClk
+#define BOARD_SDHC_IRQ          SDHC_IRQn
+#define BOARD_SDHC_PORT         PORTE
+#define BOARD_SDHC_PORT_CLOCK   kCLOCK_PortE
+#define BOARD_SDHC_ALT          kPORT_MuxAlt4
+#define BOARD_SDHC_PIN_D0       1U
+#define BOARD_SDHC_PIN_D1       0U
+#define BOARD_SDHC_PIN_D2       5U
+#define BOARD_SDHC_PIN_D3       4U
+#define BOARD_SDHC_PIN_DCLK     2U
+#define BOARD_SDHC_PIN_CMD      3U
+#define BOARD_SDHC_DET_PORT     PORTE
+#define BOARD_SDHC_DET_GPIO     GPIOE
+#define BOARD_SDHC_DET_CLOCK    kCLOCK_PortE
+#define BOARD_SDHC_DET_PIN      7U
+#define BOARD_SDHC_DET_HANDLER  PORTE_IRQHandler
 
 // on-board Qi charger socket
 #define BOARD_QI_CHG_PORT       PORTA

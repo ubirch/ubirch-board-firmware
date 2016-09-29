@@ -80,8 +80,8 @@ static inline void board_init() {
   GPIO_PinInit(BOARD_LED0_GPIO, BOARD_LED0_PIN, &OUTFALSE);
 
   // enable RGB LED (WS2812B)
-  CLOCK_EnableClock(BOARD_LED1_PORT_CLOCK);
-  PORT_SetPinMux(BOARD_LED1_PORT, BOARD_LED1_PIN, BOARD_LED1_ALT);
+  CLOCK_EnableClock(BOARD_RGBS_PORT_CLOCK);
+  PORT_SetPinMux(BOARD_RGBS_PORT, BOARD_RGBS_PIN, BOARD_RGBS_ALT);
 
   PORT_SetPinMux(BOARD_BUTTON0_PORT, BOARD_BUTTON0_PIN, kPORT_MuxAsGpio);
   GPIO_PinInit(BOARD_BUTTON0_GPIO, BOARD_BUTTON0_PIN, &IN);
@@ -95,8 +95,6 @@ static inline void board_init() {
   // enable NMI handler, use it to call the bootloader
   SCB->SHCSR = SCB_ICSR_NMIPENDSET_Msk;
 }
-
-void board_rgb_led(int n, short r, short g, short b);
 
 /*!
  * @brief Disable NMI for this board (PTA4) and make it work as a normal input pin.
