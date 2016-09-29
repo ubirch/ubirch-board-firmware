@@ -32,4 +32,14 @@ These commands, erase flash, write the binary and reset the board.
 
 ## Connectors
 
-TBD
+[TBD]
+
+## Images
+
+### Board Upper Side
+![ubirch#1 r0.3 front](ubirch1r03-front.jpg)
+### Board Adapter
+![ubirch#1 r0.3 adapter](ubirch1r03-adapter.jpg)
+### Dev Adapter Combined w/ Board
+![ubirch#1 r0.3 combined](ubirch1r03-combined.jpg)
+
