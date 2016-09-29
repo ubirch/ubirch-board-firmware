@@ -78,6 +78,7 @@ int main(void) {
   if(enable_test_pir) test_pir();
   if(enable_test_sdcard) test_sdhc();
   if(enable_test_i2s) test_i2s();
+  if(enable_test_uart) test_uart();
 #endif
   PRINTF("DONE\r\n");
 

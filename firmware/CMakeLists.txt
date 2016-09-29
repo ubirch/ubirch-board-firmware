@@ -33,9 +33,9 @@ add_library(firmware
   ubirch/rtc.c
   ubirch/timer.c
   ubirch/ws2812b.c
+  ubirch/rf-sub-ghz/rf_lpuart.h ubirch/rf-sub-ghz/rf_lpuart.c
   ${CELL_SRCS}
-  ${SDHC_SRCS}
-  )
+  ${SDHC_SRCS} )
 target_include_directories(firmware PUBLIC
   ${FATFS_MIDDLEWARE_INC}
   ${CMAKE_CURRENT_SOURCE_DIR}/ubirch/sdhc

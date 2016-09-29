@@ -28,7 +28,7 @@
 #ifndef _UBIRCH_CELL_BOARD_H_
 #define _UBIRCH_CELL_BOARD_H_
 
-#define BOARD_CELL_TYPE_M66         1                             //<! M66 modem
+#define BOARD_CELL_TYPE_M66         1                             //!< M66 modem
 
 // cell phone chip config
 #define BOARD_CELL_UART_PORT        PORTC                         //!< cell modem port used

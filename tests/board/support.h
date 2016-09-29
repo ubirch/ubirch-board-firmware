@@ -38,6 +38,7 @@ enum {
     enable_test_touch = false,
     enable_test_sdcard = false,
     enable_test_i2s = false,
+    enable_test_uart = true,
 };
 
 #include <stdbool.h>
@@ -57,5 +58,6 @@ void test_pir(void);
 void test_touch(void);
 void test_sdhc(void);
 void test_i2s(void);
+void test_uart(void);
 
 #endif //UBIRCH_BOARD_TEST_SUPPORT_H
