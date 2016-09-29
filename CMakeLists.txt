@@ -8,7 +8,7 @@ set(BOARD "ubirch1r02" CACHE STRING "board name")
 message(STATUS "selected board: ${BOARD}")
 
 # board specific code (pins, peripherals etc.)
-if (BOARD MATCHES "ubirch1r0")
+if (BOARD MATCHES "ubirch1")
   set(MCU "MK82F25615")
   set(BOARD_DIR ${BOARD})
 elseif (BOARD MATCHES "FRDM-K82F")
