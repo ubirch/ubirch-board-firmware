@@ -1,6 +1,5 @@
 #include <support.h>
 #include <ubirch/rf-sub-ghz/rf_lpuart.h>
-#include <ubirch/timer.h>
 
 void test_uart(void) {
 #if TEST_RFUART
