@@ -93,7 +93,6 @@ void rf_init(rf_config_t *rf_config);
 
 /*!
  * @brief Send data form the main MCU to the RF module
- * @param rf_config the LPUART configurations for the RF module
  * @param buffer the data to send
  * @param size length of the data to send
  */
@@ -101,7 +100,6 @@ void rf_send(const uint8_t *buffer, size_t size);
 
 /*!
  * @brief Read data from the RF module
- * @param rf_config the LPUART configurations for the RF module
  * @param buffer pointer to read the data
  * @param length length of the data to read
  */
