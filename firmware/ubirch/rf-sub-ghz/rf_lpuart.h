@@ -24,8 +24,8 @@
  * ```
  */
 
-#ifndef UBIRCH_FIRMWARE_UART2_H
-#define UBIRCH_FIRMWARE_UART2_H
+#ifndef UBIRCH_FIRMWARE_RF_H
+#define UBIRCH_FIRMWARE_RF_H
 
 #include <fsl_lpuart.h>
 #include <board.h>
@@ -54,6 +54,7 @@ typedef struct {
 } rf_config_t;
 
 #if defined(BOARD_LPUART2_PORT)
+
 /*!
  * Default RF LPUART configuration for Ubirch boards
  */
@@ -75,6 +76,7 @@ rf_config_t rf_config_default = {
   .rx_mux                      = BOARD_LPUART2_RX_ALT,
   .lpuart_IRQ                  = BOARD_LPUART2_IRQ,
 };
+
 #endif
 
 /*!
@@ -95,7 +97,7 @@ void rf_init(rf_config_t *rf_config);
  * @param buffer the data to send
  * @param size length of the data to send
  */
-void rf_send(rf_config_t *rf_config, const uint8_t *buffer, size_t size);
+void rf_send(const uint8_t *buffer, size_t size);
 
 /*!
  * @brief Read data from the RF module
@@ -103,7 +105,7 @@ void rf_send(rf_config_t *rf_config, const uint8_t *buffer, size_t size);
  * @param buffer pointer to read the data
  * @param length length of the data to read
  */
-int32_t rf_read(rf_config_t *rf_config, uint8_t *buffer, size_t length);
+int32_t rf_read(uint8_t *buffer, size_t length);
 
 /*
  * void rf_error()
@@ -111,4 +113,4 @@ int32_t rf_read(rf_config_t *rf_config, uint8_t *buffer, size_t length);
  * there is a JIRA ticket for this
  */
 
-#endif //UBIRCH_FIRMWARE_UART2_H
+#endif //UBIRCH_FIRMWARE_RF_H

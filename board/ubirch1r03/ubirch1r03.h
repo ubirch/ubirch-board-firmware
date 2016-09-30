@@ -146,18 +146,16 @@
 //! LPUART0 (RX - PTB16, TX - PTB17)
 #define BOARD_DEBUG_TYPE        DEBUG_CONSOLE_DEVICE_TYPE_LPUART
 #define BOARD_DEBUG_UART        LPUART0
-// TODO check if this clock source as and the clock frequency settings match
-#define BOARD_DEBUG_CLKSRC      kCLOCK_Osc0ErClk
 #define BOARD_DEBUG_CLK_FREQ    CLOCK_GetPllFllSelClkFreq()
 #define BOARD_DEBUG_IRQ         LPUART0_IRQn
 #define BOARD_DEBUG_IRQ_HANDLER LPUART0_IRQHandler
 #define BOARD_DEBUG_BAUD        115200
-#define BOARD_DEBUG_PORT        PORTA
-#define BOARD_DEBUG_PORT_CLOCK  kCLOCK_PortA
-#define BOARD_DEBUG_RX_PIN      1U
-#define BOARD_DEBUG_RX_ALT      kPORT_MuxAlt2
-#define BOARD_DEBUG_TX_PIN      2U
-#define BOARD_DEBUG_TX_ALT      kPORT_MuxAlt2
+#define BOARD_DEBUG_PORT        PORTB
+#define BOARD_DEBUG_PORT_CLOCK  kCLOCK_PortB
+#define BOARD_DEBUG_RX_PIN      16U
+#define BOARD_DEBUG_RX_ALT      kPORT_MuxAlt3
+#define BOARD_DEBUG_TX_PIN      17U
+#define BOARD_DEBUG_TX_ALT      kPORT_MuxAlt3
 
 //! @}
 
