@@ -41,22 +41,22 @@ void enter(char *fmt, ...) {
   free(msg);
   va_end(ap);
 
-  if (enable_input) {
-    int c;
-    while ((c = GETCHAR()) != '\r' && c != '\n') PRINTF("%02x", c);
-  }
+#if ENABLE_INPUT
+  int c;
+  while ((c = GETCHAR()) != '\r' && c != '\n') PRINTF("%02x", c);
+#endif
   PRINTF("\r\n");
 }
 
 bool yesno(char *prompt) {
   PRINTF(prompt);
   PRINTF(" (y/n)");
-  if (enable_input) {
-    int c;
-    while ((c = GETCHAR()) != 'y' && c != 'n');
-    PRINTF("\r\n");
-    return c == 'y';
-  }
+#if ENABLE_INPUT
+  int c;
+  while ((c = GETCHAR()) != 'y' && c != 'n');
+  PRINTF("\r\n");
+  return c == 'y';
+#endif
   PRINTF("\r\n");
   return true;
 }

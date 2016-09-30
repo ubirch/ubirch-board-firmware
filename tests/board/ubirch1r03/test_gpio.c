@@ -53,6 +53,7 @@ void test_gpio_pin_output(char port_char, uint32_t test_pin, char *comment) {
 }
 
 void test_gpio() {
+#if TEST_GPIO
   if(!yesno("GPIO test?")) return;
 
   // test GPIO PTA5,12-18
@@ -106,4 +107,5 @@ void test_gpio() {
   test_gpio_pin_output(PORT_E, 4, "SD_D3");
   test_gpio_pin_output(PORT_E, 5, "SD_D2");
   test_gpio_pin_output(PORT_E, 7, "SD_CD");
+#endif
 }

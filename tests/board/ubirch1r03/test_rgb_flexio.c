@@ -1,8 +1,6 @@
 #include <fsl_port.h>
 #include <fsl_flexio_uart.h>
 #include <fsl_debug_console.h>
-#include <arm_math.h>
-#include <ubirch/timer.h>
 #include "support.h"
 
 #define WS2812B_CLOCK_FREQ    800000U
@@ -132,6 +130,7 @@ void transmit(uint32_t *leds, int n) {
 }
 
 void test_rgb_flexio(void) {
+#if TEST_RGB_FXIO
   if (!yesno("RGB (FlexIO) test?")) return;
 
   CLOCK_EnableClock(kCLOCK_PortA);
@@ -188,4 +187,5 @@ void test_rgb_flexio(void) {
       delay(100);
     }
   }
+#endif
 }

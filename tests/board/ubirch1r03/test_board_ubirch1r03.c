@@ -28,11 +28,14 @@
 #include <board.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <ubirch/timer.h>
 #include "support.h"
 
 #if defined(BOARD_FRDM_KL82Z) || defined(BOARD_FRDM_K82F)
 #  define LED BOARD_LED1
-#elif defined(BOARD_UBIRCH_1R02) || defined(BOARD_UBIRCH_1R03K01)
+#elif defined(BOARD_UBIRCH_1R02) || \
+      defined(BOARD_UBIRCH_1R03K01) || \
+      defined(BOARD_UBIRCH_1R03)
 #  define LED BOARD_LED0
 #else
 #  define LED(...)
@@ -55,28 +58,29 @@ void SysTick_Handler() {
   LED(on);
 }
 
+
 int main(void) {
   // INITIALIZATION
   board_init();
-  // INITIAILIZE CONSOLE (Tests debug uart pins!)
+
+  // INITIALIZE CONSOLE (Tests debug uart pins!)
   board_console_init(BOARD_DEBUG_BAUD);
 
   // 100ms led blink, only works if setup for LED was correct
   SysTick_Config(BOARD_SYSTICK_1MS);
 
-//  PRINTF(BOARD "\r\n");
-//  enter("Press Enter to test debug console input: ");
-//  PRINTF("OK\r\n");
-
-  if(enable_test_quectel) test_quectel();
-  if(enable_test_gpio) test_gpio();
-  if(enable_test_rgb_flexio) test_rgb_flexio();
-#if defined(BOARD_UBIRCH_1R03K01)
-  if(enable_test_pir) test_pir();
-  if(enable_test_sdcard) test_sdhc();
-  if(enable_test_i2s) test_i2s();
-  if(enable_test_uart) test_uart();
+#if ENABLE_INPUT
+  PRINTF(BOARD "\r\n");
+  enter("Press Enter to test debug console input: ");
+  PRINTF("OK\r\n");
 #endif
+
+  test_quectel();
+  test_gpio();
+  test_rgb_flexio();
+  test_sdhc();
+  test_uart();
+
   PRINTF("DONE\r\n");
 
   while (true) {

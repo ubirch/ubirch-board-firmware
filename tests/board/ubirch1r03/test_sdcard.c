@@ -1,18 +1,17 @@
-#include <ff.h>
+#include "support.h"
 #include <fsl_sdhc.h>
-#include <fsl_debug_console.h>
 #include <fsl_port.h>
 #include <fsl_gpio.h>
-#include <ubirch/timer.h>
-#include <fsl_mpu.h>
-#include <diskio.h>
 
 #define BUFFER_SIZE 255
+
+#if TEST_SDCARD
 static FATFS g_fileSystem; /* File system object */
 static FIL g_fileObject;   /* File object */
 
 static uint8_t g_bufferWrite[BUFFER_SIZE]; /* Write buffer */
 static uint8_t g_bufferRead[BUFFER_SIZE];  /* Read buffer */
+#endif
 
 void init_sdhc_pins() {
   port_pin_config_t config = {0};
@@ -39,6 +38,7 @@ void init_sdhc_pins() {
 }
 
 int test_sdhc(void) {
+#if TEST_SDCARD
   init_sdhc_pins();
 
   FRESULT error;
@@ -205,5 +205,6 @@ if (f_mkfs(driverNumberBuffer, 1U, 0U))
     return -1;
   }
 
+#endif
   return 0;
 }

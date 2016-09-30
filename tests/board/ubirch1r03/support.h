@@ -27,14 +27,12 @@
 #ifndef UBIRCH_BOARD_TEST_SUPPORT_H
 #define UBIRCH_BOARD_TEST_SUPPORT_H
 
-enum {
-    enable_input = false,         //!< use serial console input to start/continue tests
-    enable_test_gpio = false,
-    enable_test_quectel = false,
-    enable_test_rgb_flexio = true,
-    enable_test_sdcard = false,
-    enable_test_uart = false,
-};
+#define ENABLE_INPUT  0
+#define TEST_GPIO     0
+#define TEST_QUECTEL  0
+#define TEST_RGB_FXIO 0
+#define TEST_SDCARD   0
+#define TEST_RFUART   1
 
 #include <stdbool.h>
 
@@ -47,7 +45,7 @@ void ok(char *prefix, bool r);
 void test_rgb_flexio(void);
 void test_quectel(void);
 void test_gpio(void);
-void test_sdhc(void);
+int test_sdhc(void);
 void test_uart(void);
 
 #endif //UBIRCH_BOARD_TEST_SUPPORT_H

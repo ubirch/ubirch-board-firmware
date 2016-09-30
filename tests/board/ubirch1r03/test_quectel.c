@@ -7,6 +7,7 @@
 extern volatile int state;
 
 void test_quectel() {
+#if TEST_QUECTEL
   yesno("QUECTEL M66 test?");
 
   modem_init();
@@ -55,4 +56,5 @@ void test_quectel() {
 
     delay(10000);
   }
+#endif
 }
