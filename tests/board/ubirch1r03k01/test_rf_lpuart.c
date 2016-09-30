@@ -6,5 +6,5 @@ void test_uart(void) {
 
   rf_init(rf_config);
   const char *hello = "HELLO WORLD\r\n";
-  rf_send(rf_config, (const uint8_t *) hello, strlen(hello));
+  rf_send((const uint8_t *) hello, strlen(hello));
 }

@@ -39,7 +39,6 @@ void rf_init(rf_config_t *rf_config) {
               port_clock_freq);
   LPUART_EnableRx(config->lpuart, true);
   LPUART_EnableTx(config->lpuart, true);
-
 }
 
 void rf_send(const uint8_t *buffer, size_t size)
