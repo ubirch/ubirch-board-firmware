@@ -34,6 +34,7 @@ add_library(firmware
   ubirch/timer.c
   ubirch/ws2812b.c
   ubirch/rf-sub-ghz/rf_lpuart.c
+  ubirch/device.c
   ${CELL_SRCS}
   ${SDHC_SRCS} )
 target_include_directories(firmware PUBLIC
@@ -47,6 +48,8 @@ if (BOARD MATCHES "ubirch1r03")
 endif ()
 
 # only do the full debug output in "Debug"
-if (NOT CMAKE_BUILD_TYPE MATCHES Debug)
+if (CMAKE_BUILD_TYPE MATCHES MinSizeRel|Release)
+  target_compile_definitions(firmware PUBLIC -DNCIODEBUG -DNCSTDEBUG)
+elseif(CMAKE_BUILD_TYPE MATCHES RelWithDebInfo)
   target_compile_definitions(firmware PUBLIC -DNCIODEBUG)
-endif ()
+endif()
