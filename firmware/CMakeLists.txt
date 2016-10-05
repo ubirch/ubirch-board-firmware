@@ -12,7 +12,7 @@ if (BOARD MATCHES "ubirch1r03")
     ${FATFS_MIDDLEWARE_SRCS}
     )
 else ()
-  set(FIRMWARE_SRCS ${FIRMWARE_SRCS}
+  set(CELL_SRCS
     ubirch/sim800h/sim800h_core.c
     ubirch/sim800h/sim800h_http.c
     ubirch/sim800h/sim800h_ops.c
