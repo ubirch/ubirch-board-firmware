@@ -53,13 +53,12 @@ int main(void) {
 
   uint32_t uuid[4];
   device_uuid(uuid);
-  printf("UUID: %08lX-%04lX-%04lX-%04lX-%04lX%06lX\r\n",
-         uuid[0],
-         uuid[1] >> 16,
-         uuid[1] & 0xFFFF,
-         uuid[2] >> 16,
-         uuid[2] & 0xFFFF,
-         uuid[3]);
+  printf("UUID: %08lX-%04lX-%04lX-%04lX-%04lX%08lX\r\n",
+         uuid[0],                     // 8
+         uuid[1] >> 16,               // 4
+         uuid[1] & 0xFFFF,            // 4
+         uuid[2] >> 16,               // 4
+         uuid[2] & 0xFFFF, uuid[3]);  // 4+8
 
   modem_init();
   modem_enable();
