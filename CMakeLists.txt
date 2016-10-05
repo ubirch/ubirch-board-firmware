@@ -34,6 +34,12 @@ provide(PACKAGE ubirch VERSION 1.0 BOARD ${BOARD} TARGETS board firmware)
 # add tests
 add_subdirectory(tests)
 
+# copy the config.h.template to config.h in case it is not there; it is ignored by .git!
+if (NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/config.h")
+  message(AUTHOR_WARNING "In directory '${CMAKE_CURRENT_SOURCE_DIR}': installing the template config.h, please edit!")
+  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.h.template ${CMAKE_CURRENT_SOURCE_DIR}/config.h COPYONLY)
+endif ()
+
 # Generate Documentation for firmware and board
 find_package(Doxygen)
 if (DOXYGEN_FOUND)

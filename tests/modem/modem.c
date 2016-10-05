@@ -30,6 +30,8 @@
 #include <ubirch/timer.h>
 #include <ubirch/device.h>
 #include <ubirch/modem.h>
+#include <ubirch/m66/mqtt.h>
+#include "../config.h"
 
 bool on = true;
 volatile uint32_t milliseconds = 0;
@@ -67,7 +69,10 @@ int main(void) {
   printf("IMEI : %s\r\n", imei);
   modem_disable();
 
-  while (true) {
+  modem_mqtt_connect( CELL_APN, CELL_USER, CELL_PWD, 5000);
+  modem_mqtt_send("HELLO", 5);
+
+    while (true) {
     delay(1000);
   };
 }

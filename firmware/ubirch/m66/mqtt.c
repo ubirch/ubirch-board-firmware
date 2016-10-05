@@ -9,8 +9,9 @@
 #include "ubirch/timer.h"
 
 bool modem_mqtt_connect(const char *apn, const char *user, const char *password, uint32_t timeout) {
+  modem_init();
   modem_enable();
-  modem_sim_pin();
+//  modem_sim_pin();
   modem_register(timeout);
   modem_gprs_attach(apn, user, password, timeout);
 

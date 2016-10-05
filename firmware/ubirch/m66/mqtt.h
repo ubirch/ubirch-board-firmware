@@ -13,8 +13,9 @@
 extern "C" {
 #endif
 
-void modem_sim_pin(void);
+//void modem_sim_pin(void);
 bool modem_mqtt_connect(const char *apn, const char *user, const char *password, uint32_t timeout);
+bool modem_mqtt_send(const char *data, uint8_t len);
 
 
 #endif //UBIRCH_FIRMWARE_MQTT_H
