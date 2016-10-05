@@ -10,3 +10,4 @@ endif()
 
 add_subdirectory(firmware)
 add_subdirectory(identify)
+add_subdirectory(modem)
