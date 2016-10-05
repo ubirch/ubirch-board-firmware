@@ -40,10 +40,14 @@ s8 bme280_bus_write(uint8_t address, uint8_t reg, uint8_t *data, uint8_t size) {
 }
 
 bool bme280_init(void) {
-  // check that this is the correct chip, they are not all fully compatible
-  if (i2c_read_reg(BME280_DEVICE_ADDRESS, BME280_CHIP_ID_REG) != BME280_CHIP_ID) return false;
-
   bme280.dev_addr = BME280_DEVICE_ADDRESS;
+
+  // check that this is the correct chip, they are not all fully compatible
+  if (i2c_read_reg(bme280.dev_addr, BME280_CHIP_ID_REG) != BME280_CHIP_ID) {
+    bme280.dev_addr = BME280_DEVICE_ADDRESS - 1;
+    if (i2c_read_reg(bme280.dev_addr, BME280_CHIP_ID_REG) != BME280_CHIP_ID) return false;
+  }
+
   bme280.bus_read = bme280_bus_read;
   bme280.bus_write = bme280_bus_write;
   bme280.delay_msec = (void (*)(u16)) delay;
