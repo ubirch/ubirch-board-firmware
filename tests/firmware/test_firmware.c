@@ -26,6 +26,10 @@
 
 #include <stdint.h>
 #include <board.h>
+#include <ubirch/modem.h>
+#include <stdio.h>
+#include <ubirch/device.h>
+#include <ubirch/dbgutil.h>
 #include "test.h"
 
 int test_i2c();
@@ -63,6 +67,22 @@ int main(void) {
   SysTick_Config(BOARD_SYSTICK_1MS);
 
   PRINTF("Testing Board and Firmware: " BOARD "\r\n\r\n");
+  uint32_t uuid[4];
+  device_uuid(uuid);
+  printf("UUID: %08lX-%04lX-%04lX-%04lX-%04lX%08lX\r\n",
+         uuid[0],                     // 8
+         uuid[1] >> 16,               // 4
+         uuid[1] & 0xFFFF,            // 4
+         uuid[2] >> 16,               // 4
+         uuid[2] & 0xFFFF, uuid[3]);  // 4+8
+
+  modem_init();
+  modem_enable();
+  char imei[17];
+  modem_imei(imei, 1000);
+  printf("IMEI : %s\r\n", imei);
+  modem_disable();
+
 
   TEST("SDHC", test_sdhc_fat());
   TEST("WS2812B", test_ws2812b());
@@ -74,5 +94,8 @@ int main(void) {
 
   SysTick_Config(BOARD_SYSTICK_100MS);
 
-  while(true);
+  dbg_dump("BCA", (const uint8_t *) 0x3c0, 0x33);
+  PRINTF("Entering bootloader.\r\n");
+  uint32_t runBootloaderAddress = **(uint32_t **) (0x1c00001c);
+  ((void (*)(void *arg)) runBootloaderAddress)(NULL);
 }

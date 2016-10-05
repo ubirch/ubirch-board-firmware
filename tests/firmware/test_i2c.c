@@ -76,7 +76,8 @@ int test_i2c(void) {
           break;
         }
         // BMP180, BME280
-        case BMP180_DEVICE_ADDRESS: {
+        case BMP180_DEVICE_ADDRESS:
+        case BMP180_DEVICE_ADDRESS - 1: {
           const uint8_t chip_id = i2c_read_reg(address, (0xD0));
           switch(chip_id) {
             case BMP180_CHIP_ID: {
