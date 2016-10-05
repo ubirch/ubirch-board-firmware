@@ -6,11 +6,11 @@ if (BOARD MATCHES "ubirch1r03")
     ubirch/m66/m66_http.c
     ubirch/m66/m66_ops.c
     ubirch/m66/m66_parser.c
+    ubirch/m66/mqtt.c
     )
   set(SDHC_SRCS
     ubirch/sdhc.c
-    ${FATFS_MIDDLEWARE_SRCS}
-    )
+    ${FATFS_MIDDLEWARE_SRCS})
 else ()
   set(CELL_SRCS
     ubirch/sim800h/sim800h_core.c
