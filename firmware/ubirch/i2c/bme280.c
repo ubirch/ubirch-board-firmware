@@ -43,9 +43,11 @@ bool bme280_init(void) {
   bme280.dev_addr = BME280_DEVICE_ADDRESS;
 
   // check that this is the correct chip, they are not all fully compatible
-  if (i2c_read_reg(bme280.dev_addr, BME280_CHIP_ID_REG) != BME280_CHIP_ID) {
+  uint8_t device_id = i2c_read_reg(bme280.dev_addr, BME280_CHIP_ID_REG);
+  if (device_id != BME280_CHIP_ID) {
     bme280.dev_addr = BME280_DEVICE_ADDRESS - 1;
-    if (i2c_read_reg(bme280.dev_addr, BME280_CHIP_ID_REG) != BME280_CHIP_ID) return false;
+    device_id = i2c_read_reg(bme280.dev_addr, BME280_CHIP_ID_REG);
+    if (device_id != BME280_CHIP_ID) return false;
   }
 
   bme280.bus_read = bme280_bus_read;
@@ -53,7 +55,7 @@ bool bme280_init(void) {
   bme280.delay_msec = (void (*)(u16)) delay;
 
   int result = _bme280_init(&bme280);
-  result += bme280_power_mode(BME280_Normal);
+  result += !bme280_power_mode(BME280_Normal);
 
   return !result;
 }

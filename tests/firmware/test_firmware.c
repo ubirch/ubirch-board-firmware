@@ -31,6 +31,7 @@
 #include <ubirch/device.h>
 #include <ubirch/dbgutil.h>
 #include "test.h"
+#include "bca.h"
 
 int test_i2c();
 
@@ -80,7 +81,7 @@ int main(void) {
   modem_enable();
   char imei[17];
   modem_imei(imei, 1000);
-  printf("IMEI : %s\r\n", imei);
+  printf("IMEI: %s\r\n", imei);
   modem_disable();
 
 
@@ -94,8 +95,9 @@ int main(void) {
 
   SysTick_Config(BOARD_SYSTICK_100MS);
 
-  dbg_dump("BCA", (const uint8_t *) 0x3c0, 0x33);
+  dbg_dump("BCA", (const uint8_t *) 0x000003c0, 0x33);
   PRINTF("Entering bootloader.\r\n");
   uint32_t runBootloaderAddress = **(uint32_t **) (0x1c00001c);
   ((void (*)(void *arg)) runBootloaderAddress)(NULL);
 }
+
