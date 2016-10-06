@@ -62,13 +62,13 @@ int main(void) {
          uuid[2] >> 16,               // 4
          uuid[2] & 0xFFFF, uuid[3]);  // 4+8
 
-  int is_it_connected = 0;
+//  int is_it_connected = 0;
 
-  while (!is_it_connected)
-  {
-    is_it_connected = modem_mqtt_connect( CELL_APN, CELL_USER, CELL_PWD, 5000);
-  }
-
+//  while (!is_it_connected)
+//  {
+//    is_it_connected = modem_mqtt_connect( CELL_APN, CELL_USER, CELL_PWD, 10000);
+//  }
+  modem_mqtt_connect( CELL_APN, CELL_USER, CELL_PWD, 10000);
 
 //  modem_init();
 //  modem_enable();
