@@ -62,15 +62,22 @@ int main(void) {
          uuid[2] >> 16,               // 4
          uuid[2] & 0xFFFF, uuid[3]);  // 4+8
 
-  modem_init();
-  modem_enable();
-  char imei[17];
-  modem_imei(imei, 1000);
-  printf("IMEI : %s\r\n", imei);
-  modem_disable();
+  int is_it_connected = 0;
 
-  modem_mqtt_connect( CELL_APN, CELL_USER, CELL_PWD, 5000);
-  modem_mqtt_send("HELLO", 5);
+  while (!is_it_connected)
+  {
+    is_it_connected = modem_mqtt_connect( CELL_APN, CELL_USER, CELL_PWD, 5000);
+  }
+
+
+//  modem_init();
+//  modem_enable();
+//  char imei[17];
+//  modem_imei(imei, 1000);
+//  printf("IMEI : %s\r\n", imei);
+//  modem_disable();
+  const char send_data[] = {"GET / HTTP/1.1\r\n\r\n"};
+  modem_mqtt_send(send_data, (uint8_t)strlen(send_data));
 
     while (true) {
     delay(1000);

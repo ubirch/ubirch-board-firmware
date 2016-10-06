@@ -7,6 +7,7 @@
 #include "m66_ops.h"
 #include "m66_parser.h"
 #include "ubirch/timer.h"
+#include <stdio.h>
 
 bool modem_mqtt_connect(const char *apn, const char *user, const char *password, uint32_t timeout) {
   modem_init();
@@ -22,9 +23,11 @@ bool modem_mqtt_connect(const char *apn, const char *user, const char *password,
 
   modem_send("AT+QIMODE=0");
   if (!modem_expect_OK(uTimer_Remaining)) return false;
+  printf("MUX and MODE selected \r\n");
 
   modem_send("AT+QIDNSIP=1");
   if (!modem_expect_OK(uTimer_Remaining)) return false;
+  printf("DNS and not IP\r\n");
 
 //    modem_send("AT+QILOCIP");
 //    if (modem_expect("ERROR", uTimer_Remaining)) return false;
@@ -37,13 +40,11 @@ bool modem_mqtt_connect(const char *apn, const char *user, const char *password,
 //    AT+QIHEAD=1;  // add info IPD<len>: before the received data
 //    AT+QISHOWRA=1; // display IP address and port of the sender
 //    AT+QISHOWPT=1; // show transmission layer protocol type, TCP or UDP
-
-  modem_send("AT+QIOPEN=\"TCP\",\"iot.eclipse.org\",1883");
-  if (!modem_expect_OK(uTimer_Remaining)) {
-    return false;
-  } else {
-    if (!modem_expect("CONNECT OK", uTimer_Remaining)) return false;
-  }
+  modem_send("AT+QIOPEN=\"TCP\",\"api.ubirch.com\",\"80\"");
+//  modem_send("AT+QIOPEN=\"TCP\",\"iot.eclipse.org\",1883");
+//  modem_send("AT+OPEN=\"TCP\",\"192.168.67.28\", 80");
+  if (!modem_expect_OK(uTimer_Remaining)) return false;
+  if (!modem_expect("CONNECT OK", 2000)) return false;
 
   return true;
 }
@@ -53,8 +54,21 @@ bool modem_mqtt_send(const char *data, uint8_t len)
 {
   //TODO add timer here
 
-  modem_send("AT+SEND=%d", len);
-  modem_writeline(data);
+  modem_send("AT+QISACK");
+  if (modem_expect("+QISACK", 3000)) printf("see acack\r\n");
+
+
+  modem_send("AT+QISEND=%d", len);
+  delay(1000);
+//  if (modem_expect('> ', 3000))
+//  {
+    modem_send(data);
+//  }
+//  else
+//  {
+//    printf("we did not receive < \r\n");
+//  }
+//  else return false;
 
   if (!modem_expect("SEND OK", uTimer_Remaining)) return false;
 
