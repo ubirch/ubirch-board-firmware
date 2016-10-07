@@ -1,10 +1,9 @@
 /**
- * Identify the board.
+ * Establish a TCP connection - Send / Receive packets.
  *
- * Outputs the UUID and the IMEI (if available)
  *
- * @author Matthias L. Jugel
- * @date 2016-10-04
+ * @author Niranjan H. Rao
+ * @date 2016-10-07
  *
  * @copyright &copy; 2016 ubirch GmbH (https://ubirch.com)
  *
@@ -31,7 +30,7 @@
 #include <ubirch/device.h>
 #include <ubirch/modem.h>
 #include <ubirch/m66/m66_tcp.h>
-#include "../config.h"
+#include "config.h"
 
 bool on = true;
 volatile uint32_t milliseconds = 0;
@@ -52,15 +51,6 @@ int main(void) {
 
   // 100ms led blink, only works if setup for LED was correct
   SysTick_Config(BOARD_SYSTICK_100MS / 10);
-
-  uint32_t uuid[4];
-  device_uuid(uuid);
-  printf("UUID: %08lX-%04lX-%04lX-%04lX-%04lX%08lX\r\n",
-         uuid[0],                     // 8
-         uuid[1] >> 16,               // 4
-         uuid[1] & 0xFFFF,            // 4
-         uuid[2] >> 16,               // 4
-         uuid[2] & 0xFFFF, uuid[3]);  // 4+8
 
   // Initialize modem
   modem_init();
