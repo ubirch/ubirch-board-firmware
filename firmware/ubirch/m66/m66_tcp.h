@@ -33,7 +33,11 @@
 extern "C" {
 #endif
 
-#define MQTT_READ_BUFFER 255
+// TODO Make the read buffer size configurable
+#ifndef MQTT_READ_BUFFER
+  #define MQTT_READ_BUFFER 255
+#endif
+
 bool modem_mqtt_connect(const char *apn, const char *user, const char *password, uint32_t timeout);
 bool modem_mqtt_send(const char *data, uint8_t len);
 void modem_mqtt_close(uint32_t timeout);
