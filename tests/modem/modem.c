@@ -55,27 +55,27 @@ int main(void) {
 
   if (!modem_enable())
   {
-    printf("failed to enable modem\r\n");
+    PRINTF("failed to enable modem\r\n");
     return false;
   }
 
   // Register to the network
   if (!modem_register(6 * 5000))
   {
-    printf("failed to register\r\n");
+    PRINTF("failed to register\r\n");
     return false;
   }
 
   if (!modem_tcp_connect(CELL_APN, CELL_USER, CELL_PWD, 20 * 5000))
   {
-    printf("unable to connect \r\n");
+    PRINTF("unable to connect \r\n");
     return 0;
   }
 
-  const char send_data[] = {"GET / HTTP/1.1\r\n\r\n"};
+  const char send_data[] = "GET / HTTP/1.1\r\n\r\n";
   if (!modem_tcp_send(send_data, (uint8_t) strlen(send_data)))
   {
-    printf("failed to send\r\n");
+    PRINTF("failed to send\r\n");
     return 0;
   }
 

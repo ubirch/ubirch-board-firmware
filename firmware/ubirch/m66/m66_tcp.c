@@ -26,6 +26,7 @@
 #include "m66_ops.h"
 #include "m66_parser.h"
 #include "ubirch/timer.h"
+#include "m66_debug.h"
 #include <stdio.h>
 
 bool modem_tcp_connect(const char *apn, const char *user, const char *password, uint32_t timeout) {
@@ -40,11 +41,11 @@ bool modem_tcp_connect(const char *apn, const char *user, const char *password, 
 //  Set QIMODE to 1, to establish TCP connection in transparent mode
 //  modem_send("AT+QIMODE=0");
 //  if (!modem_expect_OK(uTimer_Remaining)) return false;
-//  printf("MUX and MODE selected \r\n");
+//  CSTDEBUG("MUX and MODE selected \r\n");
 
   modem_send("AT+QIDNSIP=1");
   if (!modem_expect_OK(uTimer_Remaining)) return false;
-  printf("DNS and not IP\r\n");
+  CSTDEBUG("DNS and not IP\r\n");
 
 //     Add header to the received data
 //     we need these AT commands to configure the way we receive the O/P
@@ -77,7 +78,7 @@ bool modem_tcp_send(const char *data, uint8_t len)
   }
   else
   {
-    printf("we did not receive < \r\n");
+    CSTDEBUG("we did not receive < \r\n");
     return false;
   }
 
@@ -87,16 +88,16 @@ bool modem_tcp_send(const char *data, uint8_t len)
   static int rx_buffer_len = 0;
 
   // Here it reads only one line
-  rx_buffer_len = modem_readline(rx_buffer, MQTT_READ_BUFFER, 2000);
+  rx_buffer_len = modem_read_binary(rx_buffer, MQTT_READ_BUFFER, 2000);
   if (!rx_buffer_len)
   {
-    printf("No data received\r\n");
+    CSTDEBUG("No data received\r\n");
     return 0;
   }
   else
   {
-    printf("Received data: %s\r\n", rx_buffer);
-    printf("Total bytes received: %d\r\n", rx_buffer_len);
+    CSTDEBUG("Received data: %s\r\n", rx_buffer);
+    CSTDEBUG("Total bytes received: %d\r\n", rx_buffer_len);
   }
 
   return true;
@@ -107,13 +108,13 @@ void modem_tcp_close(uint32_t timeout)
   modem_send("AT+QICLOSE");
   if (!modem_expect_OK(10 * timeout))
   {
-    printf("Failed to close the TCP connection\r\n");
+    CSTDEBUG("Failed to close the TCP connection\r\n");
   }
 
   modem_send("AT+QIDEACT");
   if (!modem_expect_OK(10 * timeout))
   {
-    printf("Failed to deactivate PDP context, disabling modem\r\n");
+    CSTDEBUG("Failed to deactivate PDP context, disabling modem\r\n");
   }
 
   modem_disable();
