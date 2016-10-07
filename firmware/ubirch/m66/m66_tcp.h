@@ -22,8 +22,8 @@
  * ```
  */
 
-#ifndef UBIRCH_FIRMWARE_MQTT_H
-#define UBIRCH_FIRMWARE_MQTT_H
+#ifndef UBIRCH_FIRMWARE_TCP_H
+#define UBIRCH_FIRMWARE_TCP_H
 
 
 #include <stdbool.h>
@@ -38,9 +38,9 @@ extern "C" {
   #define MQTT_READ_BUFFER 255
 #endif
 
-bool modem_mqtt_connect(const char *apn, const char *user, const char *password, uint32_t timeout);
-bool modem_mqtt_send(const char *data, uint8_t len);
-void modem_mqtt_close(uint32_t timeout);
+bool modem_tcp_connect(const char *apn, const char *user, const char *password, uint32_t timeout);
+bool modem_tcp_send(const char *data, uint8_t len);
+void modem_tcp_close(uint32_t timeout);
 
 
 #endif //UBIRCH_FIRMWARE_MQTT_H

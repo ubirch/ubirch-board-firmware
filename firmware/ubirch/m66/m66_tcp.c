@@ -28,14 +28,16 @@
 #include "ubirch/timer.h"
 #include <stdio.h>
 
-bool modem_mqtt_connect(const char *apn, const char *user, const char *password, uint32_t timeout) {
+bool modem_tcp_connect(const char *apn, const char *user, const char *password, uint32_t timeout) {
   timer_set_timeout(timeout * 1000);
 
   if (!modem_gprs_attach(apn, user, password, uTimer_Remaining)) return false;
 
+// This is used to establish TCP connection  - server / client
 //  modem_send("AT+QIMUX=0");
 //  if (!modem_expect_OK(uTimer_Remaining)) return false;
 
+//  Set QIMODE to 1, to establish TCP connection in transparent mode
 //  modem_send("AT+QIMODE=0");
 //  if (!modem_expect_OK(uTimer_Remaining)) return false;
 //  printf("MUX and MODE selected \r\n");
@@ -61,7 +63,7 @@ bool modem_mqtt_connect(const char *apn, const char *user, const char *password,
 }
 
 
-bool modem_mqtt_send(const char *data, uint8_t len)
+bool modem_tcp_send(const char *data, uint8_t len)
 {
   // this is just to check if the tcp connection is alive
   modem_send("AT+QISACK");
@@ -100,7 +102,7 @@ bool modem_mqtt_send(const char *data, uint8_t len)
   return true;
 }
 
-void modem_mqtt_close(uint32_t timeout)
+void modem_tcp_close(uint32_t timeout)
 {
   modem_send("AT+QICLOSE");
   if (!modem_expect_OK(10 * timeout))

@@ -25,9 +25,7 @@
 #include <stdint.h>
 #include <board.h>
 #include <stdio.h>
-#include <stdlib.h>
 #include <ubirch/timer.h>
-#include <ubirch/device.h>
 #include <ubirch/modem.h>
 #include <ubirch/m66/m66_tcp.h>
 #include "config.h"
@@ -68,20 +66,20 @@ int main(void) {
     return false;
   }
 
-  if (!modem_mqtt_connect( CELL_APN, CELL_USER, CELL_PWD, 20 * 5000))
+  if (!modem_tcp_connect(CELL_APN, CELL_USER, CELL_PWD, 20 * 5000))
   {
     printf("unable to connect \r\n");
     return 0;
   }
 
   const char send_data[] = {"GET / HTTP/1.1\r\n\r\n"};
-  if (!modem_mqtt_send(send_data, (uint8_t)strlen(send_data)))
+  if (!modem_tcp_send(send_data, (uint8_t) strlen(send_data)))
   {
     printf("failed to send\r\n");
     return 0;
   }
 
-  modem_mqtt_close(1000);
+  modem_tcp_close(1000);
 
   while (true) {
     delay(1000);
