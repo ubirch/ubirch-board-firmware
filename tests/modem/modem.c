@@ -30,7 +30,7 @@
 #include <ubirch/timer.h>
 #include <ubirch/device.h>
 #include <ubirch/modem.h>
-#include <ubirch/m66/mqtt.h>
+#include <ubirch/m66/m66_tcp.h>
 #include "../config.h"
 
 bool on = true;
@@ -62,24 +62,38 @@ int main(void) {
          uuid[2] >> 16,               // 4
          uuid[2] & 0xFFFF, uuid[3]);  // 4+8
 
-//  int is_it_connected = 0;
+  // Initialize modem
+  modem_init();
 
-//  while (!is_it_connected)
-//  {
-//    is_it_connected = modem_mqtt_connect( CELL_APN, CELL_USER, CELL_PWD, 10000);
-//  }
-  modem_mqtt_connect( CELL_APN, CELL_USER, CELL_PWD, 10000);
+  if (!modem_enable())
+  {
+    printf("failed to enable modem\r\n");
+    return false;
+  }
 
-//  modem_init();
-//  modem_enable();
-//  char imei[17];
-//  modem_imei(imei, 1000);
-//  printf("IMEI : %s\r\n", imei);
-//  modem_disable();
+  // Register to the network
+  if (!modem_register(6 * 5000))
+  {
+    printf("failed to register\r\n");
+    return false;
+  }
+
+  if (!modem_mqtt_connect( CELL_APN, CELL_USER, CELL_PWD, 20 * 5000))
+  {
+    printf("unable to connect \r\n");
+    return 0;
+  }
+
   const char send_data[] = {"GET / HTTP/1.1\r\n\r\n"};
-  modem_mqtt_send(send_data, (uint8_t)strlen(send_data));
+  if (!modem_mqtt_send(send_data, (uint8_t)strlen(send_data)))
+  {
+    printf("failed to send\r\n");
+    return 0;
+  }
 
-    while (true) {
+  modem_mqtt_close(1000);
+
+  while (true) {
     delay(1000);
   };
 }
