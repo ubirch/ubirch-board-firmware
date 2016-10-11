@@ -1,7 +1,7 @@
-add_executable(gsm_console main.c)
-target_link_libraries(gsm_console board)
-target_link_libraries(gsm_console firmware)
-prepare_flash(TARGET gsm_console)
+add_executable(modem_http main.c)
+target_link_libraries(modem_http board)
+target_link_libraries(modem_http firmware)
+prepare_flash(TARGET modem_http)
 
 # copy the config.h.template to config.h in case it is not there; it is ignored by .git!
 if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/config.h")
