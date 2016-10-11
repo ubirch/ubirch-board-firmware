@@ -1,0 +1,13 @@
+AT+CGATT=1
+AT+SAPBR=3,1,"CONTYPE","GPRS"
+AT+SAPBR=3,1,"APN","eseye.com"
+AT+SAPBR=3,1,"USER","user"
+AT+SAPBR=3,1,"PWD","pass"
+AT+SAPBR=1,1
+
+AT+HTTPINIT
+AT+HTTPPARA="CID",1
+AT+HTTPPARA="UA","UBIRCH#1 r0.2"
+AT+HTTPPARA="REDIR",1
+AT+HTTPPARA="URL","http://maker.ifttt.com/trigger/hum_alarm/with/key/nh6EIOGk1qpnzAKPSa9JoCy8cjQLfcvUDfcBLCry7Gf"
+AT+HTTPACTION=0
