@@ -6,6 +6,7 @@ if (BOARD MATCHES "ubirch1r03")
     ubirch/m66/m66_http.c
     ubirch/m66/m66_ops.c
     ubirch/m66/m66_parser.c
+    ubirch/m66/m66_tcp.c
     )
   set(SDHC_SRCS
     ubirch/sdhc.c

@@ -34,6 +34,7 @@ provide(PACKAGE ubirch VERSION 1.0 BOARD ${BOARD} TARGETS board firmware)
 # add tests
 add_subdirectory(tests)
 
+
 # Generate Documentation for firmware and board
 find_package(Doxygen)
 if (DOXYGEN_FOUND)
