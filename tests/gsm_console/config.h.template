@@ -1,0 +1,8 @@
+#ifndef _LIGHTS_SENSOR_H_
+#define _LIGHTS_SENSOR_H_
+
+#define CELL_APN ""
+#define CELL_USER ""
+#define CELL_PWD ""
+
+#endif //_LIGHTS_SENSOR_H_

@@ -101,7 +101,7 @@ size_t modem_http_read(uint8_t *buffer, uint32_t timeout) {
   return idx;
 }
 
-size_t modem_http_dl_file(const char *file_name, uint32_t timeout)
+uint32_t modem_http_dl_file(const char *file_name, uint32_t timeout)
 {
   timer_set_timeout(timeout * 1000);
 
@@ -117,7 +117,7 @@ size_t modem_http_dl_file(const char *file_name, uint32_t timeout)
   return dl_len;
 }
 
-int modem_http_get(const char *url, size_t *res_size, uint32_t timeout) {
+int modem_http_get(const char *url, uint32_t timeout) {
   timer_set_timeout(timeout * 1000);
 
   bool url_ok = false;
@@ -150,7 +150,6 @@ int modem_http_get(const char *url, size_t *res_size, uint32_t timeout) {
       CIODEBUG("HTTP (%02d) -> '%s'\r\n", strlen(get_response), get_response);
       return false;
     }
-
     return true;
   }
 }
@@ -167,3 +166,27 @@ int modem_http_post(const char *url, size_t *res_size, uint8_t *request, size_t 
 }
 
 
+bool http_file_open(const char *file_name, uint32_t *file_handle, uint8_t rw_mode, uint32_t timeout)
+{
+  timer_set_timeout(timeout * 1000);
+  modem_send("AT+QFOPEN=\"%s\",%d", file_name, rw_mode);
+  modem_expect_scan("+QFOPEN:%d", file_handle);
+  if (!modem_expect_OK(uTimer_Remaining)) return false;
+  return true;
+}
+
+int http_file_read(const char *read_buffer, uint32_t file_handle, uint16_t len)
+{
+  modem_send("AT+QFREAD=%d,%d", file_handle, len);
+  size_t  data_len= modem_read_binary(read_buffer, len, uTimer_Remaining);
+
+  if (!modem_expect_OK(uTimer_Remaining)) return false;
+
+  return data_len;
+}
+bool http_file_close(uint32_t file_handle)
+{
+  modem_send("AT+QFCLOSE=%d", file_handle);
+  if (!modem_expect_OK(2000)) return false;
+  return true;
+}
