@@ -73,7 +73,12 @@ size_t modem_http_write(const uint8_t *buffer, size_t size, uint32_t timeout);
  * @param timeout how long to wait for the connection
  * @return amount of data read
  */
-size_t modem_http_read(uint8_t *buffer, uint32_t start, size_t size, uint32_t timeout);
+//size_t modem_http_read(uint8_t *buffer, uint32_t start, size_t size, uint32_t timeout);
+size_t modem_http_read(uint8_t *buffer, uint32_t timeout);
+
+
+size_t modem_http_dl_file(const char *file_name, uint32_t timeout);
+
 
 /*!
  * @brief Prepare and open a GET request.

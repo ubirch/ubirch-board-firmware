@@ -30,6 +30,10 @@
 int modem_http_prepare(const char *url, uint32_t timeout) {
   timer_set_timeout(timeout * 1000);
 
+/*  modem_enable();
+  modem_register();
+  modem_gprs_attach();*/
+
   modem_send("AT+HTTPTERM");
   modem_expect_OK(timeout);
 
@@ -79,30 +83,76 @@ size_t modem_http_write(const uint8_t *buffer, size_t size, uint32_t timeout) {
   return size;
 }
 
-size_t modem_http_read(uint8_t *buffer, uint32_t start, size_t size, uint32_t timeout) {
-  if(size <= 0) return 0;
+//default is 10240 bytessuper
+size_t modem_http_read(uint8_t *buffer, uint32_t timeout) {
 
   timer_set_timeout(timeout * 1000);
-  size_t available;
+  size_t idx, available;
 
-  modem_send("AT+HTTPREAD=%d,%d", start, size);
-  modem_expect_scan("+HTTPREAD: %lu", timeout, &available);
+  modem_send("AT+QHTTPREAD=%d", uTimer_Remaining);
+  if (modem_expect("CONNECT", uTimer_Remaining))
+  {
+    idx = modem_read_binary(buffer, available, uTimer_Remaining);
+    CIODUMP(buffer, idx);
 
-  size_t idx = modem_read_binary(buffer, available, uTimer_Remaining);
-  if (!modem_expect_OK(uTimer_Remaining)) return 0;
-
-  CIODUMP(buffer, idx);
+    if (!modem_expect_OK(uTimer_Remaining)) return 0;
+  }
 
   return idx;
+}
+
+size_t modem_http_dl_file(const char *file_name, uint32_t timeout)
+{
+  timer_set_timeout(timeout * 1000);
+
+  static uint32_t dl_len, content_len = 0;
+  static uint16_t error_code = 0;
+
+  // Here the default download file size is 10240 Bytes
+  // To give a size, enter the size after the filename
+  modem_send("AT+QHTTPDL=\"RAM:%s.txt\"", file_name);
+  modem_expect_scan("+QHTTPDL:%d,%d,%d", uTimer_Remaining, &dl_len, &content_len, &error_code);
+  if (!modem_expect_OK(uTimer_Remaining)) return 0;
+
+  return dl_len;
 }
 
 int modem_http_get(const char *url, size_t *res_size, uint32_t timeout) {
   timer_set_timeout(timeout * 1000);
 
-  int status = modem_http_prepare(url, timeout);
-  if (status) return status;
+  bool url_ok = false;
+  modem_send("AT+QHTTPURL=%d,%d", strlen(url), uTimer_Remaining);
+  if (!modem_expect("CONNECT", uTimer_Remaining))
+  {
+    CIODEBUG("HTTP (25) -> 'Failed to receive CONNECT'\r\n");
+  }
+  else
+  {
+    modem_send(url);
+    if (!modem_expect_OK(uTimer_Remaining))
+    {
+      PRINTF("Failed to connect to the server");
+      return false;
+    }
+    else
+    {
+      url_ok = true;
+    }
+  }
 
-  return modem_http(HTTP_GET, res_size, uTimer_Remaining);
+  if (url_ok)
+  {
+    modem_send("AT+QHTTPGET=%d", uTimer_Remaining);
+    if (!modem_expect_OK(uTimer_Remaining))
+    {
+      char *get_response;
+      modem_readline(get_response, 20, uTimer_Remaining);
+      CIODEBUG("HTTP (%02d) -> '%s'\r\n", strlen(get_response), get_response);
+      return false;
+    }
+
+    return true;
+  }
 }
 
 int modem_http_post(const char *url, size_t *res_size, uint8_t *request, size_t req_size, uint32_t timeout) {
