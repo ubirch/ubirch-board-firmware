@@ -89,14 +89,14 @@ bool modem_tcp_send(const char *data, uint8_t len)
 
   // Here it reads only one line
   rx_buffer_len = modem_read_binary(rx_buffer, MQTT_READ_BUFFER, 2000);
-  if (!rx_buffer_len)
+  if (rx_buffer_len)
   {
     CSTDEBUG("No data received\r\n");
     return 0;
   }
   else
   {
-    CSTDEBUG("Received data: %s\r\n", rx_buffer);
+    CIODUMP(rx_buffer, rx_buffer_len);
     CSTDEBUG("Total bytes received: %d\r\n", rx_buffer_len);
   }
 
