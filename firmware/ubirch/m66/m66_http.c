@@ -87,12 +87,14 @@ size_t modem_http_write(const uint8_t *buffer, size_t size, uint32_t timeout) {
 size_t modem_http_read(uint8_t *buffer, uint32_t timeout) {
 
   timer_set_timeout(timeout * 1000);
-  size_t idx, available;
+  size_t idx, available = 0;
+  available = 2322;
 
-  modem_send("AT+QHTTPREAD=%d", uTimer_Remaining);
+  modem_send("AT+QHTTPREAD=30"); //, uTimer_Remaining);
   if (modem_expect("CONNECT", uTimer_Remaining))
   {
-    idx = modem_read_binary(buffer, available, uTimer_Remaining);
+    modem_expect_OK(2000);
+    idx = modem_readline((char *)buffer, available, uTimer_Remaining);
     CIODUMP(buffer, idx);
 
     if (!modem_expect_OK(uTimer_Remaining)) return 0;
@@ -185,7 +187,7 @@ int http_file_read(const char *read_buffer, uint32_t file_handle, uint16_t len)
 
   return data_len;
 }
-bool http_file_close(uint32_t file_handle)
+bool http_file_close(int file_handle)
 {
   modem_send("AT+QFCLOSE=%d", file_handle);
   if (!modem_expect_OK(2000)) return false;

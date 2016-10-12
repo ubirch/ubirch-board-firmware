@@ -104,7 +104,7 @@ int modem_http_post(const char *url, size_t *res_size, uint8_t *request, size_t 
 uint32_t http_file_open(const char *file_name, uint8_t rw_mode, uint32_t timeout);
 
 int http_file_read(const char *read_buffer, uint32_t file_handle, uint16_t len);
-bool http_file_close(uint32_t file_handle);
+bool http_file_close(int file_handle);
 
 #ifdef __cplusplus
 }
