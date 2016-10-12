@@ -77,7 +77,7 @@ size_t modem_http_write(const uint8_t *buffer, size_t size, uint32_t timeout);
 size_t modem_http_read(uint8_t *buffer, uint32_t timeout);
 
 
-uint32_t modem_http_dl_file(const char *file_name, uint32_t timeout);
+int modem_http_dl_file(const char *file_name, uint32_t timeout);
 
 
 /*!
@@ -101,9 +101,9 @@ int modem_http_get(const char *url, uint32_t timeout);
 int modem_http_post(const char *url, size_t *res_size, uint8_t *request, size_t req_size, uint32_t timeout);
 
 
-uint32_t http_file_open(const char *file_name, uint8_t rw_mode, uint32_t timeout);
+int http_file_open(const char *file_name, uint8_t rw_mode, uint32_t timeout);
 
-int http_file_read(const char *read_buffer, uint32_t file_handle, uint16_t len);
+size_t http_file_read(char *read_buffer, int file_handle, int len);
 bool http_file_close(int file_handle);
 
 #ifdef __cplusplus
