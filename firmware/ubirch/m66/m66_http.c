@@ -87,6 +87,14 @@ size_t modem_http_write(const uint8_t *buffer, size_t size, uint32_t timeout) {
 size_t modem_http_read(uint8_t *buffer, uint32_t timeout) {
 
   timer_set_timeout(timeout * 1000);
+
+  //    Use this to read the packets directly
+//    modem_send("AT+QHTTPREAD=60");
+//    modem_expect_OK(5000);
+//    uint8_t read_buff[] = {0};
+//    modem_http_read(read_buff, 10 * 6000);
+
+
   size_t idx, available = 0;
   available = 2322;
 
@@ -171,15 +179,16 @@ int http_file_open(const char *file_name, uint8_t rw_mode, uint32_t timeout)
 
   int file_handle;
   modem_send("AT+QFOPEN=\"%s\",%d", file_name, rw_mode);
-  if (modem_expect_scan("+QFOPEN: %u", 5 * 1000, &file_handle)) {
-    PRINTF("File handle number %d\r\n", file_handle);
-//    file_h_cl = file_handle;
+  if (!modem_expect_scan("+QFOPEN: %u", 5 * 1000, &file_handle))
+  {
+    PRINTF("No File handle \r\n");
+    return 0;
   }
-//  uint32_t file_handle = 0;
-//  modem_send("AT+QFOPEN=\"%s\",%d", file_name, rw_mode);
-//  modem_expect_scan("+QFOPEN:%d", &file_handle);
-//  if (!modem_expect_OK(uTimer_Remaining)) return false;
-  return file_handle;
+  else
+  {
+    PRINTF("File handle number %d\r\n", file_handle);
+    return file_handle;
+  }
 }
 
 size_t http_file_read(char *read_buffer, int file_handle, int len)
@@ -190,10 +199,7 @@ size_t http_file_read(char *read_buffer, int file_handle, int len)
   size_t data_len = modem_readline(read_buffer, 10, 5 * 5000);
   CIODEBUG("HTTP12 (%02d) -> '%s'\r\n", strlen(read_buffer), read_buffer);
 
-
-//  size_t  data_len= modem_read_binary((uint8_t *)read_buffer, len, uTimer_Remaining);
-
-//  if (!modem_expect_OK(2000)) return false;
+  if (!data_len > 0) return 0;
 
   return data_len;
 }
