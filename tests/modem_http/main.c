@@ -41,8 +41,7 @@ int main(void) {
 
     const char url[] = "http://developer.ubirch.com/test2048.txt";
     const char file_name[] = "RAM:text.txt";
-    char read_buffer; //[] = {0};
-    char *read_bufferPtr = &read_buffer;
+    char read_buffer[256]; // <<- allocate an array, which is equal to char *read_buffer
 
     int dl_len = 0;
     file_handle = 0;
@@ -61,10 +60,10 @@ int main(void) {
     if (file_handle < 0) break;
 //    for (int i = 0; i < dl_len; i += read_len)
 //    {
-      size_t data_len = http_file_read(read_bufferPtr, file_handle, read_len);
+      size_t data_len = http_file_read(read_buffer, file_handle, read_len);
       if (data_len < 0)
       {
-      CIODEBUG("HTTP no data len (%02d) -> '%s'\r\n", strlen(read_bufferPtr), read_buffer);
+      CIODEBUG("HTTP no data len (%02d) -> '%s'\r\n", data_len, read_buffer);
         break;
       }
 
