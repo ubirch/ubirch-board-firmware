@@ -134,24 +134,30 @@ int modem_http_dl_file(const char *file_name, uint32_t timeout)
   return dl_len;
 }
 
-int modem_http_get(const char *url, uint32_t timeout) {
+int modem_http_get(const char *url, uint32_t timeout)
+{
   timer_set_timeout(timeout * 1000);
 
   modem_send("AT+QHTTPURL=%d,30", strlen(url));//, uTimer_Remaining);
 
   if (!modem_expect("CONNECT", 5 * 1000)) {
     CIODEBUG("HTTP (25) -> 'Failed to receive CONNECT'\r\n");
-  } else {
+  }
+  else
+  {
     modem_send(url);
-    if (!modem_expect_OK(5 * 5000)) {
+    if (!modem_expect_OK(5 * 5000))
+    {
       PRINTF("Failed to connect to the server");
       return false;
     } else {
       modem_send("AT+QHTTPGET=40");
-      if (!modem_expect_OK(40 * 1000)) {
+      if (!modem_expect_OK(40 * 1000))
+      {
         char get_response[] = {0};
         modem_readline(get_response, 20, 3 * 5000);
         CIODEBUG("HTTP (%02d) -> '%s'\r\n", strlen(get_response), get_response);
+        PRINTF("NO HTTP GET RESPONSE");
         return false;
       }
     }
@@ -193,10 +199,12 @@ int http_file_open(const char *file_name, uint8_t rw_mode, uint32_t timeout)
 
 size_t http_file_read(char *read_buffer, int file_handle, int len)
 {
-  modem_send("AT+QFREAD=%d,%d", file_handle, len);
+  modem_send("AT+QFREAD=%d,%d", file_handle, 100);
   modem_expect("CONNECT", 5000);
 
-  size_t data_len = modem_readline(read_buffer, 10, 5 * 5000);
+//  size_t data_len = modem_readline(read_buffer, 50, 10 * 5000);
+  size_t data_len = modem_read_binary((uint8_t *)read_buffer, 59, 10 * 5000);
+
   CIODEBUG("HTTP12 (%02d) -> '%s'\r\n", strlen(read_buffer), read_buffer);
 
   if (!data_len > 0) return 0;

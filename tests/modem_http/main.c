@@ -48,7 +48,7 @@ int main(void) {
     int read_len = 10;
 
     int get_ret_value = modem_http_get(url, 60 * 1000);
-    if (get_ret_value > 0) break;
+    if (get_ret_value < 0) break;
 
     dl_len = modem_http_dl_file(file_name, 5 * 5000);
     if (dl_len < 0 ) break;
@@ -59,8 +59,8 @@ int main(void) {
 
     if (file_handle < 0) break;
 
-    for (int i = 0; i < dl_len; i += read_len)
-    {
+//    for (int i = 0; i < dl_len; i += read_len)
+//    {
       size_t data_len = http_file_read(read_buffer, file_handle, read_len);
       if (data_len < 0)
       {
@@ -68,7 +68,7 @@ int main(void) {
         break;
       }
 
-    }
+//    }
 
     if (!http_file_close(file_handle)) PRINTF("sariyagi close aagilla\r\n");
 
