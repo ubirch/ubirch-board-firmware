@@ -73,8 +73,8 @@ size_t modem_http_write(const uint8_t *buffer, size_t size, uint32_t timeout);
  * @param timeout how long to wait for the connection
  * @return amount of data read
  */
-//size_t modem_http_read(uint8_t *buffer, uint32_t start, size_t size, uint32_t timeout);
-size_t modem_http_read(uint8_t *buffer, uint32_t timeout);
+size_t modem_http_read(uint8_t *buffer, uint32_t start, size_t size, uint32_t timeout);
+//size_t modem_http_read(uint8_t *buffer, uint32_t timeout);
 
 
 int modem_http_dl_file(const char *file_name, uint32_t timeout);
@@ -87,7 +87,7 @@ int modem_http_dl_file(const char *file_name, uint32_t timeout);
  * @param timeout how long to wait for the connection
  * @return the HTTP status
  */
-int modem_http_get(const char *url, uint32_t timeout);
+int modem_http_get(const char *url, size_t  *res_size, uint32_t timeout);
 
 /*!
  * @brief Prepare and open a POST request.
@@ -103,8 +103,8 @@ int modem_http_post(const char *url, size_t *res_size, uint8_t *request, size_t 
 
 int http_file_open(const char *file_name, uint8_t rw_mode, uint32_t timeout);
 
-size_t http_file_read(char *read_buffer, int file_handle, int len);
-bool http_file_close(int file_handle);
+size_t http_file_read(char *read_buffer, int file_handle, int len, uint32_t timeout);
+bool http_file_close(int file_handle, uint32_t timeout);
 
 #ifdef __cplusplus
 }

@@ -45,7 +45,7 @@ int main(void) {
 
     int dl_len = 0;
     file_handle = 0;
-    int read_len = 10;
+    int read_len = 100;
 
     int get_ret_value = modem_http_get(url, 60 * 1000);
     if (get_ret_value < 0) break;
