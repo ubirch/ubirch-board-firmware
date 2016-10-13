@@ -24,6 +24,7 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <ubirch/timer.h>
+#include <stdio.h>
 #include "ubirch/modem.h"
 #include "m66_debug.h"
 
@@ -83,12 +84,12 @@ size_t modem_http_write(const uint8_t *buffer, size_t size, uint32_t timeout) {
   return size;
 }
 
-//default is 10240 bytessuper
+//default is 10240 bytes
 size_t modem_http_read(uint8_t *buffer, uint32_t timeout) {
 
   timer_set_timeout(timeout * 1000);
 
-  //    Use this to read the packets directly
+//    Use this to read the packets directly
 //    modem_send("AT+QHTTPREAD=60");
 //    modem_expect_OK(5000);
 //    uint8_t read_buff[] = {0};
@@ -200,14 +201,31 @@ int http_file_open(const char *file_name, uint8_t rw_mode, uint32_t timeout)
 size_t http_file_read(char *read_buffer, int file_handle, int len)
 {
   modem_send("AT+QFREAD=%d,%d", file_handle, 100);
-  modem_expect("CONNECT", 5000);
+  int expect_connect_len = 11;
+  char expect_connect[11] = {0};
+  snprintf(expect_connect, expect_connect_len, "CONNECT %d", len);
+  if (!modem_expect(expect_connect, 1000)) {
+    PRINTF("NO CONNECT\r\n");
+  }
+  else
+  {
+    PRINTF("YES CONNECTEEEEE\r\n");
+  }
+
 
 //  size_t data_len = modem_readline(read_buffer, 50, 10 * 5000);
-  size_t data_len = modem_read_binary((uint8_t *)read_buffer, 59, 10 * 5000);
-
+  size_t data_len = modem_read_binary((uint8_t *)read_buffer, 65, 10 * 1000);
   CIODEBUG("HTTP12 (%02d) -> '%s'\r\n", strlen(read_buffer), read_buffer);
+  if(!modem_expect_OK(3000)) {
+    PRINTF("No OK after qfread\r\n");
+  }
+  else
+  {
+    PRINTF("OK Reveiced macha\r\n");
+  }
 
-  if (!data_len > 0) return 0;
+
+  if (data_len < 0) return 0;
 
   return data_len;
 }
