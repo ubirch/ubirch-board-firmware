@@ -53,6 +53,37 @@ int modem_http_prepare(const char *url, uint32_t timeout);
  */
 int modem_http(http_method_t op, size_t *res_size, uint32_t timeout);
 
+
+/*
+File Name: Name for the downloaded file
+Length: Size file to be downloaded, only for RAM files; default is 10240
+Wait Time: time in seconds, it closes the http connection when timeout
+DL_SIZE
+ CONTENT lENGTH
+ ERRORCODE
+*/
+int modem_http_dl_file(const char *file_name, uint32_t timeout);
+
+
+/* File Name: Name of the file to be opened
+ * Mode: there are three modes
+    0 - creat file if doesn exist, open. file type RW
+    1 - if file exists clears it and creats new file
+    2 - if the file exists open it, it is read-only
+  * Length: Max length of the file, Used only for RAM file 10240 is default value
+  * File Handle: Handle for the file to be operated
+  */
+int http_file_open(const char *file_name, uint8_t rw_mode, uint32_t timeout);
+
+/* Read Length: Actuall Length to read out
+ * File Handle: Get the file handle from the http_file_open
+ */
+size_t http_file_read(char *read_buffer, int file_handle, size_t len, uint32_t timeout);
+
+
+bool http_file_close(int file_handle, uint32_t timeout);
+
+
 /*!
  * @brief Write data to an opened HTTP connection.
  * @param buffer the data to write
@@ -61,6 +92,7 @@ int modem_http(http_method_t op, size_t *res_size, uint32_t timeout);
  * @return amount of data written
  */
 size_t modem_http_write(const uint8_t *buffer, size_t size, uint32_t timeout);
+
 
 /*!
  * @brief Read data from a HTTP connection (the response).
@@ -74,11 +106,6 @@ size_t modem_http_write(const uint8_t *buffer, size_t size, uint32_t timeout);
  * @return amount of data read
  */
 size_t modem_http_read(uint8_t *buffer, uint32_t start, size_t size, uint32_t timeout);
-//size_t modem_http_read(uint8_t *buffer, uint32_t timeout);
-
-
-int modem_http_dl_file(const char *file_name, uint32_t timeout);
-
 
 /*!
  * @brief Prepare and open a GET request.
@@ -88,6 +115,7 @@ int modem_http_dl_file(const char *file_name, uint32_t timeout);
  * @return the HTTP status
  */
 int modem_http_get(const char *url, size_t  *res_size, uint32_t timeout);
+
 
 /*!
  * @brief Prepare and open a POST request.
@@ -99,12 +127,6 @@ int modem_http_get(const char *url, size_t  *res_size, uint32_t timeout);
  * @return the HTTP status
  */
 int modem_http_post(const char *url, size_t *res_size, uint8_t *request, size_t req_size, uint32_t timeout);
-
-
-int http_file_open(const char *file_name, uint8_t rw_mode, uint32_t timeout);
-
-size_t http_file_read(char *read_buffer, int file_handle, int len, uint32_t timeout);
-bool http_file_close(int file_handle, uint32_t timeout);
 
 #ifdef __cplusplus
 }
