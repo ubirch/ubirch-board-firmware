@@ -29,7 +29,7 @@
 #include "m66_debug.h"
 
 
-char file_name[] = "RAM:file.txt";
+char file_name[] = "RAM:file.bin";
 
 int modem_http_prepare(const char *url, uint32_t timeout) {
   timer_set_timeout(timeout * 1000);
