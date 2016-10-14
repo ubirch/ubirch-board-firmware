@@ -75,32 +75,31 @@ int modem_http_file_dl(const char *file_name, uint32_t timeout)
 
   if (!modem_expect_OK(5 * 1000))
   {
-    PRINTF("Failed to download file\r\n");
+    CSTDEBUG("HTTP --- Failed to download the file\r\n");
     return 0;
   }
 
   if (modem_expect_scan("+QHTTPDL: %d,%d,%d", 10 * 5000, &dl_size, &content_len, &dl_error_code))
   {
-    if (!dl_error_code)
+    if (dl_error_code)
     {
-      PRINTF("Error downloading file: %d\r\n", dl_error_code);
+      CSTDEBUG("HTTP --- Error downloading file: %d\r\n", dl_error_code);
       return 0;
     }
 
     if (content_len == -1)
     {
-      PRINTF("Content length unknown\r\n");
+      CSTDEBUG("HTTP --- Content length unknown\r\n");
       return 0;
     }
 
     if (!dl_size)
     {
-      PRINTF("Downloaded ZERO bytes\r\n");
+      CSTDEBUG("HTTP --- Downloaded ZERO bytes\r\n");
       return 0;
     }
 
-    //TODO: see if we need this print, either here or in main loop
-    PRINTF("dl_len = %d, content_len = %d, error_code = %d\r\n", dl_size, content_len, dl_error_code);
+    CSTDEBUG("HTTP --- dl_size = %d, content_len = %d, error_code = %d\r\n", dl_size, content_len, dl_error_code);
   }
 
   return dl_size;
@@ -110,47 +109,36 @@ int modem_http_file_open(const char *file_name, uint8_t rw_mode, uint32_t timeou
 {
   timer_set_timeout(timeout * 1000);
 
-  uint8_t file_handle;
+  int file_handle =0;
 
   modem_send("AT+QFOPEN=\"%s\",%d", file_name, rw_mode);
 
-  if (!modem_expect_scan("+QFOPEN: %u", uTimer_Remaining, &file_handle))
+  if (!modem_expect_scan("+QFOPEN: %d", uTimer_Remaining, &file_handle))
   {
-    PRINTF("No File handle received\r\n");
+    CSTDEBUG("HTTP --- No File handle received\r\n");
     return 0;
   }
 
-  PRINTF("File handle number %u\r\n", file_handle);
+  CSTDEBUG("HTTP --- File handle number %d\r\n", file_handle);
 
   return file_handle;
 }
 
-// TODO: add seek and position function, to get to the point where we need to start reading from
-size_t modem_http_file_read(char *read_buffer, int file_handle, size_t len, uint32_t timeout)
+size_t modem_http_file_read(uint8_t *read_buffer, int file_handle, size_t len, uint32_t timeout)
 {
   timer_set_timeout(timeout * 1000);
 
-  modem_send("AT+QFREAD=%d,%d", file_handle, 100);
+  modem_send("AT+QFREAD=%d,%d", file_handle, len);
 
-  if (modem_expect_scan("CONNECT %d", uTimer_Remaining, len))
-  {
-    PRINTF("NO CONNECT\r\n");
-    return 0;
-  }
+  int new_len = 0;
+  if (!modem_expect_scan("CONNECT %d", uTimer_Remaining, &new_len)) return 0;
 
-  PRINTF("YES CONNECTEEEEE\r\n");
-
-//  size_t data_len = modem_readline(read_buffer, 50, 10 * 5000);
-  size_t data_len = modem_read_binary((uint8_t *)read_buffer, len, uTimer_Remaining);
-  CIODEBUG("HTTP12 (%02d) -> '%s'\r\n", strlen(read_buffer), read_buffer);
+  size_t data_len = modem_read_binary(read_buffer, len, uTimer_Remaining);
 
   if(!modem_expect_OK(uTimer_Remaining))
   {
-    PRINTF("No OK after qfread\r\n");
-  }
-  else
-  {
-    PRINTF("OK Reveiced macha\r\n");
+    CSTDEBUG("HTTP --- Read file failed\r\n");
+    return  0;
   }
 
   if (data_len < 0) return 0;
@@ -205,11 +193,11 @@ size_t modem_http_read(uint8_t *buffer, uint32_t start, size_t size, uint32_t ti
   modem_send("AT+QFSEEK=%d,%d,%d", file_handle, start, 0);
   if (!modem_expect_OK(uTimer_Remaining))
   {
-    CSTDEBUG("HTTP ### Failed ot seek the file position\r\n");
+    CSTDEBUG("HTTP --- Failed ot seek the file position\r\n");
     return 0;
   }
 
-  data_len = modem_http_file_read((char *) buffer, file_handle, size, uTimer_Remaining);
+  data_len = modem_http_file_read(buffer, file_handle, size, uTimer_Remaining);
   if (!data_len) return 0;
 
   close_file = modem_http_file_close(file_handle, uTimer_Remaining);
@@ -228,7 +216,7 @@ int modem_http_get(const char *url, size_t *res_size, uint32_t timeout)
 
   if (!modem_expect("CONNECT", uTimer_Remaining))
   {
-    CIODEBUG("HTTP (25) -> 'Failed to receive CONNECT'\r\n");
+    CSTDEBUG("HTTP --- Failed to receive CONNECT\r\n");
     return false;
   }
 
@@ -236,16 +224,13 @@ int modem_http_get(const char *url, size_t *res_size, uint32_t timeout)
 
   if (!modem_expect_OK(uTimer_Remaining))
   {
-    PRINTF("Failed to connect to the server");
+    CSTDEBUG("HTTP --- Failed to connect to the server");
     return 0;
   }
 
   modem_send("AT+QHTTPGET=%d", timer_timeout_remaining() / 1000);
   if (!modem_expect_OK(uTimer_Remaining)) return 0;
 
-  // TODO: to use modem_http_get api call we need to add file name variable, see how we can do it. we cant keep cont name here
-  // we should be able to change it
-  // or try to globally #define the file name
   dl_size = modem_http_file_dl("RAM:text.txt", uTimer_Remaining);
 
   if (!dl_size) return 0;
