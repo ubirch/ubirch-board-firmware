@@ -1,5 +1,5 @@
 /**
- * Simple SIM800 GSM Modem Console.
+ * Establish HTTP connection, download a file and process it
  */
 
 #include <stdint.h>
