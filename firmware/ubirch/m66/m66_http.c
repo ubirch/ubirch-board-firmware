@@ -2,7 +2,7 @@
  * M66 HTTP operations.
  *
  * @author Matthias L. Jugel
- * @date 2016-04-09
+ * @date 2016-10-14
  *
  * @copyright &copy; 2015 ubirch GmbH (https://ubirch.com)
  *
@@ -68,6 +68,14 @@ int modem_http(http_method_t method, size_t *res_size, uint32_t timeout) {
   return status;
 }
 
+/*
+File Name: Name for the downloaded file
+Length: Size file to be downloaded, only for RAM files; default is 10240
+Wait Time: time in seconds, it closes the http connection when timeout
+DL_SIZE
+ CONTENT lENGTH
+ ERRORCODE
+*/
 int modem_http_file_dl(const char *file_name, uint32_t timeout)
 {
   timer_set_timeout(timeout * 1000);
@@ -108,6 +116,14 @@ int modem_http_file_dl(const char *file_name, uint32_t timeout)
   return dl_size;
 }
 
+/* File Name: Name of the file to be opened
+ * Mode: there are three modes
+    0 - creat file if doesn exist, open. file type RW
+    1 - if file exists clears it and creats new file
+    2 - if the file exists open it, it is read-only
+  * Length: Max length of the file, Used only for RAM file 10240 is default value
+  * File Handle: Handle for the file to be operated
+  */
 int modem_http_file_open(const char *file_name, uint8_t rw_mode, uint32_t timeout)
 {
   timer_set_timeout(timeout * 1000);
