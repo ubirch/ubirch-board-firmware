@@ -28,6 +28,9 @@
 #include "ubirch/modem.h"
 #include "m66_debug.h"
 
+
+char file_name[] = "RAM:file.txt";
+
 int modem_http_prepare(const char *url, uint32_t timeout) {
   timer_set_timeout(timeout * 1000);
 
@@ -180,7 +183,7 @@ size_t modem_http_read(uint8_t *buffer, uint32_t start, size_t size, uint32_t ti
   size_t  data_len = 0;
   bool close_file = false;
 
-  file_handle = modem_http_file_open("RAM:text.txt", 0, uTimer_Remaining);
+  file_handle = modem_http_file_open(file_name, 0, uTimer_Remaining);
 
   if (!file_handle) return 0;
 
@@ -231,7 +234,7 @@ int modem_http_get(const char *url, size_t *res_size, uint32_t timeout)
   modem_send("AT+QHTTPGET=%d", timer_timeout_remaining() / 1000);
   if (!modem_expect_OK(uTimer_Remaining)) return 0;
 
-  dl_size = modem_http_file_dl("RAM:text.txt", uTimer_Remaining);
+  dl_size = modem_http_file_dl(file_name, uTimer_Remaining);
 
   if (!dl_size) return 0;
 
