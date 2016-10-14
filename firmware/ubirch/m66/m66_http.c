@@ -130,12 +130,9 @@ size_t modem_http_file_read(char *read_buffer, int file_handle, size_t len, uint
 {
   timer_set_timeout(timeout * 1000);
 
-  char expect_connect[11] = {0};
-  snprintf(expect_connect, 11, "CONNECT %d", len);
-
   modem_send("AT+QFREAD=%d,%d", file_handle, 100);
 
-  if (!modem_expect(expect_connect, uTimer_Remaining))
+  if (modem_expect_scan("CONNECT %d", uTimer_Remaining, len))
   {
     PRINTF("NO CONNECT\r\n");
     return 0;
@@ -198,6 +195,19 @@ size_t modem_http_read(uint8_t *buffer, uint32_t start, size_t size, uint32_t ti
   file_handle = modem_http_file_open("RAM:text.txt", 0, uTimer_Remaining);
 
   if (!file_handle) return 0;
+
+  /*
+   *  Position -> Pointer movement mode
+   *  0 -> File begining | Default value
+   *  1 -> Current position of the pointer
+   *  2 -> File end
+   *  */
+  modem_send("AT+QFSEEK=%d,%d,%d", file_handle, start, 0);
+  if (!modem_expect_OK(uTimer_Remaining))
+  {
+    CSTDEBUG("HTTP ### Failed ot seek the file position\r\n");
+    return 0;
+  }
 
   data_len = modem_http_file_read((char *) buffer, file_handle, size, uTimer_Remaining);
   if (!data_len) return 0;
