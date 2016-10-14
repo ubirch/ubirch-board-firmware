@@ -62,7 +62,7 @@ DL_SIZE
  CONTENT lENGTH
  ERRORCODE
 */
-int modem_http_dl_file(const char *file_name, uint32_t timeout);
+int modem_http_file_dl(const char *file_name, uint32_t timeout);
 
 
 /* File Name: Name of the file to be opened
@@ -73,15 +73,15 @@ int modem_http_dl_file(const char *file_name, uint32_t timeout);
   * Length: Max length of the file, Used only for RAM file 10240 is default value
   * File Handle: Handle for the file to be operated
   */
-int http_file_open(const char *file_name, uint8_t rw_mode, uint32_t timeout);
+int modem_http_file_open(const char *file_name, uint8_t rw_mode, uint32_t timeout);
 
 /* Read Length: Actuall Length to read out
- * File Handle: Get the file handle from the http_file_open
+ * File Handle: Get the file handle from the modem_http_file_open
  */
-size_t http_file_read(char *read_buffer, int file_handle, size_t len, uint32_t timeout);
+size_t modem_http_file_read(char *read_buffer, int file_handle, size_t len, uint32_t timeout);
 
 
-bool http_file_close(int file_handle, uint32_t timeout);
+bool modem_http_file_close(int file_handle, uint32_t timeout);
 
 
 /*!
