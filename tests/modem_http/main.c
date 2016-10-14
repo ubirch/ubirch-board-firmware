@@ -50,17 +50,17 @@ int main(void) {
     int get_ret_value = modem_http_get(url, 60 * 1000);
     if (get_ret_value < 0) break;
 
-    dl_len = modem_http_dl_file(file_name, 5 * 5000);
+    dl_len = modem_http_file_dl(file_name, 5 * 5000);
     if (dl_len < 0 ) break;
 
     PRINTF("Now opening file\r\n");
-    file_handle = http_file_open(file_name, 0, 5 * 1000);
+    file_handle = modem_http_file_open(file_name, 0, 5 * 1000);
     PRINTF("This is our file handle %d\r\n", file_handle);
 
     if (file_handle < 0) break;
 //    for (int i = 0; i < dl_len; i += read_len)
 //    {
-      size_t data_len = http_file_read(read_buffer, file_handle, read_len);
+      size_t data_len = modem_http_file_read(read_buffer, file_handle, read_len);
       if (data_len < 0)
       {
       CIODEBUG("HTTP no data len (%02d) -> '%s'\r\n", data_len, read_buffer);
@@ -69,7 +69,7 @@ int main(void) {
 
 //    }
 
-    if (!http_file_close(file_handle)) PRINTF("sariyagi close aagilla\r\n");
+    if (!modem_http_file_close(file_handle)) PRINTF("sariyagi close aagilla\r\n");
 
     counter--;
     delay(10 * 1000);
