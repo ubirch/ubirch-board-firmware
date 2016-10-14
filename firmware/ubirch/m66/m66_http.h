@@ -35,7 +35,6 @@ typedef enum http_methods {
     HTTP_POST = 1   /*!< HTTP POST */
 } http_method_t;
 
-
 /*!
  * @brief Prepare a HTTP request. Used by http().
  * @param url the URL to connect to
@@ -78,7 +77,7 @@ int modem_http_file_open(const char *file_name, uint8_t rw_mode, uint32_t timeou
 /* Read Length: Actuall Length to read out
  * File Handle: Get the file handle from the modem_http_file_open
  */
-size_t modem_http_file_read(char *read_buffer, int file_handle, size_t len, uint32_t timeout);
+size_t modem_http_file_read(uint8_t *read_buffer, int file_handle, size_t len, uint32_t timeout);
 
 
 bool modem_http_file_close(int file_handle, uint32_t timeout);
