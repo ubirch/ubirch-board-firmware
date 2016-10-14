@@ -85,7 +85,7 @@ bool modem_tcp_send(const char *data, uint8_t len)
   if (!modem_expect("SEND OK", 300)) return false;
 
   static char rx_buffer[] = {0};
-  static int rx_buffer_len = 0;
+  static size_t rx_buffer_len = 0;
 
   rx_buffer_len = modem_readline(rx_buffer, MQTT_READ_BUFFER, 2000);
   if (rx_buffer_len)

@@ -3,7 +3,7 @@
  * @brief M66 HTTP operations.
  *
  * @author Matthias L. Jugel
- * @date 2016-05-08
+ * @date 2016-10-14
  *
  * @copyright &copy; 2015 ubirch GmbH (https://ubirch.com)
  *
@@ -52,34 +52,42 @@ int modem_http_prepare(const char *url, uint32_t timeout);
  */
 int modem_http(http_method_t op, size_t *res_size, uint32_t timeout);
 
-
-/*
-File Name: Name for the downloaded file
-Length: Size file to be downloaded, only for RAM files; default is 10240
-Wait Time: time in seconds, it closes the http connection when timeout
-DL_SIZE
- CONTENT lENGTH
- ERRORCODE
-*/
+/*!
+ * @brief Download file from the http server.
+ * @param file_name File name for the downloaded file
+ * @param timeout how long to wait for the connection
+ * @return Downloaded file size
+ */
 int modem_http_file_dl(const char *file_name, uint32_t timeout);
 
-
-/* File Name: Name of the file to be opened
- * Mode: there are three modes
-    0 - creat file if doesn exist, open. file type RW
-    1 - if file exists clears it and creats new file
-    2 - if the file exists open it, it is read-only
-  * Length: Max length of the file, Used only for RAM file 10240 is default value
-  * File Handle: Handle for the file to be operated
-  */
+/*!
+ * @brief Open the downloaded file.
+ * @param file_name File name for the downloaded file
+ * @param rw_mode 0 - Creat new file
+ *                1 - Delete and create new file
+ *                2 - Open if file exists in read-only mode
+ * @param timeout how long to wait for the connection
+ * @return File handle to perform operation on the opened file
+ */
 int modem_http_file_open(const char *file_name, uint8_t rw_mode, uint32_t timeout);
 
-/* Read Length: Actuall Length to read out
- * File Handle: Get the file handle from the modem_http_file_open
+/*!
+ * @brief Read the downloaded file in chunks.
+ * @param read_buffer Buffer to read the file data into
+ * @param file_handle File handle to read from the opened file
+ * @param len length of data to be read from the file
+ * @param timeout how long to wait for the connection
+ * @return amount of data read from the file
  */
 size_t modem_http_file_read(uint8_t *read_buffer, int file_handle, size_t len, uint32_t timeout);
 
 
+/*!
+ * @brief Close the opened file.
+ * @param file_handle File handle to read from the opened file
+ * @param timeout how long to wait for the connection
+ * @return true if the file was closed
+ */
 bool modem_http_file_close(int file_handle, uint32_t timeout);
 
 
@@ -111,7 +119,7 @@ size_t modem_http_read(uint8_t *buffer, uint32_t start, size_t size, uint32_t ti
  * @param url the url to open
  * @param res_size pointer to where the size of the response will be stored
  * @param timeout how long to wait for the connection
- * @return the HTTP status
+ * @return size of the downloaded file
  */
 int modem_http_get(const char *url, size_t  *res_size, uint32_t timeout);
 
