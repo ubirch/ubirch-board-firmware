@@ -1,11 +1,12 @@
-/*!
- * @file
- * @brief Modem driver.
+
+/*
+ * SIM800H TCP/IP operations.
+ * Simple driver with send and receive functions
  *
- * Modem driver code. Necessary for cell phone connectivity.
+ * TODO: [WORK IN PROGRESS]
  *
  * @author Matthias L. Jugel
- * @date 2016-04-09
+ * @date 2016-10-15
  *
  * @copyright &copy; 2015 ubirch GmbH (https://ubirch.com)
  *
@@ -24,19 +25,26 @@
  * ```
  */
 
-#include <cell.h>
+#include <stdbool.h>
+#include <stdint.h>
+#include "sim800h_debug.h"
 
-#if defined(BOARD_CELL_TYPE_M66)
-  #include "m66/m66_core.h"
-  #include "m66/m66_parser.h"
-  #include "m66/m66_ops.h"
-  #include "m66/m66_http.h"
-  #include "m66/m66_tcp.h"
-#else
-  #include "sim800h/sim800h_core.h"
-  #include "sim800h/sim800h_parser.h"
-  #include "sim800h/sim800h_ops.h"
-  #include "sim800h/sim800h_http.h"
-  #include "sim800h/sim800h_tcp.h"
-#endif
+bool modem_tcp_connect(const char *host, uint16_t port, uint32_t timeout) {
+  CSTDEBUG("NOT IMPLEMENTED!\r\n");
+  return false;
+}
 
+bool modem_tcp_send(const char *data, uint8_t len, uint32_t timeout) {
+  CSTDEBUG("NOT IMPLEMENTED!\r\n");
+  return false;
+}
+
+size_t modem_tcp_receive(uint8_t *buffer, size_t size) {
+  CSTDEBUG("NOT IMPLEMENTED!\r\n");
+  return false;
+}
+
+bool modem_tcp_close(uint32_t timeout) {
+  CSTDEBUG("NOT IMPLEMENTED!\r\n");
+  return false;
+}

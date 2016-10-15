@@ -54,6 +54,9 @@ bool modem_register(uint32_t timeout) {
 bool modem_gprs_attach(const char *apn, const char *user, const char *password, uint32_t timeout) {
   timer_set_timeout(timeout * 1000);
 
+  modem_send("AT+QIDEACT");
+  modem_expect_OK(uTimer_Remaining);
+
   // attach to the network
   bool attached = false;
   do {

@@ -18,6 +18,7 @@ else ()
     ubirch/sim800h/sim800h_http.c
     ubirch/sim800h/sim800h_ops.c
     ubirch/sim800h/sim800h_parser.c
+    ubirch/sim800h/sim800h_tcp.c
     )
 endif ()
 

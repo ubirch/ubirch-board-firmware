@@ -29,10 +29,8 @@
 #include "m66_debug.h"
 #include <stdio.h>
 
-bool modem_tcp_connect(const char *apn, const char *user, const char *password, uint32_t timeout) {
+bool modem_tcp_connect(const char *host, uint16_t port, uint32_t timeout) {
   timer_set_timeout(timeout * 1000);
-
-  if (!modem_gprs_attach(apn, user, password, uTimer_Remaining)) return false;
 
 // This is used to establish TCP connection  - server / client
 //  modem_send("AT+QIMUX=0");
@@ -45,7 +43,6 @@ bool modem_tcp_connect(const char *apn, const char *user, const char *password, 
 
   modem_send("AT+QIDNSIP=1");
   if (!modem_expect_OK(uTimer_Remaining)) return false;
-  CSTDEBUG("DNS and not IP\r\n");
 
 //     Add header to the received data
 //     we need these AT commands to configure the way we receive the O/P
@@ -56,66 +53,78 @@ bool modem_tcp_connect(const char *apn, const char *user, const char *password, 
 //    AT+QISHOWRA=1; // display IP address and port of the sender
 //    AT+QISHOWPT=1; // show transmission layer protocol type, TCP or UDP
 
-  modem_send("AT+QIOPEN=\"TCP\",\"api.ubirch.com\",\"80\"");
+  modem_send("AT+QIOPEN=\"TCP\",\"%s\",\"%d\"", host, port);
   if (!modem_expect_OK(uTimer_Remaining)) return false;
   if (!modem_expect("CONNECT OK", uTimer_Remaining)) return false;
 
   return true;
 }
 
+bool modem_tcp_send(const uint8_t *buffer, uint8_t size, uint32_t timeout) {
+  timer_set_timeout(timeout * 1000);
 
-bool modem_tcp_send(const char *data, uint8_t len)
-{
   // this is just to check if the tcp connection is alive
-  modem_send("AT+QISACK");
-  if (modem_expect("ERROR", 100)) return false;
+  uint16_t sent, acked, nacked;
+  do {
+    modem_send("AT+QISACK");
+    modem_expect_scan("+QISACK: %d, %d, %d", uTimer_Remaining, &sent, &acked, &nacked);
+    if (!modem_expect_OK(uTimer_Remaining)) return false;
+  } while (sent != 0);
 
-  modem_send("AT+QISEND=%d", len);
+  modem_send("AT+QINDI=1");
+  if (!modem_expect_OK(uTimer_Remaining)) return false;
 
-  if (modem_expect("> ", 300))
-  {
-    modem_send(data);
-  }
-  else
-  {
-    CSTDEBUG("we did not receive < \r\n");
+  modem_send("AT+QISEND=%d", size);
+  // wait for prompt: '\r\n>' (3 bytes, last must be '>')
+  uint8_t prompt[3] = {0, 0, 0};
+  if (!modem_read_binary(prompt, 3, uTimer_Remaining) && prompt[3] == '>') {
+    CSTDEBUG("error waiting for prompt\r\n");
+    CIODUMP(prompt, 3);
     return false;
   }
 
+  modem_send((const char *) buffer, size);
   if (!modem_expect("SEND OK", 300)) return false;
-
-  static char rx_buffer[] = {0};
-  static int rx_buffer_len = 0;
-
-  // Here it reads only one line
-  rx_buffer_len = modem_read_binary(rx_buffer, MQTT_READ_BUFFER, 2000);
-  if (!rx_buffer_len)
-  {
-    CSTDEBUG("No data received\r\n");
-    return 0;
-  }
-  else
-  {
-    CSTDEBUG("Received data: %s\r\n", rx_buffer);
-    CSTDEBUG("Total bytes received: %d\r\n", rx_buffer_len);
-  }
 
   return true;
 }
 
-void modem_tcp_close(uint32_t timeout)
-{
+size_t modem_tcp_receive(uint8_t *buffer, size_t size, uint32_t timeout) {
+  timer_set_timeout(timeout * 1000);
+
+  // we can only handle 1500 bytes at once
+  if(size > 1500) return 0;
+
+  unsigned int sent, acked, nacked;
+  do {
+    modem_send("AT+QISACK");
+    if(!modem_expect_scan("+QISACK: %u, %u, %u", uTimer_Remaining, &sent, &acked, &nacked));
+    if (!modem_expect_OK(uTimer_Remaining)) return false;
+  } while (sent != acked);
+
+
+  // wait for the receive notification
+  int id, sc, sid;
+  modem_expect_scan("+QIRDI: %d,%d,%d", uTimer_Remaining, &id, &sc, &sid);
+  modem_send("AT+QIRD=%d,%d,%d,%u", id, sc, sid, size);
+
+  uint16_t ip[4], port, expected;
+  if (!modem_expect_scan("+QIRD: %u.%u.%u.%u:%u,TCP,%u", uTimer_Remaining,
+                         &ip[0], &ip[1], &ip[2], &ip[3], &port, &expected)) return 0;
+  size_t received = modem_read_binary(buffer, expected, uTimer_Remaining);
+  if (!modem_expect_OK(uTimer_Remaining)) return 0;
+
+  return received;
+}
+
+bool modem_tcp_close(uint32_t timeout) {
+  timer_set_timeout(timeout * 1000);
+
   modem_send("AT+QICLOSE");
-  if (!modem_expect_OK(10 * timeout))
-  {
-    CSTDEBUG("Failed to close the TCP connection\r\n");
+  if (!modem_expect_OK(uTimer_Remaining)) {
+    CSTDEBUG("failed to close TCP connection\r\n");
+    return false;
   }
 
-  modem_send("AT+QIDEACT");
-  if (!modem_expect_OK(10 * timeout))
-  {
-    CSTDEBUG("Failed to deactivate PDP context, disabling modem\r\n");
-  }
-
-  modem_disable();
+  return true;
 }

@@ -27,7 +27,7 @@
 #include <stdio.h>
 #include <ubirch/timer.h>
 #include <ubirch/modem.h>
-#include <ubirch/m66/m66_tcp.h>
+#include <ubirch/dbgutil.h>
 #include "config.h"
 
 bool on = true;
@@ -39,49 +39,41 @@ void SysTick_Handler() {
   BOARD_LED0(on);
 }
 
+void error(char *msg) {
+  PRINTF("ERROR: %s\r\n", msg);
+  while(true) {}
+}
+
 
 int main(void) {
-  // INITIALIZATION
   board_init();
-
-  // INITIALIZE CONSOLE (Tests debug uart pins!)
   board_console_init(BOARD_DEBUG_BAUD);
 
-  // 100ms led blink, only works if setup for LED was correct
   SysTick_Config(BOARD_SYSTICK_100MS / 10);
 
   // Initialize modem
   modem_init();
 
-  if (!modem_enable())
-  {
-    PRINTF("failed to enable modem\r\n");
-    return false;
-  }
+  if (!modem_enable()) error("modem enable");
+  if (!modem_register(60000)) error("network register");
+  if (!modem_gprs_attach(CELL_APN, CELL_USER, CELL_PWD, 30000)) error("GPRS attach");
+  if (!modem_tcp_connect("api.ubirch.com", 80, 5000)) error("TCP connect");
 
-  // Register to the network
-  if (!modem_register(6 * 5000))
-  {
-    PRINTF("failed to register\r\n");
-    return false;
-  }
+  const char *send_data = "GET / HTTP/1.1\r\n\r\n";
+  if (!modem_tcp_send((const uint8_t *) send_data, (uint8_t) strlen(send_data), 30000))
+    error("simulated HTTP GET");
 
-  if (!modem_tcp_connect(CELL_APN, CELL_USER, CELL_PWD, 20 * 5000))
-  {
-    PRINTF("unable to connect \r\n");
-    return 0;
-  }
+  uint8_t buffer[8192];
+  size_t received = modem_tcp_receive(buffer, 1500, 10000);
+  PRINTF("received %d bytes\r\n", received);
 
-  const char send_data[] = "GET / HTTP/1.1\r\n\r\n";
-  if (!modem_tcp_send(send_data, (uint8_t) strlen(send_data)))
-  {
-    PRINTF("failed to send\r\n");
-    return 0;
-  }
+  dbg_dump("RCV", buffer, received);
 
-  modem_tcp_close(1000);
+  if(!modem_tcp_close(1000)) error("TCP close");
+
+  modem_disable();
 
   while (true) {
     delay(1000);
-  };
+  }
 }

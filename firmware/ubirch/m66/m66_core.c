@@ -34,7 +34,7 @@
 #endif
 
 #ifndef GSM_RINGBUFFER_SIZE
-#  define GSM_RINGBUFFER_SIZE 32
+#  define GSM_RINGBUFFER_SIZE 64
 #endif
 static uint8_t gsmUartRingBuffer[GSM_RINGBUFFER_SIZE];
 static volatile int gsmRxIndex, gsmRxHead;

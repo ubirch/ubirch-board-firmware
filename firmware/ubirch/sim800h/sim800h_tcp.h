@@ -1,8 +1,8 @@
 /*!
  * @file
- * @brief M66 TCP/IP operations.
+ * @brief SIM800H TCP/IP operations.
  *
- * @author Niranjan H. Rao
+ * @author Niranjan H. Rao, Matthias L. Jugel
  * @date 2016-10-07
  *
  * @copyright &copy; 2015 ubirch GmbH (https://ubirch.com)
@@ -22,13 +22,12 @@
  * ```
  */
 
-#ifndef UBIRCH_M66_TCP_H
-#define UBIRCH_M66_TCP_H
+#ifndef UBIRCH_FIRMWARE_TCP_H
+#define UBIRCH_FIRMWARE_TCP_H
 
 
 #include <stdbool.h>
 #include <stdint.h>
-#include <stddef.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -68,8 +67,4 @@ size_t modem_tcp_receive(uint8_t *buffer, size_t size, uint32_t timeout);
  */
 bool modem_tcp_close(uint32_t timeout);
 
-#ifdef __cplusplus
-}
-#endif
-
-#endif //UBIRCH_M66_TCP_H
+#endif //UBIRCH_FIRMWARE_MQTT_H
