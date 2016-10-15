@@ -99,5 +99,7 @@ int main(void) {
   PRINTF("Entering bootloader.\r\n");
   uint32_t runBootloaderAddress = **(uint32_t **) (0x1c00001c);
   ((void (*)(void *arg)) runBootloaderAddress)(NULL);
+
+  return 0;
 }
 

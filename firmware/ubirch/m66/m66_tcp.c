@@ -77,7 +77,7 @@ bool modem_tcp_send(const uint8_t *buffer, uint8_t size, uint32_t timeout) {
   modem_send("AT+QISEND=%d", size);
   // wait for prompt: '\r\n>' (3 bytes, last must be '>')
   uint8_t prompt[3] = {0, 0, 0};
-  if (!modem_read_binary(prompt, 3, uTimer_Remaining) && prompt[3] == '>') {
+  if (!(modem_read_binary(prompt, 3, uTimer_Remaining) && prompt[2] == '>')) {
     CSTDEBUG("error waiting for prompt\r\n");
     CIODUMP(prompt, 3);
     return false;
@@ -113,6 +113,7 @@ size_t modem_tcp_receive(uint8_t *buffer, size_t size, uint32_t timeout) {
                          &ip[0], &ip[1], &ip[2], &ip[3], &port, &expected)) return 0;
   size_t received = modem_read_binary(buffer, expected, uTimer_Remaining);
   if (!modem_expect_OK(uTimer_Remaining)) return 0;
+  modem_expect("CLOSED", 100);
 
   return received;
 }
