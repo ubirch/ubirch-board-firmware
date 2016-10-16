@@ -1,4 +1,4 @@
-/** \mainpage
+/** \ mainpage
 *
 ****************************************************************************
 * Copyright (C) 2008 - 2015 Bosch Sensortec GmbH
@@ -13,7 +13,7 @@
 *
 ****************************************************************************
 *
-* \section License
+* \ section License
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -53,7 +53,7 @@
 * No license is granted by implication or otherwise under any patent or
 * patent rights of the copyright holder.
 **************************************************************************/
-/** \file bmp180.h
+/** \ file bmp180.h
    \brief Header file for all define constants and function prototypes
 */
 #ifndef __BMP180_H__

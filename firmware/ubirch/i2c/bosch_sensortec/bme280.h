@@ -1,4 +1,4 @@
-/** \mainpage
+/** \ mainpage
 *
 ****************************************************************************
 * Copyright (C) 2013 - 2015 Bosch Sensortec GmbH
@@ -14,7 +14,7 @@
 *
 ****************************************************************************
 *
-* \section License
+* \ section License
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -54,7 +54,7 @@
 * No license is granted by implication or otherwise under any patent or
 * patent rights of the copyright holder.
 **************************************************************************/
-/*! \file bme280.h
+/*! \ file bme280.h
     \brief BME280 Sensor Driver Support Header File */
 #ifndef __BME280_H__
 #define __BME280_H__
