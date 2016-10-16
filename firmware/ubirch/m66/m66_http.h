@@ -29,6 +29,8 @@
 extern "C" {
 #endif
 
+// TODO: add enum for return codes and normalize codes
+
 //! supported HTTP methods
 typedef enum http_methods {
     HTTP_GET = 0,   /*!< HTTP GET */
@@ -85,7 +87,6 @@ int modem_http(http_method_t op, size_t *res_size, uint32_t timeout);
  * @return amount of data written
  */
 size_t modem_http_write(const uint8_t *buffer, size_t size, uint32_t timeout);
-
 
 /*!
  * @brief Read data from a HTTP connection (the response).
