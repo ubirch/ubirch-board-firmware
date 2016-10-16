@@ -45,51 +45,37 @@ int modem_http_prepare(const char *url, uint32_t timeout);
 
 /*!
  * @brief Open HTTP connection using the specified method.
+ *
+ * Currently, the method is ignored with the M66, to execute
+ * a specific GET or POST request either use modem_http_get() or
+ * modem_http_post(), or execute the commands directly:
+ *
+ * GET request:
+ * \code{.c}
+ * modem_send("AT+QHTTPGET=%d", timeout_in_s);
+ * if (!modem_expect_OK(timeout_in_ms)) PRINTF("ERROR");
+ * modem_http(HTTP_GET, timeout_in_ms);
+ * \endcode
+ *
+ * POST request:
+ * \code{.c}
+ * modem_send("AT+QHTTPPOST=%d,%d,%d", size, send_timeout_in_s, response_timeout_in_s);
+ * if (!modem_expect("CONNECT", timeout_in_ms)) PRINTF("ERROR");
+ * modem_http_write(data, data_size, timeout_in_mss);
+ * if (!modem_expect_OK(timeout_in_ms)) PRINTF("ERROR");
+ * modem_http(HTTP_POST, timeout_in_ms);
+ * \endcode
+ *
+ * The M66 makes it difficult to load data if the server does not send
+ * 'Content-Length' headers. Ensure a long enough timeout to be able to
+ * receive the data.
+ *
  * @param op the HTTP method (see ::http_methods)
  * @param res_size the size of the response
  * @param timeout how long to wait for the connection
  * @return connection status
  */
 int modem_http(http_method_t op, size_t *res_size, uint32_t timeout);
-
-/*!
- * @brief Download file from the http server.
- * @param file_name File name for the downloaded file
- * @param timeout how long to wait for the connection
- * @return Downloaded file size
- */
-int modem_http_file_dl(const char *file_name, uint32_t timeout);
-
-/*!
- * @brief Open the downloaded file.
- * @param file_name File name for the downloaded file
- * @param rw_mode 0 - Creat new file
- *                1 - Delete and create new file
- *                2 - Open if file exists in read-only mode
- * @param timeout how long to wait for the connection
- * @return File handle to perform operation on the opened file
- */
-int modem_http_file_open(const char *file_name, uint8_t rw_mode, uint32_t timeout);
-
-/*!
- * @brief Read the downloaded file in chunks.
- * @param read_buffer Buffer to read the file data into
- * @param file_handle File handle to read from the opened file
- * @param len length of data to be read from the file
- * @param timeout how long to wait for the connection
- * @return amount of data read from the file
- */
-size_t modem_http_file_read(uint8_t *read_buffer, int file_handle, size_t len, uint32_t timeout);
-
-
-/*!
- * @brief Close the opened file.
- * @param file_handle File handle to read from the opened file
- * @param timeout how long to wait for the connection
- * @return true if the file was closed
- */
-bool modem_http_file_close(int file_handle, uint32_t timeout);
-
 
 /*!
  * @brief Write data to an opened HTTP connection.
@@ -121,8 +107,7 @@ size_t modem_http_read(uint8_t *buffer, uint32_t start, size_t size, uint32_t ti
  * @param timeout how long to wait for the connection
  * @return size of the downloaded file
  */
-int modem_http_get(const char *url, size_t  *res_size, uint32_t timeout);
-
+int modem_http_get(const char *url, size_t *res_size, uint32_t timeout);
 
 /*!
  * @brief Prepare and open a POST request.

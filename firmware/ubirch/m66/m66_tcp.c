@@ -98,7 +98,7 @@ size_t modem_tcp_receive(uint8_t *buffer, size_t size, uint32_t timeout) {
   unsigned int sent, acked, nacked;
   do {
     modem_send("AT+QISACK");
-    if(!modem_expect_scan("+QISACK: %u, %u, %u", uTimer_Remaining, &sent, &acked, &nacked));
+    modem_expect_scan("+QISACK: %u, %u, %u", uTimer_Remaining, &sent, &acked, &nacked);
     if (!modem_expect_OK(uTimer_Remaining)) return false;
   } while (sent != acked);
 
@@ -109,8 +109,8 @@ size_t modem_tcp_receive(uint8_t *buffer, size_t size, uint32_t timeout) {
   modem_send("AT+QIRD=%d,%d,%d,%u", id, sc, sid, size);
 
   uint16_t ip[4], port, expected;
-  if (!modem_expect_scan("+QIRD: %u.%u.%u.%u:%u,TCP,%u", uTimer_Remaining,
-                         &ip[0], &ip[1], &ip[2], &ip[3], &port, &expected)) return 0;
+  if (modem_expect_scan("+QIRD: %u.%u.%u.%u:%u,TCP,%u", uTimer_Remaining,
+                         &ip[0], &ip[1], &ip[2], &ip[3], &port, &expected) != 6) return 0;
   size_t received = modem_read_binary(buffer, expected, uTimer_Remaining);
   if (!modem_expect_OK(uTimer_Remaining)) return 0;
   modem_expect("CLOSED", 100);
