@@ -39,7 +39,7 @@ int modem_http_prepare(const char *url, uint32_t timeout) {
   modem_send("AT+HTTPPARA=\"CID\",1");
   if (!modem_expect_OK(uTimer_Remaining)) return 1101;
 
-  modem_send("AT+HTTPPARA=\"UA\",\"ubirch#1 r0.2\"");
+  modem_send("AT+HTTPPARA=\"UA\",\"" BOARD "\"");
   if (!modem_expect_OK(uTimer_Remaining)) return 1102;
 
   modem_send("AT+HTTPPARA=\"REDIR\",1");
