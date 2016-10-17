@@ -43,18 +43,9 @@ extern "C" {
  */
 //
 const char *M66_URC[] = {
-  "+CIPRXGET: 1,",  /*!< incoming socket data notification */
-  "+FTPGET: 1,",    /*!< FTP state change notification */
-  "+PDP: DEACT",    /*!< PDP disconnected */
-  "+SAPBR 1: DEACT",/*!< PDP disconnected (for SAPBR apps) */
-  "*PSNWID:",       /*!< AT+CLTS network name */
-  "*PSUTTZ:",       /*!< AT+CLTS time */
-  "+CTZV:",         /*!< AT+CLTS timezone */
-  "DST:",           /*!< AT+CLTS dst information */
-  "+CIEV:",         /*!< AT+CLTS undocumented indicator */
-  "RDY",            /*!< Device ready. */
-  "+CFUN: 1",       /*!< Device has entered full functional mode */
-  "+CPIN: READY",
+  "RDY",                      /*!< Device ready. */
+  "+CFUN: 1",                 /*!< Device has entered full functional mode */
+  "+CPIN: READY",             /*!< Device has SIM card inserted */
   "Call Ready",
   "SMS Ready",
   "NORMAL POWER DOWN",
@@ -62,6 +53,7 @@ const char *M66_URC[] = {
   "UNDER-VOLTAGE WARNNING",
   "OVER-VOLTAGE POWER DOWN",
   "OVER-VOLTAGE WARNNING",
+  "+CMTI: \"SM\",3",          /*!< SMS has arrived */
   NULL
 };
 

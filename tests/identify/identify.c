@@ -26,7 +26,6 @@
 #include <stdint.h>
 #include <board.h>
 #include <stdio.h>
-#include <stdlib.h>
 #include <ubirch/timer.h>
 #include <ubirch/device.h>
 #include <ubirch/modem.h>

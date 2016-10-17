@@ -33,6 +33,14 @@
 #  error "No PORT found for cell phone chip. please configure ports/pins/clocks!"
 #endif
 
+#define VBAT_SENSE_PORT PORTD
+#define VBAT_SENSE_PIN 6
+#define VBAT_SENSE_ALT kPORT_PinDisabledOrAnalog
+#define VBAT_SENSE_ADC ADC0
+#define VBAT_SENSE_ADC_GROUP 0
+#define VBAT_SENSE_CHANNEL 7
+#define VBAT_SENSE_CHANNEL_MUX kADC16_ChannelMuxB
+
 #ifndef GSM_RINGBUFFER_SIZE
 #  define GSM_RINGBUFFER_SIZE 64
 #endif
@@ -91,6 +99,12 @@ void modem_init() {
   GPIO_PinInit(BOARD_CELL_PWR_EN_GPIO, BOARD_CELL_PWR_EN_PIN, &OUTFALSE);
 #endif
 
+  PORT_SetPinMux(VBAT_SENSE_PORT,   VBAT_SENSE_PIN,   VBAT_SENSE_ALT);
+  adc16_config_t adc16ConfigStruct;
+  ADC16_GetDefaultConfig(&adc16ConfigStruct);
+  adc16ConfigStruct.longSampleMode = kADC16_LongSampleCycle16;
+  ADC16_Init(VBAT_SENSE_ADC, &adc16ConfigStruct);
+  ADC16_EnableHardwareTrigger(VBAT_SENSE_ADC, false); // no hardware trigger
 
   // configure uart driver connected to the M66
   lpuart_config_t lpuart_config;
@@ -106,13 +120,6 @@ void modem_init() {
   EnableIRQ(BOARD_CELL_UART_IRQ);
 }
 
-#define VBAT_SENSE_PORT PORTD
-#define VBAT_SENSE_PIN 6
-#define VBAT_SENSE_ALT kPORT_PinDisabledOrAnalog
-#define VBAT_SENSE_ADC ADC0
-#define VBAT_SENSE_ADC_GROUP 0
-#define VBAT_SENSE_CHANNEL 7
-#define VBAT_SENSE_CHANNEL_MUX kADC16_ChannelMuxB
 
 static uint16_t vbat_sense() {
   ADC16_SetChannelMuxMode(VBAT_SENSE_ADC, VBAT_SENSE_CHANNEL_MUX);
@@ -140,18 +147,15 @@ bool modem_enable() {
   GPIO_WritePinOutput(BOARD_CELL_PWR_EN_GPIO, BOARD_CELL_PWR_EN_PIN, true);
   // TODO check that power has come up correctly
 
-  PORT_SetPinMux(VBAT_SENSE_PORT,   VBAT_SENSE_PIN,   VBAT_SENSE_ALT);
-  adc16_config_t adc16ConfigStruct;
-  ADC16_GetDefaultConfig(&adc16ConfigStruct);
-  ADC16_Init(VBAT_SENSE_ADC, &adc16ConfigStruct);
-  ADC16_EnableHardwareTrigger(VBAT_SENSE_ADC, false); // no hardware trigger
 
-  uint16_t power;
-  do {
-    power = vbat_sense();
-    CSTDEBUG("GSM #### -- %d\r\n", power);
-    delay(1000);
-  } while(power < 2500);
+//  timer_set_interrupt(10000 * 1000);
+//  uint16_t power;
+//  do {
+//    power = vbat_sense();
+//    CSTDEBUG("GSM #### -- %d\r\n", power);
+//    delay(1000);
+//  } while(power < 3300 && timer_timeout_remaining());
+//  if(vbat_sense() < 4000) return false;
 #endif
 
   // after enabling power, power on the M66

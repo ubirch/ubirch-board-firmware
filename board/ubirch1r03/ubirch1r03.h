@@ -1,5 +1,5 @@
 /*!
- * @file ubirch1r03k01.h
+ * @file ubirch1r03.h
  * @brief __ubirch#1 r0.3k0.1__ board specific defines
  *
  * @author Matthias L. Jugel
