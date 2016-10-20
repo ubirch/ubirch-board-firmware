@@ -57,6 +57,16 @@ int main(void) {
   if (!modem_enable()) error("modem enable");
   if (!modem_register(60000)) error("network register");
   if (!modem_gprs_attach(CELL_APN, CELL_USER, CELL_PWD, 30000)) error("GPRS attach");
+
+  double lat = 0.0, lon = 0.0;
+  rtc_datetime_t date;
+  modem_location(&lat, &lon, &date, 30000);
+
+  PRINTF("%04hd-%02hd-%02hd %02hd:%02hd:%02hd\r\n",
+         date.year, date.month, date.day, date.hour, date.minute, date.second);
+
+  PRINTF("Location: lat=%f, lon=%f\r\n", lat, lon);
+
   if (!modem_tcp_connect("api.ubirch.com", 80, 5000)) error("TCP connect");
 
   const char *send_data = "GET / HTTP/1.1\r\n\r\n";
@@ -69,7 +79,7 @@ int main(void) {
 
   dbg_dump("RCV", buffer, received);
 
-  if(!modem_tcp_close(1000)) error("TCP close");
+  modem_tcp_close(1000);
 
   modem_disable();
 

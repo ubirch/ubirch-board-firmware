@@ -128,7 +128,8 @@ bool modem_battery(status_t *status, int *level, int *voltage, const uint32_t ti
   return modem_expect_OK(500);
 }
 
-bool modem_location(status_t *status, double *lat, double *lon, rtc_datetime_t *datetime, const uint32_t timeout) {
+bool modem_location(double *lat, double *lon, rtc_datetime_t *datetime, const uint32_t timeout) {
+  int status = 0;
   char response[60];
 
   modem_send("AT+CIPGSMLOC=1,1");

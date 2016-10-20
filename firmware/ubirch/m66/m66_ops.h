@@ -80,17 +80,16 @@ bool modem_gprs_detach(uint32_t timeout);
  * @param voltage where voltage is stored (in mV)
  * @param timeout how long to wait in ms
  */
-bool modem_battery(status_t *status, int *level, int *voltage, uint32_t timeout);
+bool modem_battery(uint8_t *status, int *level, int *voltage, uint32_t timeout);
 
 /*!
  * @brief Get GSM location information, as well as date and time.
- * @param status request status (0 ok)
  * @param lat latitude
  * @param lon longitude
  * @param datetime date and time from the GSM network
  * @param timeout how long to wait in ms
  */
-bool modem_location(status_t *status, double *lat, double *lon, rtc_datetime_t *datetime, uint32_t timeout);
+bool modem_location(double *lat, double *lon, rtc_datetime_t *datetime, uint32_t timeout);
 
 /*!
  * @brief Get the IMEI number.

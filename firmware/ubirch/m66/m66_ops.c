@@ -28,6 +28,7 @@
 #include <stdlib.h>
 #include <fsl_rtc.h>
 #include <ubirch/timer.h>
+#include <time.h>
 #include "m66_parser.h"
 #include "m66_core.h"
 #include "m66_debug.h"
@@ -58,7 +59,7 @@ bool modem_gprs_attach(const char *apn, const char *user, const char *password, 
   modem_expect_OK(uTimer_Remaining);
 
   // attach to the network
-  bool attached = false;
+  bool attached;
   do {
     modem_send("AT+CGATT=1");
     attached = modem_expect_OK(uTimer_Remaining);
@@ -86,44 +87,40 @@ bool modem_gprs_attach(const char *apn, const char *user, const char *password, 
 bool modem_gprs_detach(uint32_t timeout) {
   timer_set_timeout(timeout * 1000);
 
-  modem_send("AT+CIPSHUT");
-  if (!modem_expect("SHUT OK", uTimer_Remaining)) return false;
-
-  modem_send("AT+SAPBR=0,1");
-  if (!modem_expect_OK(uTimer_Remaining)) return false;
+  modem_send("AT+QIDEACT");
+  if (!modem_expect("DEACT OK", uTimer_Remaining)) return false;
 
   modem_send("AT+CGATT=0");
   return modem_expect_OK(uTimer_Remaining);
 }
 
-
-bool modem_battery(status_t *status, int *level, int *voltage, uint32_t timeout) {
+bool modem_battery(uint8_t *status, int *level, int *voltage, uint32_t timeout) {
   modem_send("AT+CBC");
-  modem_expect_scan("+CBC: %d,%d,%d", timeout, status, level, voltage);
-  return modem_expect_OK(500);
+  if(!modem_expect_scan("+CBC: %d,%d,%d", timeout, status, level, voltage)) return false;
+  return modem_expect_OK(500) && status == 0;
 }
 
-bool modem_location(status_t *status, double *lat, double *lon, rtc_datetime_t *datetime, uint32_t timeout) {
-  char response[60];
+bool modem_location(double *lat, double *lon, rtc_datetime_t *datetime, uint32_t timeout) {
+  timer_set_timeout(timeout * 1000);
 
-  modem_send("AT+QLOCC=60,60");
-  modem_expect_OK(uTimer_Remaining);
-  modem_send("AT+QGSMLOC=4");
-  modem_expect_scan("+QGSMLOC: %d, %s", uTimer_Remaining, &status, response);
-
-  if (status == 0) {
-    *lon = atof(strtok(response, ","));
-    *lat = atof(strtok(NULL, ","));
-
-    datetime->year = (uint16_t) atoi(strtok(NULL, "/"));
-    datetime->month = (uint8_t) atoi(strtok(NULL, "/"));
-    datetime->day = (uint8_t) atoi(strtok(NULL, ","));
-    datetime->hour = (uint8_t) atoi(strtok(NULL, ":"));
-    datetime->minute = (uint8_t) atoi(strtok(NULL, ":"));
-    datetime->second = (uint8_t) atoi(strtok(NULL, ":"));
+  // get location
+  modem_send("AT+QCELLLOC=1");
+  char response[32] = "";
+  if (modem_expect_scan("+QCELLLOC: %s", uTimer_Remaining, response)) {
+    if (modem_expect_OK(uTimer_Remaining)) {
+      *lon = atof(strtok(response, ","));
+      *lat = atof(strtok(NULL, ","));
+    }
   }
-
-  return modem_expect_OK(uTimer_Remaining) && status == 0;
+  // get network time
+  int timezone, saving;
+  modem_send("AT+QLTS");
+  if(!modem_expect_scan("+QLTS: \"%d/%d/%d,%d:%d:%d+%d,1\"", uTimer_Remaining,
+                    &datetime->year, &datetime->month, &datetime->day,
+                    &datetime->hour, &datetime->minute, &datetime->second,
+                    &timezone, &saving)) return false;
+  datetime->year += 2000;
+  return modem_expect_OK(uTimer_Remaining);
 }
 
 bool modem_imei(char *imei, const uint32_t timeout) {
