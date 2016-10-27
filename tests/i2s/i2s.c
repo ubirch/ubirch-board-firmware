@@ -6,6 +6,9 @@
 #include <ubirch/timer.h>
 #include "tosdcard.h"
 
+#define RX_SAI_IRQ I2S0_Rx_IRQn
+#define SAI_RxIRQHandler I2S0_Rx_IRQHandler
+
 bool isFinished = false;
 uint32_t temp[2000];
 sai_handle_t rxHandle = {0};
@@ -23,7 +26,7 @@ static void callback(I2S_Type *base, sai_handle_t *handle, status_t status, void
 }
 
 
-
+/* Initialize the SAI / I2S interface */
 void sai_init(sai_config_t config)
 {
   PRINTF("Enable I2S pins...\r\n");
@@ -66,105 +69,54 @@ void sai_init(sai_config_t config)
   SAI_TransferRxSetFormat(I2S0, &rxHandle, &format, CLOCK_GetCoreSysClkFreq(), format.masterClockHz);
 }
 
-
 void error(char *msg) {
   PRINTF("ERROR: %s\r\n", msg);
   while(true) {}
 }
 
-static void SAI_ReadNonBlocking(I2S_Type *base, uint32_t channel, uint32_t bitWidth, uint8_t *buffer, uint32_t size)
+/* The IRQ handler to read the messages*/
+void SAI_RxIRQHandler(I2S_Type *base, uint32_t channel, uint32_t bitWidth, uint32_t *buffer, uint32_t size)
 {
-  uint32_t i = 0;
-  uint8_t j = 0;
-  uint8_t bytesPerWord = bitWidth / 8U;
-  uint32_t data = 0;
-
-  for (i = 0; i < size / bytesPerWord; i++)
-  {
-    data = base->RDR[channel];
-    for (j = 0; j < bytesPerWord; j++)
-    {
-      *buffer = (data >> (8U * j)) & 0xFF;
-      buffer++;
-    }
-  }
-}
-
-
-void SAI_TxIRQHandler(I2S_Type *base, uint32_t channel, uint32_t bitWidth, uint8_t *buffer, uint32_t size)
-{
-
   uint8_t i = 0;
   uint8_t j = 0;
   uint32_t data = 0;
-  uint32_t temp = 0;
+  uint8_t bytesPerWord = bitWidth / 8U;
 
+  size_t g_index = 0;
+
+  PRINTF("IRQ handler\r\n");
   /* Clear the FIFO error flag */
-  if (SAI_TxGetStatusFlag(I2S0) & kSAI_FIFOErrorFlag)
+  if (SAI_RxGetStatusFlag(I2S0) & kSAI_FIFOErrorFlag)
   {
-    SAI_TxClearStatusFlags(I2S0, kSAI_FIFOErrorFlag);
+    SAI_RxClearStatusFlags(I2S0, kSAI_FIFOErrorFlag);
   }
 
-  if (SAI_TxGetStatusFlag(I2S0) & kSAI_FIFOWarningFlag)
+  if (SAI_RxGetStatusFlag(I2S0) & kSAI_FIFOWarningFlag)
   {
     for (i = 0; i < FSL_FEATURE_SAI_FIFO_COUNT; i++)
     {
-      SAI_ReadNonBlocking(I2S0, channel, bitWidth, buffer, size);
-      data = 0;
-      for (j = 0; j < format.bitWidth / 8U; j++)
+      for (i = 0; i < size / bytesPerWord; i++)
       {
-        temp = (uint32_t)(music[g_index]);
-        data |= (temp << (8U * j));
-        g_index++;
+        data = base->RDR[channel];
+        for (j = 0; j < bytesPerWord; j++)
+        {
+          *buffer = (data >> (8U * j)) & 0xFF;
+          buffer++;
+          g_index++;
+        }
       }
-      SAI_WriteData(I2S0, format.channel, data);
     }
   }
 
-  if (g_index >= MUSIC_LEN)
+  isFinished = true;
+
+  if (g_index >= size)
   {
     isFinished = true;
-    SAI_TxDisableInterrupts(I2S0, kSAI_FIFOWarningInterruptEnable | kSAI_FIFOErrorInterruptEnable);
-    SAI_TxEnable(I2S0, false);
+    SAI_RxDisableInterrupts(I2S0, kSAI_FIFOWarningInterruptEnable | kSAI_FIFOErrorInterruptEnable);
+    SAI_RxEnable(I2S0, false);
   }
 }
-
-
-status_t xSAI_TransferReceiveNonBlocking(I2S_Type *base, sai_handle_t *handle, sai_transfer_t *xfer)
-{
-  assert(handle);
-
-  /* Check if the queue is full */
-  if (handle->saiQueue[handle->queueUser].data)
-  {
-    return kStatus_SAI_QueueFull;
-  }
-
-  /* Add into queue */
-  handle->transferSize[handle->queueUser] = xfer->dataSize;
-  handle->saiQueue[handle->queueUser].data = xfer->data;
-  handle->saiQueue[handle->queueUser].dataSize = xfer->dataSize;
-  handle->queueUser = (handle->queueUser + 1) % SAI_XFER_QUEUE_SIZE;
-
-  /* Set state to busy */
-  handle->state = 0x0U;
-
-/* Enable interrupt */
-//#if defined(FSL_FEATURE_SAI_FIFO_COUNT) && (FSL_FEATURE_SAI_FIFO_COUNT > 1)
-//  /* Use FIFO request interrupt and fifo error*/
-  SAI_RxEnableInterrupts(base, kSAI_FIFOErrorInterruptEnable
-                               | kSAI_FIFORequestInterruptEnable
-                               | kSAI_WordStartInterruptEnable);
-//#else
-//  SAI_RxEnableInterrupts(base, kSAI_FIFOErrorInterruptEnable | kSAI_FIFOWarningInterruptEnable);
-//#endif /* FSL_FEATURE_SAI_FIFO_COUNT */
-
-  /* Enable Rx transfer */
-  SAI_RxEnable(base, true);
-
-  return kStatus_Success;
-}
-
 
 int main (void)
 {
@@ -175,49 +127,44 @@ int main (void)
 
   init_sdhc_pins();
 
-  sai_handle_t *handle = &rxHandle;
-
-  uint8_t buffer[3 * 2048]; // = handle->saiQueue[handle->queueDriver].data;
-  uint8_t dataSize = handle->bitWidth / 8U;
+  uint32_t buffer[3 * 2048]; // = handle->saiQueue[handle->queueDriver].data;
+//  uint8_t dataSize = rxHandle.bitWidth / 8U;
   uint8_t the_size =0;
-//  while(true)
-//  {
+
   PRINTF("Listening...\r\n");
 
   xfer.data = (uint8_t *) temp;
   xfer.dataSize = sizeof(temp);
 
-//  GPIO_WritePinOutput(GPIOA, 18U, true);
+  GPIO_WritePinOutput(GPIOA, 18U, true);
 
-  PRINTF("%x\r\n", xSAI_TransferReceiveNonBlocking(I2S0, &rxHandle, &xfer));
-
-  while (isFinished != true) {}
-
-  if (I2S0->RCSR & I2S_RCSR_FWF_MASK)
+  if (rxHandle.saiQueue[rxHandle.queueUser].data)
   {
-    uint8_t size = MIN((handle->saiQueue[handle->queueDriver].dataSize), dataSize);
-    PRINTF("first size is %d\r\n", size);
-    SAI_ReadNonBlocking(I2S0, handle->channel, handle->bitWidth, buffer, size);
-
-    the_size = size;
-    /* Update internal state */
-    handle->saiQueue[handle->queueDriver].dataSize -= size;
-    handle->saiQueue[handle->queueDriver].data += size;
+    PRINTF("Returning %d\r\n", kStatus_SAI_QueueFull);
+    return kStatus_SAI_QueueFull;
   }
 
-//  GPIO_WritePinOutput(GPIOA, 18U, false);
+  EnableIRQ(RX_SAI_IRQ);
+  SAI_RxEnableInterrupts(I2S0, kSAI_FIFOWarningInterruptEnable);
+//  kSAI_WordStartInterruptEnable); //   |
+//                               kSAI_FIFORequestInterruptEnable |
+//                               kSAI_FIFOErrorInterruptEnable   |
+//                               kSAI_FIFOWarningInterruptEnable);
+  SAI_RxEnable(I2S0, true);
 
+  while (isFinished != true) {
+    uint32_t hex_val = SAI_RxGetStatusFlag(I2S0);
+    PRINTF("The status %x  %u ", hex_val, hex_val);
+  }
+
+  GPIO_WritePinOutput(GPIOA, 18U, false);
 
   PRINTF("FINISHED.\r\n");
-
-
   PRINTF("Size is %d\r\n", the_size);
-//  dbg_xxd("AUDIO", xfer.data, xfer.dataSize);
-  dbg_xxd("AUDIO", buffer, the_size);
-  PRINTF("Done \r\n\r\n\r\n");
+  dbg_xxd("AUDIO", (uint8_t *)buffer, the_size);
 
   PRINTF("Now copying stuff into SD card\r\n");
-  pcm__sdhc(buffer);
+  pcm__sdhc((uint8_t *)buffer);
 
   while(true)
   {
