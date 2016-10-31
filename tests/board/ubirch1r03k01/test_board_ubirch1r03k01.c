@@ -70,7 +70,8 @@ int main(void) {
 //  test_i2s();
 
 //  test_uart();
-  test_sdhc();
+//  test_sdhc();
+  test_i2s();
   if(enable_test_audio) test_audio();
   if(enable_test_quectel) test_quectel();
   if(enable_test_gpio) test_gpio();
