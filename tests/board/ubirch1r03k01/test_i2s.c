@@ -36,7 +36,6 @@ void test_i2s(void) {
   PRINTF("Configuring SAI...\r\n");
   SAI_RxGetDefaultConfig(&config);
   config.protocol = kSAI_BusI2S;
-  config.syncMode = kSAI_ModeAsync;
   SAI_RxInit(I2S0, &config);
 
   /* Configure the audio format */
@@ -57,9 +56,9 @@ void test_i2s(void) {
   xfer.dataSize = sizeof(temp);
   PRINTF("%x\r\n", SAI_TransferReceiveNonBlocking(I2S0, &rxHandle, &xfer));
 
-  GPIO_WritePinOutput(GPIOA, 18U, false);
   while (isFinished != true) {}
 
+  GPIO_WritePinOutput(GPIOA, 18U, false);
   PRINTF("FINISHED.\r\n");
 
   dbg_xxd("AUDIO", (const uint8_t *) temp, xfer.dataSize);

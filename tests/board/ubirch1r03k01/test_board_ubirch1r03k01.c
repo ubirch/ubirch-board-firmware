@@ -64,14 +64,10 @@ int main(void) {
   // 100ms led blink, only works if setup for LED was correct
   SysTick_Config(BOARD_SYSTICK_1MS);
 
-  PRINTF(BOARD "i2c \r\n");
+//  PRINTF(BOARD "\r\n");
 //  enter("Press Enter to test debug console input: ");
 //  PRINTF("OK\r\n");
-//  test_i2s();
 
-//  test_uart();
-//  test_sdhc();
-  test_i2s();
   if(enable_test_audio) test_audio();
   if(enable_test_quectel) test_quectel();
   if(enable_test_gpio) test_gpio();
