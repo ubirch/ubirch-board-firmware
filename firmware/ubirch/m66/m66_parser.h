@@ -41,7 +41,6 @@ extern "C" {
  *
  * The list originates here: this useful list found here: https://github.com/cloudyourcar/attentive
  */
-//
 const char *M66_URC[] = {
   "RDY",                      /*!< Device ready. */
   "+CFUN: 1",                 /*!< Device has entered full functional mode */
@@ -55,6 +54,20 @@ const char *M66_URC[] = {
   "OVER-VOLTAGE WARNNING",
   "+CMTI: \"SM\",3",          /*!< SMS has arrived */
   NULL
+};
+
+enum urc {
+    Ready = 0,
+    Functional,
+    SIMCardReady,
+    CallReady,
+    SMSReady,
+    NormalPowerDown,
+    UnderVoltagePowerDown,
+    UnderVoltageWarning,
+    OverVoltagePowerDown,
+    OverVoltageWarning,
+    SMSArrived
 };
 
 //! registration status codes

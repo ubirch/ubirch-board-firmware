@@ -78,12 +78,15 @@ int main(void) {
          uuid[2] & 0xFFFF, uuid[3]);  // 4+8
 
   modem_init();
-  modem_enable();
-  char imei[17];
-  modem_imei(imei, 1000);
-  printf("IMEI: %s\r\n", imei);
-  modem_disable();
-
+  if(modem_enable()) {
+    char imei[17];
+    modem_imei(imei, 1000);
+    printf("IMEI: %s\r\n", imei);
+    modem_disable();
+    PRINTF("= %-15s: %s\r\n", "MODEM", "OK");
+  } else {
+    PRINTF("= %-15s: %s\r\n", "MODEM", "FAIL");
+  }
 
   TEST("SDHC", test_sdhc_fat());
   TEST("WS2812B", test_ws2812b());
