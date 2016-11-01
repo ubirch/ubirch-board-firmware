@@ -166,6 +166,11 @@ int main (void)
   size_t count = 0;
   uint8_t the_size =0;
 
+  sai_transfer_t xfer;
+
+  xfer.data = (uint8_t *)temp;
+  xfer.dataSize = sizeof(temp);
+
   board_init();
   board_console_init(BOARD_DEBUG_BAUD);
 
@@ -174,15 +179,17 @@ int main (void)
   PRINTF("Listening...\r\n");
 
   EnableIRQ(RX_SAI_IRQ);
-  SAI_RxEnableInterrupts(I2S0, kSAI_FIFOErrorInterruptEnable | kSAI_FIFORequestInterruptEnable);
+
+  PRINTF("SAI non-blocking status: %d\r\n", SAI_TransferSendNonBlocking(I2S0, &rxHandle, &xfer));
+//  SAI_RxEnableInterrupts(I2S0, kSAI_FIFOErrorInterruptEnable | kSAI_FIFORequestInterruptEnable);
   SAI_RxEnable(I2S0, true);
 
   GPIO_WritePinOutput(GPIOA, 18U, true);
   delay(1000);
 
   while (isFinished != true) {
-    uint32_t hex_val = SAI_RxGetStatusFlag(I2S0);
-    PRINTF("The status is %x :: %u\r\n", hex_val, hex_val);
+//    uint32_t hex_val = SAI_RxGetStatusFlag(I2S0);
+//    PRINTF("The status is %x :: %u\r\n", hex_val, hex_val);
   }
   GPIO_WritePinOutput(GPIOA, 18U, false);
 
