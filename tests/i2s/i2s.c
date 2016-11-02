@@ -8,9 +8,11 @@
 
 #define RX_SAI_IRQ I2S0_Rx_IRQn
 #define new_I2S0_Rx_DriverIRQHandler I2S0_Rx_IRQHandler
-bool isFinished = false;
 
-static sai_handle_t *new_handle;
+#ifndef FSL_FEATURE_SAI_FIFO_COUNT
+  #define FSL_FEATURE_SAI_FIFO_COUNT
+#endif
+bool isFinished = false;
 
 sai_handle_t rxHandle = {0};
 
@@ -99,7 +101,7 @@ void SAI_Transfer_Rx_Handle_IRQ(I2S_Type *base, sai_handle_t *handle)
   {
     /* Clear FIFO error flag to continue transfer */
     SAI_RxClearStatusFlags(base, kSAI_FIFOErrorFlag);
-
+    PRINTF("Clear the FIFO Error flag\r\n");
     /* Call the callback */
     if (handle->callback)
     {
@@ -111,6 +113,7 @@ void SAI_Transfer_Rx_Handle_IRQ(I2S_Type *base, sai_handle_t *handle)
 #if defined(FSL_FEATURE_SAI_FIFO_COUNT) && (FSL_FEATURE_SAI_FIFO_COUNT > 1)
   if (base->RCSR & I2S_RCSR_FRF_MASK)
   {
+    PRINTF("Handle the transfer FIFO_Count\r\n");
     /* Judge if the data need to transmit is less than space */
     uint8_t size = MIN((handle->saiQueue[handle->queueDriver].dataSize), (handle->watermark * dataSize));
 
@@ -124,6 +127,7 @@ void SAI_Transfer_Rx_Handle_IRQ(I2S_Type *base, sai_handle_t *handle)
 #else
   if (base->RCSR & I2S_RCSR_FWF_MASK)
   {
+    PRINTF("Handle the transfer No FIFO count\r\n");
 
     uint8_t size = MIN((handle->saiQueue[handle->queueDriver].dataSize), dataSize);
 
@@ -138,6 +142,8 @@ void SAI_Transfer_Rx_Handle_IRQ(I2S_Type *base, sai_handle_t *handle)
   /* If finished a blcok, call the callback function */
   if (handle->saiQueue[handle->queueDriver].dataSize == 0U)
   {
+    PRINTF("Block transfer is over\r\n");
+
     memset(&handle->saiQueue[handle->queueDriver], 0, sizeof(sai_transfer_t));
     handle->queueDriver = (handle->queueDriver + 1) % SAI_XFER_QUEUE_SIZE;
     if (handle->callback)
@@ -151,7 +157,7 @@ void SAI_Transfer_Rx_Handle_IRQ(I2S_Type *base, sai_handle_t *handle)
   {
     SAI_TransferAbortReceive(base, handle);
   }
-
+  PRINTF("Lets copy buffer to temp\r\n");
   memcpy(temp, buffer, sizeof(temp));
 }
 
@@ -180,9 +186,9 @@ int main (void)
 
   EnableIRQ(RX_SAI_IRQ);
 
-  PRINTF("SAI non-blocking status: %d\r\n", SAI_TransferSendNonBlocking(I2S0, &rxHandle, &xfer));
+  PRINTF("SAI non-blocking status: %d\r\n", SAI_TransferReceiveNonBlocking(I2S0, &rxHandle, &xfer));
 //  SAI_RxEnableInterrupts(I2S0, kSAI_FIFOErrorInterruptEnable | kSAI_FIFORequestInterruptEnable);
-  SAI_RxEnable(I2S0, true);
+//  SAI_RxEnable(I2S0, true);
 
   GPIO_WritePinOutput(GPIOA, 18U, true);
   delay(1000);
@@ -193,8 +199,8 @@ int main (void)
   }
   GPIO_WritePinOutput(GPIOA, 18U, false);
 
-  PRINTF("last the status is %d\r\n", SAI_TransferGetReceiveCount(I2S0, &rxHandle, &count));
-  PRINTF("count is %d\r\n", count);
+  PRINTF("Previous status     : %d\r\n", SAI_TransferGetReceiveCount(I2S0, &rxHandle, &count));
+  PRINTF("Received data count : %d\r\n", count);
   PRINTF("FINISHED.\r\n");
   PRINTF("Size is %d\r\n", the_size);
   dbg_xxd("AUDIO", (uint8_t *)temp, the_size);
