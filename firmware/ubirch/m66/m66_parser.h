@@ -45,6 +45,8 @@ const char *M66_URC[] = {
   "RDY",                      /*!< Device ready. */
   "+CFUN: 1",                 /*!< Device has entered full functional mode */
   "+CPIN: READY",             /*!< Device has SIM card inserted */
+  "+CPIN: NOT READY",
+  "+PDP DEACT",
   "Call Ready",
   "SMS Ready",
   "NORMAL POWER DOWN",
@@ -60,6 +62,8 @@ enum urc {
     Ready = 0,
     Functional,
     SIMCardReady,
+    SIMCardNotReady,
+    PDPDeact,
     CallReady,
     SMSReady,
     NormalPowerDown,

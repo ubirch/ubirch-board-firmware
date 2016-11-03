@@ -97,8 +97,6 @@ void modem_init() {
   CLOCK_EnableClock(BOARD_CELL_PWR_EN_CLOCK);
   PORT_SetPinMux(BOARD_CELL_PWR_EN_PORT, BOARD_CELL_PWR_EN_PIN, kPORT_MuxAsGpio);
   GPIO_PinInit(BOARD_CELL_PWR_EN_GPIO, BOARD_CELL_PWR_EN_PIN, &OUTFALSE);
-  // switch power off
-  GPIO_WritePinOutput(BOARD_CELL_PWR_EN_GPIO, BOARD_CELL_PWR_EN_PIN, false);
 #endif
 
   PORT_SetPinMux(VBAT_SENSE_PORT,   VBAT_SENSE_PIN,   VBAT_SENSE_ALT);
@@ -149,13 +147,13 @@ bool modem_enable() {
   GPIO_WritePinOutput(BOARD_CELL_PWR_EN_GPIO, BOARD_CELL_PWR_EN_PIN, true);
   // TODO check that power has come up correctly
 
-  timer_set_interrupt(20000 * 1000);
-  uint16_t power;
-  do {
-    power = vbat_sense();
-    // CSTDEBUG("GSM #### -- %d\r\n", power);
-  } while(power < 2800 && timer_timeout_remaining());
-  if(vbat_sense() < 2800) return false;
+//  timer_set_interrupt(20000 * 1000);
+//  uint16_t power;
+//  do {
+//    power = vbat_sense();
+//    // CSTDEBUG("GSM #### -- %d\r\n", power);
+//  } while(power < 2800 && timer_timeout_remaining());
+//  if(vbat_sense() < 2800) return false;
 #endif
 
   // after enabling power, power on the M66
@@ -180,11 +178,11 @@ bool modem_enable() {
     CSTDEBUG("GSM #### !! trigger PWRKEY\r\n");
 
     // power on the cell phone chip
-    GPIO_WritePinOutput(BOARD_CELL_PIN_GPIO, BOARD_CELL_PWRKEY_PIN, true);
-    delay(110); //1ms
     GPIO_WritePinOutput(BOARD_CELL_PIN_GPIO, BOARD_CELL_PWRKEY_PIN, false);
-    delay(1500); // 2s
+    delay(110); // >100ms
     GPIO_WritePinOutput(BOARD_CELL_PIN_GPIO, BOARD_CELL_PWRKEY_PIN, true);
+    delay(1500); // >1s
+    GPIO_WritePinOutput(BOARD_CELL_PIN_GPIO, BOARD_CELL_PWRKEY_PIN, false);
   } else {
     CSTDEBUG("GSM #### !! already on\r\n");
   }
