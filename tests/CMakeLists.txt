@@ -8,7 +8,7 @@ if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/board/${BOARD}")
   add_subdirectory(board/${BOARD})
 endif()
 
-add_subdirectory(cc430)
+#add_subdirectory(cc430)
 add_subdirectory(firmware)
 add_subdirectory(identify)
 add_subdirectory(modem)
