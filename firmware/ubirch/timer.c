@@ -114,3 +114,14 @@ void delay(uint32_t ms) {
   delay_us(us_delay);
 }
 
+volatile unsigned long timer0_millis;
+
+unsigned long millis(void)
+{
+  unsigned long m;
+  // disable interrupt so we can read timer variable
+  PIT_DisableInterrupts(PIT, kPIT_Chnl_0, kPIT_TimerInterruptEnable);
+  m = timer0_millis;
+  PIT_EnableInterrupts(PIT, kPIT_Chnl_0, kPIT_TimerInterruptEnable);
+  return m;
+}

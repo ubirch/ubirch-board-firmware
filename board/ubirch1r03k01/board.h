@@ -44,6 +44,8 @@
 #include "ubirch1r03k01.h"
 #include "clock_config.h"
 
+#define PIT_SOURCE_CLOCK CLOCK_GetFreq(kCLOCK_BusClk)
+
 /*!
  * @brief Installs a bootloader hook that runs on pressing the board button.
  *

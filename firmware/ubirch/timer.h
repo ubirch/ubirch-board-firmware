@@ -117,6 +117,7 @@ void delay_us(uint32_t us);
  */
 void delay(uint32_t ms);
 
+unsigned long millis(void);
 #ifdef __cplusplus
 }
 #endif

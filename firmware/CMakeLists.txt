@@ -37,6 +37,11 @@ add_library(firmware
   ubirch/ws2812b.c
   ubirch/rf-sub-ghz/rf_lpuart.c
   ubirch/device.c
+  ubirch/microphone/mic.c
+  ubirch/microphone/audio_dma.c
+  ubirch/microphone/fsl_flexio_mems.c
+  ubirch/microphone/fsl_flexio_mems_edma.c
+  ubirch/microphone/pdm2pcm.c
   ${CELL_SRCS}
   ${SDHC_SRCS} )
 target_include_directories(firmware PUBLIC

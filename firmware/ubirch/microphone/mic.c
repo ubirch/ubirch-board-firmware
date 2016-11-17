@@ -6,17 +6,32 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdint.h>
-#include "Serial.h"
+#include <fsl_port.h>
+#include <fsl_debug_console.h>
+
+#include "fsl_flexio_mems.h"
 
 #include "wav_record.h"
+#include "pdm2pcm.h"
+#include "audio_dma.h"
 
 
+unsigned char __attribute__((aligned(32), section(".myRAM"))) file_buf[2*AUDIO_SIZE];
+uint8_t __attribute__((aligned(32), section(".myRAM"))) PCMData[2][2*PCM_FRAME];
+
+uint8_t *newPcm;
 static int count;
 
 mems_audio_t mems_audio;
 audio_playback_t audio_playback;
 
 void audio_init(void){
+  // INIT MEMS FLEXIO
+  //  FXIO_D15
+  PORT_SetPinMux(PORTA, 5U, kPORT_MuxAlt5);
+  //  FXIO_D18
+  PORT_SetPinMux(PORTA, 12U, kPORT_MuxAlt5);
+
   FLEXIO_MemMicInit();
 }
 
@@ -26,13 +41,14 @@ void set_PDM_buf(uint8_t buf){
 }
 
 void set_PCM_buf(uint8_t buf){
-  mems_audio.pcm = &PCMData[buf][0];
+  newPcm = &PCMData[buf][0];
+//  mems_audio.pcm = &PCMData[buf][0];
 }
 
 // write little endian to wav file
 void insert_PCM_buf(CICREG sample){
-  mems_audio.pcm++ = sample & 0xFF;
-  mems_audio.pcm++ = ((sample >> 8) & 0xFF);
+  *newPcm++ =  sample & 0xFF;
+  *newPcm = ((sample >> 8) & 0xFF);
 }
 
 uint8_t get_cur_PCM_buf(void){
@@ -47,17 +63,17 @@ void process_audio(){
     audio_playback.mems_dma_rdy = false;
     if(mems_audio.stopped){
       // that last worker task was the last one
-      turnRecordingOff();
+      turn_recording_off();
     }
   }
   if(audio_playback.event_dma_rdy == 1){
     audio_playback.event_dma_rdy = 0;
-    pingPongManager();
+//    pingPongManager();
   }
 }
 
 void turn_recording_on(void){
-  mems_audio.rec_fh = file.open("record.raw", FA_WRITE | FA_CREATE_ALWAYS);
+  mems_audio.rec_fh = 1; //file.open("record.raw", FA_WRITE | FA_CREATE_ALWAYS);
   if (mems_audio.rec_fh >= 0){
     PRINTF("Recording to file new");
     mems_audio.record2file = true;
@@ -66,7 +82,7 @@ void turn_recording_on(void){
 
 void turn_recording_off(void){
   if(mems_audio.record2file){
-    file.close(mems_audio.rec_fh);
+//    file.close(mems_audio.rec_fh);
     PRINTF("Close record file\r\n");
 
     mems_audio.rec_fh = 1; //set handler to the close state
@@ -103,7 +119,7 @@ bool worker(uint8_t buf){
   for(uint8_t k=0; k < PCM_FRAME; k++){
     // extract the PDM samples taken care of the reorder made by using FlexIO and DMA
     for(uint8_t j=0; j < CIC2_R/2; j++) {
-      mems_audio.s2_sum1 += pdmsum8[pdm_[((CIC2_R/2)-1)-j]];
+      mems_audio.s2_sum1 += pdmsum8[mems_audio.pdm[((CIC2_R/2)-1)-j]];
       mems_audio.s2_sum2 += mems_audio.s2_sum1;
       mems_audio.s2_sum3 += mems_audio.s2_sum2;
     }
@@ -143,18 +159,18 @@ bool worker(uint8_t buf){
     pcm0 = pcm;
     pcm = pcm1;
 
-    pcm << 1;			// increase volume simple test / not very successful
+    pcm = pcm << 1;			// increase volume simple test / not very successful
     // queue the finished PCM filtered sample
-    insertPCMbuf(pcm);
+    insert_PCM_buf(pcm);
 
   }
 
-  if(record2file_){
-    if(file.isOpen(rec_fh_)){
-      file.write(rec_fh_, &PCMData[pcm_in_use_][0], 2*PCM_FRAME);			// PCMData is of int16_t type
-      // perhaps need to check for an error
-    }
-  }
+//  if(mems_audio.record2file){
+//    if(file.isOpen(mems_audio.rec_fh)){
+//      file.write(mems_audio.rec_fh, &PCMData[mems_audio.pcm_in_use][0], 2*PCM_FRAME);			// PCMData is of int16_t type
+//      // perhaps need to check for an error
+//    }
+//  }
   // swap PCM buffers - Ping Pong
   if(mems_audio.pcm_in_use == 0){
     mems_audio.pcm_in_use = 1;

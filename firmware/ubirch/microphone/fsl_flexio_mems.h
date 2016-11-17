@@ -1,8 +1,9 @@
 #ifndef _FSL_FLEXIO_MEMS_H_
 #define _FSL_FLEXIO_MEMS_H_
 
-#include "fsl_common.h"
-#include "fsl_flexio.h"
+#include <fsl_common.h>
+#include <fsl_flexio.h>
+
 
 /*!
  * @addtogroup flexio_mems
@@ -24,10 +25,10 @@
 /*! @brief FlexIO MEMS transfer status */
 enum _flexio_mems_status
 {
-    kStatus_FLEXIO_MEMS_Idle = MAKE_STATUS(kStatusGroup_MEMS_MIC, 0),      /*!< FlexIO MEMS is in idle state */
-    kStatus_FLEXIO_MEMS_RxBusy = MAKE_STATUS(kStatusGroup_MEMS_MIC, 2),    /*!< FlexIO MEMS Tx is busy */
-    kStatus_FLEXIO_MEMS_Error = MAKE_STATUS(kStatusGroup_MEMS_MIC, 3),     /*!< FlexIO MEMS error occurred */
-    kStatus_FLEXIO_MEMS_QueueFull = MAKE_STATUS(kStatusGroup_MEMS_MIC, 4), /*!< FlexIO MEMS transfer queue is full. */
+    kStatus_FLEXIO_MEMS_Idle = MAKE_STATUS(60, 0),      /*!< FlexIO MEMS is in idle state */
+    kStatus_FLEXIO_MEMS_RxBusy = MAKE_STATUS(60, 2),    /*!< FlexIO MEMS Tx is busy */
+    kStatus_FLEXIO_MEMS_Error = MAKE_STATUS(60, 3),     /*!< FlexIO MEMS error occurred */
+    kStatus_FLEXIO_MEMS_QueueFull = MAKE_STATUS(60, 4), /*!< FlexIO MEMS transfer queue is full. */
 };
 
 /*! @brief Define FlexIO MEMS access structure typedef */

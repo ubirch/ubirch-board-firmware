@@ -10,7 +10,6 @@
 #include "board.h"
 
 #include "clock_config.h"
-#include "pin_mux.h"
 #include "fsl_edma.h"
 #include "fsl_dmamux.h"
 #include "fsl_clock.h"
@@ -25,7 +24,7 @@
 #define BOARD_FLEXIO_BASE FLEXIO0
 //#define FLEXIO_SPI_SOUT_PIN 4U
 #define FLEXIO_MEMS_DAT_PIN 15U								// J1 - 1 / FXIO_D15 PTA5
-#define FLEXIO_MEMS_CLK_PIN 23U								// J1 - 7 / FXIO_D23 PTA17
+#define FLEXIO_MEMS_CLK_PIN 18U    //PTA12    //23U J1 - 7 / FXIO_D23 PTA17
 //#define FLEXIO_SPI_PCS_PIN 2U
 #define FLEXIO_CLOCK_FREQUENCY CLOCK_GetFreq(kCLOCK_CoreSysClk)			// System Clock
 #define FLEXIO_DMA_REQUEST_BASE kDmaRequestMux0Group1FlexIO0Channel0

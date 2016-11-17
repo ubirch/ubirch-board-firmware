@@ -9,15 +9,15 @@
 extern "C" {
 #include "audio_dma.h"
 #include "pdm2pcm.h"
-#include <stdint.h>
 }
 #endif
 
-#include <FatFs.h>
+#include <stdint.h>
+#include <stdbool.h>
 
 #define CIC2_R 8
 
-typedef  int32_t CICREG;
+typedef int32_t CICREG;
 
 const int8_t pdmsum8[256] = {
 #   define S(n) (2*(n)-8)
@@ -54,7 +54,7 @@ typedef struct {
 } mems_audio_t;
 
 typedef struct {
-    bool mems_dma_dry;
+    bool mems_dma_rdy;
     uint8_t mems_cur_buf;
 
     uint8_t event_dma_rdy;
