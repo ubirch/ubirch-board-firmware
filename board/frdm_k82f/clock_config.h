@@ -46,6 +46,8 @@ extern "C" {
 void BOARD_BootClockVLPR(void);
 void BOARD_BootClockRUN(void);
 void BOARD_BootClockHSRUN(void);
+void APP_SetClockRunFromHsrun(void);
+void APP_SetClockRunFromVlpr(void);
 
 #if defined(__cplusplus)
 }

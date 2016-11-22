@@ -88,7 +88,7 @@ static inline void board_init() {
 /*!
  * @brief Disable NMI for this board (PTA4) and make it work as a normal input pin.
  */
-static inline void board_nmi_disable() {
+static inline void board_nmi_disable(void) {
   const gpio_pin_config_t IN = {kGPIO_DigitalInput, false};
 
   CLOCK_EnableClock(BOARD_NMI_PORT_CLOCK);
@@ -106,6 +106,14 @@ static inline status_t board_console_init(uint32_t baud) {
   PORT_SetPinMux(BOARD_DEBUG_PORT, BOARD_DEBUG_TX_PIN, BOARD_DEBUG_TX_ALT);
   PORT_SetPinMux(BOARD_DEBUG_PORT, BOARD_DEBUG_RX_PIN, BOARD_DEBUG_RX_ALT);
   return DbgConsole_Init((uint32_t) BOARD_DEBUG_UART, baud, BOARD_DEBUG_TYPE, BOARD_DEBUG_CLK_FREQ);
+}
+
+static inline status_t board_console_vlpr_init(uint32_t baud) {
+  CLOCK_SetLpuartClock(2);
+  CLOCK_EnableClock(BOARD_DEBUG_PORT_CLOCK);
+  PORT_SetPinMux(BOARD_DEBUG_PORT, BOARD_DEBUG_TX_PIN, BOARD_DEBUG_TX_ALT);
+  PORT_SetPinMux(BOARD_DEBUG_PORT, BOARD_DEBUG_RX_PIN, BOARD_DEBUG_RX_ALT);
+  return DbgConsole_Init((uint32_t) BOARD_DEBUG_UART,baud, BOARD_DEBUG_TYPE, BOARD_DEBUG_CLK_FREQ);
 }
 
 /*!

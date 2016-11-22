@@ -207,19 +207,31 @@ void BOARD_BootClockVLPR(void)
 {
     CLOCK_SetSimSafeDivs();
 
-    CLOCK_BootToBlpiMode(g_defaultClockConfigVlpr.mcgConfig.fcrdiv, g_defaultClockConfigVlpr.mcgConfig.ircs,
-                         g_defaultClockConfigVlpr.mcgConfig.irclkEnableMode);
+    // Use this to enable board in LP mode after reset or during boot
+//    CLOCK_BootToBlpiMode(g_defaultClockConfigVlpr.mcgConfig.fcrdiv, g_defaultClockConfigVlpr.mcgConfig.ircs,
+//                         g_defaultClockConfigVlpr.mcgConfig.irclkEnableMode);
 
-    CLOCK_SetSimConfig(&g_defaultClockConfigVlpr.simConfig);
 
-    SystemCoreClock = g_defaultClockConfigVlpr.coreClock;
+  CLOCK_SetSimSafeDivs();
+  CLOCK_SetInternalRefClkConfig(kMCG_IrclkEnable, kMCG_IrcFast, 0U);
 
-    SMC_SetPowerModeProtection(SMC, kSMC_AllowPowerModeAll);
-    SMC_SetPowerModeVlpr(SMC);
-    while (SMC_GetPowerModeState(SMC) != kSMC_PowerStateVlpr)
-    {
-    }
+  CLOCK_ExternalModeToFbeModeQuick();
+  CLOCK_SetFbiMode(kMCG_DrsLow, NULL);
+  CLOCK_SetLowPowerEnable(true);
+
+  SystemCoreClock = g_defaultClockConfigVlpr.coreClock;
+
+  SMC_SetPowerModeProtection(SMC, kSMC_AllowPowerModeAll);
+  SMC_SetPowerModeVlpr(SMC);
+
+  CLOCK_SetSimConfig(&g_defaultClockConfigVlpr.simConfig);
+
+  while (SMC_GetPowerModeState(SMC) != kSMC_PowerStateVlpr)
+  {
+  }
 }
+
+
 
 void BOARD_BootClockRUN(void)
 {
@@ -247,18 +259,64 @@ void BOARD_BootClockHSRUN(void)
     {
     }
 
-    CLOCK_SetSimSafeDivs();
+  CLOCK_SetPbeMode(kMCG_PllClkSelPll0, &g_defaultClockConfigHsrun.mcgConfig.pll0Config);
+  CLOCK_SetPeeMode();
 
-    CLOCK_InitOsc0(&g_defaultClockConfigHsrun.oscConfig);
-    CLOCK_SetXtal0Freq(BOARD_XTAL0_CLK_HZ);
+//    CLOCK_SetSimSafeDivs();
 
-    CLOCK_BootToPeeMode(g_defaultClockConfigHsrun.mcgConfig.oscsel, kMCG_PllClkSelPll0,
-                        &g_defaultClockConfigHsrun.mcgConfig.pll0Config);
-
-    CLOCK_SetInternalRefClkConfig(g_defaultClockConfigHsrun.mcgConfig.irclkEnableMode,
-                                  g_defaultClockConfigHsrun.mcgConfig.ircs, g_defaultClockConfigHsrun.mcgConfig.fcrdiv);
+//    CLOCK_InitOsc0(&g_defaultClockConfigHsrun.oscConfig);
+//    CLOCK_SetXtal0Freq(BOARD_XTAL0_CLK_HZ);
+//
+//    CLOCK_BootToPeeMode(g_defaultClockConfigHsrun.mcgConfig.oscsel, kMCG_PllClkSelPll0,
+//                        &g_defaultClockConfigHsrun.mcgConfig.pll0Config);
+//
+//    CLOCK_SetInternalRefClkConfig(g_defaultClockConfigHsrun.mcgConfig.irclkEnableMode,
+//                                  g_defaultClockConfigHsrun.mcgConfig.ircs, g_defaultClockConfigHsrun.mcgConfig.fcrdiv);
 
     CLOCK_SetSimConfig(&g_defaultClockConfigHsrun.simConfig);
 
     SystemCoreClock = g_defaultClockConfigHsrun.coreClock;
+}
+
+void APP_SetClockRunFromHsrun(void)
+{
+  CLOCK_SetPbeMode(kMCG_PllClkSelPll0, &g_defaultClockConfigRun.mcgConfig.pll0Config);
+  CLOCK_SetPeeMode();
+
+  CLOCK_SetSimConfig(&g_defaultClockConfigRun.simConfig);
+
+  SMC_SetPowerModeRun(SMC);
+  while (kSMC_PowerStateRun != SMC_GetPowerModeState(SMC)) {
+
+  }
+
+}
+
+void APP_SetClockRunFromVlpr(void)
+{
+  const sim_clock_config_t simConfig = {
+    .pllFllSel = 1U,        /* PLLFLLSEL select PLL. */
+    .pllFllDiv = 0U,        /* PLLFLLSEL clock divider divisor. */
+    .pllFllFrac = 0U,       /* PLLFLLSEL clock divider fraction. */
+    .er32kSrc = 5U,         /* ERCLK32K selection, use RTC. */
+    .clkdiv1 = 0x01140000U, /* SIM_CLKDIV1. */
+  };
+
+  const mcg_pll_config_t pll0Config = {
+    .enableMode = 0U, .prdiv = 0x00U, .vdiv = 0x04U,
+  };
+
+  CLOCK_SetSimSafeDivs();
+
+  /* Currently in BLPI mode, will switch to PEE mode. */
+  /* Enter FBI. */
+  CLOCK_SetLowPowerEnable(false);
+  /* Enter FBE. */
+  CLOCK_SetFbeMode(4U, kMCG_Dmx32Default, kMCG_DrsLow, NULL);
+  /* Enter PBE. */
+  CLOCK_SetPbeMode(kMCG_PllClkSelPll0, &g_defaultClockConfigRun.mcgConfig.pll0Config);
+  /* Enter PEE. */
+  CLOCK_SetPeeMode();
+
+  CLOCK_SetSimConfig(&g_defaultClockConfigRun.simConfig);
 }

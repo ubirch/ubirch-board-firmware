@@ -29,6 +29,31 @@
 #include <ubirch/timer.h>
 #include <ubirch/device.h>
 #include <ubirch/modem.h>
+#include <fsl_smc.h>
+
+smc_power_state_t thePowerState;
+uint32_t freq = 0;
+
+/*! @brief Show current power mode. */
+void APP_ShowPowerMode(smc_power_state_t currentPowerState)
+{
+  switch (currentPowerState)
+  {
+    case kSMC_PowerStateRun:
+      PRINTF("    Power mode: RUN\r\n");
+      break;
+    case kSMC_PowerStateVlpr:
+      PRINTF("    Power mode: VLPR\r\n");
+      break;
+    case kSMC_PowerStateHsrun:
+      PRINTF("    Power mode: HSRUN\r\n");
+      break;
+    default:
+      PRINTF("    Power mode wrong\r\n");
+      break;
+  }
+}
+
 
 bool on = true;
 volatile uint32_t milliseconds = 0;
@@ -65,6 +90,43 @@ int main(void) {
   modem_imei(imei, 1000);
   printf("IMEI : %s\r\n", imei);
   modem_disable();
+
+  thePowerState = SMC_GetPowerModeState(SMC);
+  APP_ShowPowerMode(thePowerState);
+  freq = CLOCK_GetFreq(kCLOCK_CoreSysClk);
+  PRINTF("    Core Clock = %dHz \r\n", freq);
+
+  delay(1000);
+
+  // Get into HSRUN mode
+  BOARD_BootClockHSRUN();
+
+  thePowerState = SMC_GetPowerModeState(SMC);
+  APP_ShowPowerMode(thePowerState);
+  freq = CLOCK_GetFreq(kCLOCK_CoreSysClk);
+  PRINTF("    Core Clock = %dHz \r\n", freq);
+
+  delay(1000);
+
+  // Get back to RUN mode
+  APP_SetClockRunFromHsrun();
+
+  thePowerState = SMC_GetPowerModeState(SMC);
+  APP_ShowPowerMode(thePowerState);
+  freq = CLOCK_GetFreq(kCLOCK_CoreSysClk);
+  PRINTF("    Core Clock = %dHz \r\n", freq);
+
+  delay(1000);
+
+  //  Get into VLPR mode
+  BOARD_BootClockVLPR();
+  board_console_vlpr_init(BOARD_DEBUG_BAUD);
+
+  thePowerState = SMC_GetPowerModeState(SMC);
+  APP_ShowPowerMode(thePowerState);
+  freq = CLOCK_GetFreq(kCLOCK_CoreSysClk);
+  PRINTF("    Core Clock = %dHz \r\n", freq);
+
 
   while (true) {
     delay(1000);
