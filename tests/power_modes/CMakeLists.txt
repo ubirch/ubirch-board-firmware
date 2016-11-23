@@ -1,0 +1,5 @@
+add_executable(power_modes power_modes.c)
+target_link_libraries(power_modes board)
+target_link_libraries(power_modes firmware)
+prepare_flash(TARGET power_modes)
+#prepare_flash(TARGET modem_http JLINK DEVICE MK82FN256xxx15)

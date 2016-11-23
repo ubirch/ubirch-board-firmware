@@ -28,7 +28,13 @@
 #include <stdio.h>
 #include <ubirch/timer.h>
 #include <ubirch/device.h>
-#include <ubirch/modem.h>
+#include <fsl_smc.h>
+
+smc_power_state_t thePowerState;
+uint32_t freq = 0;
+
+
+
 
 bool on = true;
 volatile uint32_t milliseconds = 0;
@@ -59,12 +65,28 @@ int main(void) {
          uuid[2] >> 16,               // 4
          uuid[2] & 0xFFFF, uuid[3]);  // 4+8
 
-  modem_init();
-  modem_enable();
-  char imei[17];
-  modem_imei(imei, 1000);
-  printf("IMEI : %s\r\n", imei);
-  modem_disable();
+//  thePowerState = SMC_GetPowerModeState(SMC);
+  BOARD_ShowPowerMode(SMC_GetPowerModeState(SMC));
+  delay(1000);
+
+  // Get into HSRUN mode
+  BOARD_BootClockHSRUN();
+
+  BOARD_ShowPowerMode(SMC_GetPowerModeState(SMC));
+  delay(1000);
+
+  // Get back to RUN mode
+  BOARD_SetClockRUNfromHSRUN();
+
+  BOARD_ShowPowerMode(SMC_GetPowerModeState(SMC));
+  delay(1000);
+
+  //  Get into VLPR mode
+  BOARD_SetClockVLPR();
+  board_console_vlpr_init(BOARD_DEBUG_BAUD);
+
+  BOARD_ShowPowerMode(SMC_GetPowerModeState(SMC));
+
 
   while (true) {
     delay(1000);

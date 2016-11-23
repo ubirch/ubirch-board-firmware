@@ -30,6 +30,7 @@
 #ifndef _CLOCK_CONFIG_H_
 #define _CLOCK_CONFIG_H_
 
+#include "fsl_smc.h"
 /*******************************************************************************
  * DEFINITION
  ******************************************************************************/
@@ -46,8 +47,13 @@ extern "C" {
 void BOARD_BootClockVLPR(void);
 void BOARD_BootClockRUN(void);
 void BOARD_BootClockHSRUN(void);
-void APP_SetClockRunFromHsrun(void);
-void APP_SetClockRunFromVlpr(void);
+
+void BOARD_SetClockRUN(void);
+void BOARD_SetClockVLPR(void);
+void BOARD_SetClockHSRUN(void);
+void BOARD_SetClockRUNfromVLPR(void);
+void BOARD_SetClockRUNfromHSRUN(void);
+void BOARD_ShowPowerMode(smc_power_state_t currentPowerState);
 
 #if defined(__cplusplus)
 }
