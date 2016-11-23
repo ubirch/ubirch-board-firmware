@@ -49,6 +49,7 @@ void rtc_init() {
   RTC_Init(BOARD_RTC, &rtcConfig);
   BOARD_RTC->CR |= BOARD_RTC_CLOCK;
   enable_interrupt(BOARD_RTC_IRQ);
+  RTC_StartTimer(BOARD_RTC);
 }
 
 void rtc_set(const rtc_datetime_t *datetime) {
