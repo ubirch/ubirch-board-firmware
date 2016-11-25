@@ -48,10 +48,9 @@ void BOARD_BootClockVLPR(void);
 void BOARD_BootClockRUN(void);
 void BOARD_BootClockHSRUN(void);
 
-void BOARD_SetClockRUN(void);
 void BOARD_SetClockVLPR(void);
-void BOARD_SetClockHSRUN(void);
 void BOARD_SetClockRUNfromVLPR(void);
+void BOARD_SetClockHSRUN(void);
 void BOARD_SetClockRUNfromHSRUN(void);
 void BOARD_ShowPowerMode(smc_power_state_t currentPowerState);
 

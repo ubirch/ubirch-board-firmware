@@ -248,7 +248,7 @@ void BOARD_BootClockRUN(void)
 
 void BOARD_BootClockHSRUN(void)
 {
-//    SMC_SetPowerModeProtection(SMC, kSMC_AllowPowerModeAll);
+    SMC_SetPowerModeProtection(SMC, kSMC_AllowPowerModeAll);
     SMC_SetPowerModeHsrun(SMC);
     while (SMC_GetPowerModeState(SMC) != kSMC_PowerStateHsrun)
     {
@@ -270,51 +270,12 @@ void BOARD_BootClockHSRUN(void)
     SystemCoreClock = g_defaultClockConfigHsrun.coreClock;
 }
 
-void init_VLPR(void){
-
-  lptmr_config_t lptmrConfig;
-
-  /* Power related. */
-//  if (kRCM_SourceWakeup & RCM_GetPreviousResetSources(RCM)) /* Wakeup from VLLS. */
-//  {
-//    PMC_ClearPeriphIOIsolationFlag(PMC);
-//    NVIC_ClearPendingIRQ(LLWU_IRQn);
-//  }
-
-  LPTMR_Init(LPTMR1, &lptmrConfig);
-
-  NVIC_EnableIRQ(LPTMR1_IRQn);
-
-  LPTMR_GetDefaultConfig(&lptmrConfig);
-/* Use LPO as clock source. */
-  lptmrConfig.prescalerClockSource = kLPTMR_PrescalerClock_1;
-  lptmrConfig.bypassPrescaler = true;
-}
-
-/*!
- * @brief LPTMR0 interrupt handler.
- */
-void LPTMR1_IRQHandler(void)
-{
-  if (kLPTMR_TimerInterruptEnable & LPTMR_GetEnabledInterrupts(LPTMR1))
-  {
-    LPTMR_DisableInterrupts(LPTMR1, kLPTMR_TimerInterruptEnable);
-    LPTMR_ClearStatusFlags(LPTMR1, kLPTMR_TimerCompareFlag);
-    LPTMR_StopTimer(LPTMR1);
-
-    BOARD_SetClockRUNfromVLPR();
-    BOARD_ShowPowerMode(SMC_GetPowerModeState(SMC));
-    PRINTF("Timer1 irq\r\n");
-
-  }
-}
-
 void BOARD_SetClockVLPR(void){
 
   CLOCK_SetSimSafeDivs();
   CLOCK_SetInternalRefClkConfig(kMCG_IrclkEnable, kMCG_IrcFast, 0U);
 
-//  /* MCG works in PEE mode now, will switch to BLPI mode. */
+  /* MCG works in PEE mode now, will switch to BLPI mode. */
   CLOCK_ExternalModeToFbeModeQuick();
   CLOCK_SetFbiMode(kMCG_DrsLow, NULL);
   CLOCK_SetLowPowerEnable(true);

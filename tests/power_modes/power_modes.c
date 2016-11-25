@@ -93,7 +93,6 @@ int main(void) {
 
   SMC_SetPowerModeProtection(SMC, kSMC_AllowPowerModeAll);
   board_init();
-//  BOARD_BootClockRUN();
   board_console_init(BOARD_DEBUG_BAUD);
 
   LPTMR_GetDefaultConfig(&lptmrConfig);
