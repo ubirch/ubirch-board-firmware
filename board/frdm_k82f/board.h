@@ -108,6 +108,8 @@ static inline status_t board_console_init(uint32_t baud) {
   return DbgConsole_Init((uint32_t) BOARD_DEBUG_UART, baud, BOARD_DEBUG_TYPE, BOARD_DEBUG_CLK_FREQ);
 }
 
+#define BOARD_DEBUG_UART_VLPR_CLKSRC 0x03
+
 static inline status_t board_console_vlpr_init(uint32_t baud) {
   CLOCK_SetLpuartClock(2);
   CLOCK_EnableClock(BOARD_DEBUG_PORT_CLOCK);

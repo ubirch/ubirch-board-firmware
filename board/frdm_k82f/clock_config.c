@@ -29,6 +29,7 @@
  */
 
 #include <fsl_debug_console.h>
+#include <fsl_lptmr.h>
 #include "fsl_common.h"
 #include "fsl_smc.h"
 #include "clock_config.h"
@@ -50,6 +51,9 @@ typedef struct _clock_config
  ******************************************************************************/
 /* System clock frequency. */
 extern uint32_t SystemCoreClock;
+
+#define LPTMR1_IRQHandler LPTMR0_LPTMR1_IRQHandler
+#define LPTMR1_IRQn LPTMR0_LPTMR1_IRQn
 
 /* Configuration for enter VLPR mode. Core clock = 4MHz. */
 const clock_config_t g_defaultClockConfigVlpr = {
@@ -238,11 +242,13 @@ void BOARD_BootClockRUN(void)
     CLOCK_SetSimConfig(&g_defaultClockConfigRun.simConfig);
 
     SystemCoreClock = g_defaultClockConfigRun.coreClock;
+
+    SMC_SetPowerModeProtection(SMC, kSMC_AllowPowerModeAll);
 }
 
 void BOARD_BootClockHSRUN(void)
 {
-    SMC_SetPowerModeProtection(SMC, kSMC_AllowPowerModeAll);
+//    SMC_SetPowerModeProtection(SMC, kSMC_AllowPowerModeAll);
     SMC_SetPowerModeHsrun(SMC);
     while (SMC_GetPowerModeState(SMC) != kSMC_PowerStateHsrun)
     {
@@ -264,54 +270,62 @@ void BOARD_BootClockHSRUN(void)
     SystemCoreClock = g_defaultClockConfigHsrun.coreClock;
 }
 
-void BOARD_SetClockRUN(void){
-// go inside a state machine and decide the previous power mode of the board
+void init_VLPR(void){
+
+  lptmr_config_t lptmrConfig;
+
+  /* Power related. */
+//  if (kRCM_SourceWakeup & RCM_GetPreviousResetSources(RCM)) /* Wakeup from VLLS. */
+//  {
+//    PMC_ClearPeriphIOIsolationFlag(PMC);
+//    NVIC_ClearPendingIRQ(LLWU_IRQn);
+//  }
+
+  LPTMR_Init(LPTMR1, &lptmrConfig);
+
+  NVIC_EnableIRQ(LPTMR1_IRQn);
+
+  LPTMR_GetDefaultConfig(&lptmrConfig);
+/* Use LPO as clock source. */
+  lptmrConfig.prescalerClockSource = kLPTMR_PrescalerClock_1;
+  lptmrConfig.bypassPrescaler = true;
+}
+
+/*!
+ * @brief LPTMR0 interrupt handler.
+ */
+void LPTMR1_IRQHandler(void)
+{
+  if (kLPTMR_TimerInterruptEnable & LPTMR_GetEnabledInterrupts(LPTMR1))
+  {
+    LPTMR_DisableInterrupts(LPTMR1, kLPTMR_TimerInterruptEnable);
+    LPTMR_ClearStatusFlags(LPTMR1, kLPTMR_TimerCompareFlag);
+    LPTMR_StopTimer(LPTMR1);
+
+    BOARD_SetClockRUNfromVLPR();
+    BOARD_ShowPowerMode(SMC_GetPowerModeState(SMC));
+    PRINTF("Timer1 irq\r\n");
+
+  }
 }
 
 void BOARD_SetClockVLPR(void){
+
   CLOCK_SetSimSafeDivs();
   CLOCK_SetInternalRefClkConfig(kMCG_IrclkEnable, kMCG_IrcFast, 0U);
 
+//  /* MCG works in PEE mode now, will switch to BLPI mode. */
   CLOCK_ExternalModeToFbeModeQuick();
   CLOCK_SetFbiMode(kMCG_DrsLow, NULL);
   CLOCK_SetLowPowerEnable(true);
 
-  SystemCoreClock = g_defaultClockConfigVlpr.coreClock;
-
-  SMC_SetPowerModeProtection(SMC, kSMC_AllowPowerModeAll);
-  SMC_SetPowerModeVlpr(SMC);
-
   CLOCK_SetSimConfig(&g_defaultClockConfigVlpr.simConfig);
+
+  SMC_SetPowerModeVlpr(SMC);
 
   while (SMC_GetPowerModeState(SMC) != kSMC_PowerStateVlpr)
   {
   }
-}
-
-void BOARD_SetClockHSRUN(void){
-  SMC_SetPowerModeProtection(SMC, kSMC_AllowPowerModeAll);
-  SMC_SetPowerModeHsrun(SMC);
-  while (SMC_GetPowerModeState(SMC) != kSMC_PowerStateHsrun)
-  {
-  }
-
-  CLOCK_SetPbeMode(kMCG_PllClkSelPll0, &g_defaultClockConfigHsrun.mcgConfig.pll0Config);
-  CLOCK_SetPeeMode();
-
-//    CLOCK_SetSimSafeDivs();
-
-//    CLOCK_InitOsc0(&g_defaultClockConfigHsrun.oscConfig);
-//    CLOCK_SetXtal0Freq(BOARD_XTAL0_CLK_HZ);
-//
-//    CLOCK_BootToPeeMode(g_defaultClockConfigHsrun.mcgConfig.oscsel, kMCG_PllClkSelPll0,
-//                        &g_defaultClockConfigHsrun.mcgConfig.pll0Config);
-//
-//    CLOCK_SetInternalRefClkConfig(g_defaultClockConfigHsrun.mcgConfig.irclkEnableMode,
-//                                  g_defaultClockConfigHsrun.mcgConfig.ircs, g_defaultClockConfigHsrun.mcgConfig.fcrdiv);
-
-  CLOCK_SetSimConfig(&g_defaultClockConfigHsrun.simConfig);
-
-  SystemCoreClock = g_defaultClockConfigHsrun.coreClock;
 }
 
 void BOARD_SetClockRUNfromVLPR(void)
@@ -329,6 +343,23 @@ void BOARD_SetClockRUNfromVLPR(void)
   CLOCK_SetPeeMode();
 
   CLOCK_SetSimConfig(&g_defaultClockConfigRun.simConfig);
+}
+
+
+void BOARD_SetClockHSRUN(void){
+  SMC_SetPowerModeHsrun(SMC);
+  while (SMC_GetPowerModeState(SMC) != kSMC_PowerStateHsrun)
+  {
+  }
+
+  CLOCK_SetSimSafeDivs();
+
+  CLOCK_SetPbeMode(kMCG_PllClkSelPll0, &g_defaultClockConfigHsrun.mcgConfig.pll0Config);
+  CLOCK_SetPeeMode();
+
+  CLOCK_SetSimConfig(&g_defaultClockConfigHsrun.simConfig);
+
+  SystemCoreClock = g_defaultClockConfigHsrun.coreClock;
 }
 
 void BOARD_SetClockRUNfromHSRUN(void)

@@ -29,6 +29,7 @@
 #include <ubirch/timer.h>
 #include <ubirch/device.h>
 #include <fsl_smc.h>
+#include <fsl_lptmr.h>
 
 smc_power_state_t thePowerState;
 uint32_t freq = 0;
@@ -54,7 +55,7 @@ int main(void) {
   board_console_init(BOARD_DEBUG_BAUD);
 
   // 100ms led blink, only works if setup for LED was correct
-  SysTick_Config(BOARD_SYSTICK_100MS / 10);
+//  SysTick_Config(BOARD_SYSTICK_100MS / 10);
 
   uint32_t uuid[4];
   device_uuid(uuid);
@@ -70,23 +71,36 @@ int main(void) {
   delay(1000);
 
   // Get into HSRUN mode
-  BOARD_BootClockHSRUN();
-
-  BOARD_ShowPowerMode(SMC_GetPowerModeState(SMC));
-  delay(1000);
+//  BOARD_BootClockHSRUN();
+//
+//  BOARD_ShowPowerMode(SMC_GetPowerModeState(SMC));
+//  delay(1000);
 
   // Get back to RUN mode
-  BOARD_SetClockRUNfromHSRUN();
+//  BOARD_SetClockRUNfromHSRUN();
 
-  BOARD_ShowPowerMode(SMC_GetPowerModeState(SMC));
-  delay(1000);
+//  BOARD_ShowPowerMode(SMC_GetPowerModeState(SMC));
+//  delay(1000);
 
-  //  Get into VLPR mode
+  // Get into VLPR mode
   BOARD_SetClockVLPR();
-  board_console_vlpr_init(BOARD_DEBUG_BAUD);
+//  board_console_vlpr_init(BOARD_DEBUG_BAUD);
 
   BOARD_ShowPowerMode(SMC_GetPowerModeState(SMC));
+//  BOARD_ShowPowerMode(SMC_GetPowerModeState(SMC));
+//  delay(3000);
 
+  smc_power_state_t currentPowerMode = SMC_GetPowerModeState(SMC);
+
+  if (kSMC_PowerStateVlpr == currentPowerMode)
+  {
+    BOARD_SetClockRUNfromVLPR();
+//                APP_SetClockRunFromVlpr();
+  }
+
+//  BOARD_SetClockRUNfromVLPR();
+//  board_console_init(BOARD_DEBUG_BAUD);
+  BOARD_ShowPowerMode(SMC_GetPowerModeState(SMC));
 
   while (true) {
     delay(1000);
