@@ -32,15 +32,32 @@
 #include "fsl_common.h"
 #include "fsl_smc.h"
 #include "fsl_lptmr.h"
-#include "power_manager.h"
 #include "board.h"
 
 /*******************************************************************************
  * Definitions
  ******************************************************************************/
-#define LPTMR0_IRQHandler LPTMR0_LPTMR1_IRQHandler
-#define LPTMR0_IRQn LPTMR0_LPTMR1_IRQn
+#define LPTMR1_IRQHandler LPTMR0_LPTMR1_IRQHandler
+#define LPTMR1_IRQn LPTMR0_LPTMR1_IRQn
 
+/* Power mode definition used in application. */
+typedef enum _app_power_mode
+{
+    kAPP_PowerModeMin = 'A' - 1,
+    kAPP_PowerModeRun,   /*!< Run mode. All Kinetis chips. */
+    kAPP_PowerModeWait,  /*!< Wait mode. All Kinetis chips. */
+    kAPP_PowerModeStop,  /*!< Stop mode. All Kinetis chips. */
+    kAPP_PowerModeVlpr,  /*!< Very low power run mode. All Kinetis chips. */
+    kAPP_PowerModeVlpw,  /*!< Very low power wait mode. All Kinetis chips. */
+    kAPP_PowerModeVlps,  /*!< Very low power stop mode. All Kinetis chips. */
+    kAPP_PowerModeLls,   /*!< Low leakage stop mode. All Kinetis chips. */
+    kAPP_PowerModeVlls0, /*!< Very low leakage stop 0 mode. Chip-specific. */
+    kAPP_PowerModeVlls1, /*!< Very low leakage stop 1 mode. All Kinetis chips. */
+    kAPP_PowerModeVlls2, /*!< Very low leakage stop 2 mode. All Kinetis chips. */
+    kAPP_PowerModeVlls3, /*!< Very low leakage stop 3 mode. All Kinetis chips. */
+    kAPP_PowerModeHsrun, /*!< High-speed run mode. Chip-specific. */
+    kAPP_PowerModeMax
+} app_power_mode_t;
 /*******************************************************************************
  * Prototypes
  ******************************************************************************/
@@ -56,13 +73,13 @@
 /*!
  * @brief LPTMR0 interrupt handler.
  */
-void LPTMR0_IRQHandler(void)
+void LPTMR1_IRQHandler(void)
 {
-  if (kLPTMR_TimerInterruptEnable & LPTMR_GetEnabledInterrupts(LPTMR0))
+  if (kLPTMR_TimerInterruptEnable & LPTMR_GetEnabledInterrupts(LPTMR1))
   {
-    LPTMR_DisableInterrupts(LPTMR0, kLPTMR_TimerInterruptEnable);
-    LPTMR_ClearStatusFlags(LPTMR0, kLPTMR_TimerCompareFlag);
-    LPTMR_StopTimer(LPTMR0);
+    LPTMR_DisableInterrupts(LPTMR1, kLPTMR_TimerInterruptEnable);
+    LPTMR_ClearStatusFlags(LPTMR1, kLPTMR_TimerCompareFlag);
+    LPTMR_StopTimer(LPTMR1);
   }
 }
 
@@ -74,25 +91,24 @@ int main(void) {
   smc_power_state_t currentPowerState;
   lptmr_config_t lptmrConfig;
 
-//    BOARD_InitPins();
   SMC_SetPowerModeProtection(SMC, kSMC_AllowPowerModeAll);
   board_init();
-  BOARD_BootClockRUN();
+//  BOARD_BootClockRUN();
   board_console_init(BOARD_DEBUG_BAUD);
 
   LPTMR_GetDefaultConfig(&lptmrConfig);
   /* Use LPO as clock source. */
-  lptmrConfig.prescalerClockSource = kLPTMR_PrescalerClock_1;
+  lptmrConfig.prescalerClockSource = kLPTMR_PrescalerClock_2;
   lptmrConfig.bypassPrescaler = true;
 
-  LPTMR_Init(LPTMR0, &lptmrConfig);
-
+  LPTMR_Init(LPTMR1, &lptmrConfig);
   while (1) {
     currentPowerState = SMC_GetPowerModeState(SMC);
 
     BOARD_ShowPowerMode(SMC_GetPowerModeState(SMC));
 
-//    delay(1000);
+    delay(100);
+
     if (kAPP_PowerModeVlpr == currentPowerState) {
       BOARD_SetClockRUNfromVLPR();
       board_console_init(BOARD_DEBUG_BAUD);
