@@ -1,5 +1,5 @@
-#add_executable(power_modes power_modes.c)
-add_executable(power_modes power_manager.c)
+add_executable(power_modes power_modes.c)
+#add_executable(power_modes power_manager.c)
 target_link_libraries(power_modes board)
 target_link_libraries(power_modes firmware)
 prepare_flash(TARGET power_modes)

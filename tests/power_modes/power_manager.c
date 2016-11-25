@@ -730,12 +730,12 @@ status_t APP_PowerModeSwitch(notifier_user_config_t *targetConfig, void *userDat
 int main(void)
 {
     uint32_t freq = 0;
-    uint8_t ch;
-    uint8_t targetConfigIndex;
-    notifier_handle_t powerModeHandle;
+//    uint8_t ch;
+//    uint8_t targetConfigIndex;
+//    notifier_handle_t powerModeHandle;
     smc_power_state_t currentPowerState;
-    app_power_mode_t targetPowerMode;
-    bool needSetWakeup; /* Flag of whether or not need to set wakeup. */
+//    app_power_mode_t targetPowerMode;
+//    bool needSetWakeup; /* Flag of whether or not need to set wakeup. */
     lptmr_config_t lptmrConfig;
 
     /*Power mode configurations*/
@@ -809,8 +809,11 @@ int main(void)
     hsrunConfig.mode = kAPP_PowerModeHsrun;
 
     /* Create Notifier Handle */
-    NOTIFIER_CreateHandle(&powerModeHandle, powerConfigs, ARRAY_SIZE(powerConfigs), callbacks, 1U, APP_PowerModeSwitch,
-                          NULL);
+
+
+
+//    NOTIFIER_CreateHandle(&powerModeHandle, powerConfigs, ARRAY_SIZE(powerConfigs), callbacks, 1U, APP_PowerModeSwitch,
+//                          NULL);
 
     /* Power related. */
     SMC_SetPowerModeProtection(SMC, kSMC_AllowPowerModeAll);
@@ -842,17 +845,17 @@ int main(void)
 
     LPTMR_Init(LPTMR0, &lptmrConfig);
 
-    NVIC_EnableIRQ(LLWU_IRQn);
+//    NVIC_EnableIRQ(LLWU_IRQn);
+//
+//    NVIC_EnableIRQ(LPTMR0_IRQn);
+//
+//    NVIC_EnableIRQ(APP_WAKEUP_BUTTON_IRQ);
 
-    NVIC_EnableIRQ(LPTMR0_IRQn);
-
-    NVIC_EnableIRQ(APP_WAKEUP_BUTTON_IRQ);
-
-    /* Wakeup from VLLS. */
-    if (kRCM_SourceWakeup & RCM_GetPreviousResetSources(RCM))
-    {
-        PRINTF("\r\nMCU wakeup from VLLS modes...\r\n");
-    }
+//    /* Wakeup from VLLS. */
+//    if (kRCM_SourceWakeup & RCM_GetPreviousResetSources(RCM))
+//    {
+//        PRINTF("\r\nMCU wakeup from VLLS modes...\r\n");
+//    }
 
     while (1)
     {
