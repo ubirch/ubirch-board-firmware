@@ -1,0 +1,5 @@
+add_executable(cc430 cc430.c)
+target_link_libraries(cc430 board)
+target_link_libraries(cc430 firmware)
+#prepare_flash(TARGET cc430)
+prepare_flash(TARGET cc430 JLINK DEVICE MK82FN256xxx15)
