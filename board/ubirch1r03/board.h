@@ -65,7 +65,13 @@ void board_install_bootloader_hook(void);
  * the button to enter bootloader mode.
  */
 static inline void board_init() {
+#if BOARD_CLOCK_RUN_MODE == VLPR
+  BOARD_BootClockVLPR();
+#elif BOARD_CLOCK_RUN_MODE == HSRUN
   BOARD_BootClockHSRUN();
+#else
+  BOARD_BootClockRUN();
+#endif
 
   // enable led/button clock
   CLOCK_EnableClock(BOARD_LED0_PORT_CLOCK);
@@ -124,7 +130,7 @@ static inline status_t board_console_init(uint32_t baud) {
   PORT_SetPinMux(BOARD_DEBUG_PORT, BOARD_DEBUG_RX_PIN, BOARD_DEBUG_RX_ALT);
 
   uint32_t lpuart_src_freq;
-  switch(SIM->SOPT2 & SIM_SOPT2_LPUARTSRC_MASK) {
+  switch (SIM->SOPT2 & SIM_SOPT2_LPUARTSRC_MASK) {
     case SIM_SOPT2_LPUARTSRC(3U): {
       lpuart_src_freq = CLOCK_GetInternalRefClkFreq();
       break;
@@ -153,4 +159,5 @@ static inline status_t board_console_init(uint32_t baud) {
 static inline void enable_interrupt(IRQn_Type irq) {
   EnableIRQ(irq);
 }
+
 #endif // _UBIRCH_BOARD_H_
