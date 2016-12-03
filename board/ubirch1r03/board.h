@@ -65,7 +65,7 @@ void board_install_bootloader_hook(void);
  * the button to enter bootloader mode.
  */
 static inline void board_init() {
-  BOARD_BootClockRUN();
+  BOARD_BootClockHSRUN();
 
   // enable led/button clock
   CLOCK_EnableClock(BOARD_LED0_PORT_CLOCK);
@@ -119,11 +119,31 @@ static inline void board_nmi_disable() {
  * @param baud the baud rate of the debug console
  */
 static inline status_t board_console_init(uint32_t baud) {
-  CLOCK_SetLpuartClock(1);
   CLOCK_EnableClock(BOARD_DEBUG_PORT_CLOCK);
   PORT_SetPinMux(BOARD_DEBUG_PORT, BOARD_DEBUG_TX_PIN, BOARD_DEBUG_TX_ALT);
   PORT_SetPinMux(BOARD_DEBUG_PORT, BOARD_DEBUG_RX_PIN, BOARD_DEBUG_RX_ALT);
-  return DbgConsole_Init((uint32_t) BOARD_DEBUG_UART, baud, BOARD_DEBUG_TYPE, BOARD_DEBUG_CLK_FREQ);
+
+  uint32_t lpuart_src_freq;
+  switch(SIM->SOPT2 & SIM_SOPT2_LPUARTSRC_MASK) {
+    case SIM_SOPT2_LPUARTSRC(3U): {
+      lpuart_src_freq = CLOCK_GetInternalRefClkFreq();
+      break;
+    }
+    case SIM_SOPT2_LPUARTSRC(2U): {
+      lpuart_src_freq = CLOCK_GetOsc0ErClkFreq();
+      break;
+    }
+    case SIM_SOPT2_LPUARTSRC(1U): {
+      lpuart_src_freq = CLOCK_GetPllFllSelClkFreq();
+      break;
+    }
+    default: {
+      // lpuart source clock is disabled
+      return kStatus_Fail;
+    }
+  }
+
+  return DbgConsole_Init((uint32_t) BOARD_DEBUG_UART, baud, BOARD_DEBUG_TYPE, lpuart_src_freq);
 }
 
 /*!

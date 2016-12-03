@@ -16,7 +16,7 @@ void test_quectel() {
     modem_send("ATI");
     ok("M66 identified", modem_expect("Quectel_Ltd", 5000));
 
-    status_t status = 0;
+    uint8_t status = 0;
     int level = 0, voltage = 0;
     double lat = 0.0, lon = 0.0;
     rtc_datetime_t date = {0};
@@ -47,7 +47,7 @@ void test_quectel() {
 //  modem_expect_OK(5000);
 //  PRINTF("M66 download: %d bytes\r\n", total);
 
-    ok("M66 Location", modem_location(&status, &lat, &lon, &date, 2 * 60000));
+    ok("M66 Location", modem_location(&lat, &lon, &date, 2 * 60000));
     PRINTF("%04hd-%02hd-%02hd %02hd:%02hd:%02hd\r\n",
            date.year, date.month, date.day, date.hour, date.minute, date.second);
 

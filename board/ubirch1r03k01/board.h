@@ -124,7 +124,6 @@ static inline void board_nmi_disable() {
  * @param baud the baud rate of the debug console
  */
 static inline status_t board_console_init(uint32_t baud) {
-  CLOCK_SetLpuartClock(1);
   CLOCK_EnableClock(BOARD_DEBUG_PORT_CLOCK);
   PORT_SetPinMux(BOARD_DEBUG_PORT, BOARD_DEBUG_TX_PIN, BOARD_DEBUG_TX_ALT);
   PORT_SetPinMux(BOARD_DEBUG_PORT, BOARD_DEBUG_RX_PIN, BOARD_DEBUG_RX_ALT);

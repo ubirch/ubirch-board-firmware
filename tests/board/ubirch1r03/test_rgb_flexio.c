@@ -1,6 +1,8 @@
 #include <fsl_port.h>
 #include <fsl_flexio_uart.h>
 #include <fsl_debug_console.h>
+#include <math.h>
+#include <arm_math.h>
 #include "support.h"
 
 #define WS2812B_CLOCK_FREQ    800000U
@@ -10,19 +12,27 @@
 #define FLEXIO_SHIFT_BITS(n)  ((((n) * 2 - 1) << 8) | ((FLEXIO_CLOCK_DIVIDER / 2) - 1))
 
 #define FLEXIO_SHIFTER     0
-#define FIO_CLOCK       0
+#define FIO_CLOCK           0
 #define FLEXIO_0_TIMER     1
 #define FLEXIO_1_TIMER     2
 
 #define FLEXIO_SHIFTER_PIN 2
 #define FLEXIO_CLOCK_PIN   3
-#define FLEXIO_DATA_PIN 20
+#define FLEXIO_DATA_PIN   20
 
 #define LEDS 8
 
 // calculate count from nanoseconds
 // (!) can't use USEC_TO_COUNT with floats as the the value is cast to uint64_t)
 #define NSEC_TO_COUNT(ns, frq)  (USEC_TO_COUNT(ns, (frq))/1000U)
+
+static void delay(volatile uint32_t nof) {
+  nof *= 10000;
+  while(nof!=0) {
+    __asm("NOP");
+    nof--;
+  }
+}
 
 void init_flexio() {
   // signal 0 and 1 high/low counter values,
