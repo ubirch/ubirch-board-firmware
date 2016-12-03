@@ -30,7 +30,7 @@
 #define ENABLE_INPUT  0
 #define TEST_GPIO     0
 #define TEST_QUECTEL  0
-#define TEST_RGB_FXIO 0
+#define TEST_RGB_FXIO 1
 #define TEST_SDCARD   0
 #define TEST_RFUART   1
 

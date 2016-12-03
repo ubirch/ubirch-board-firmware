@@ -27,28 +27,121 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 #ifndef _CLOCK_CONFIG_H_
 #define _CLOCK_CONFIG_H_
 
-/*******************************************************************************
- * DEFINITION
- ******************************************************************************/
-#define BOARD_XTAL32K_CLK_HZ 32768U
-#define BOARD_IRC48M_CLK_HZ 48000000U
+#include "fsl_common.h"
 
 /*******************************************************************************
- * API
+ * Definitions
+ ******************************************************************************/
+#define BOARD_XTAL32K_CLK_HZ                          32768U  /*!< Board RTC xtal frequency in Hz */
+
+/*******************************************************************************
+ ********************* Configuration BOARD_BootClockHSRUN **********************
+ ******************************************************************************/
+/*******************************************************************************
+ * Definitions for BOARD_BootClockHSRUN configuration
+ ******************************************************************************/
+#define BOARD_BOOTCLOCKHSRUN_CORE_CLOCK           150000000U  /*!< Core clock frequency: 150000000Hz */
+
+/*! @brief MCG set for BOARD_BootClockHSRUN configuration.
+ */
+extern const mcg_config_t mcgConfig_BOARD_BootClockHSRUN;
+/*! @brief SIM module set for BOARD_BootClockHSRUN configuration.
+ */
+extern const sim_clock_config_t simConfig_BOARD_BootClockHSRUN;
+/*! @brief OSC set for BOARD_BootClockHSRUN configuration.
+ */
+extern const osc_config_t oscConfig_BOARD_BootClockHSRUN;
+
+/*******************************************************************************
+ * API for BOARD_BootClockHSRUN configuration
  ******************************************************************************/
 #if defined(__cplusplus)
 extern "C" {
 #endif /* __cplusplus*/
 
-void BOARD_BootClockVLPR(void);
-void BOARD_BootClockRUN(void);
+/*!
+ * @brief This function executes configuration of clocks.
+ *
+ */
 void BOARD_BootClockHSRUN(void);
 
 #if defined(__cplusplus)
 }
 #endif /* __cplusplus*/
 
+/*******************************************************************************
+ ********************** Configuration BOARD_BootClockRUN ***********************
+ ******************************************************************************/
+/*******************************************************************************
+ * Definitions for BOARD_BootClockRUN configuration
+ ******************************************************************************/
+#define BOARD_BOOTCLOCKRUN_CORE_CLOCK             120000000U  /*!< Core clock frequency: 120000000Hz */
+
+/*! @brief MCG set for BOARD_BootClockRUN configuration.
+ */
+extern const mcg_config_t mcgConfig_BOARD_BootClockRUN;
+/*! @brief SIM module set for BOARD_BootClockRUN configuration.
+ */
+extern const sim_clock_config_t simConfig_BOARD_BootClockRUN;
+/*! @brief OSC set for BOARD_BootClockRUN configuration.
+ */
+extern const osc_config_t oscConfig_BOARD_BootClockRUN;
+
+/*******************************************************************************
+ * API for BOARD_BootClockRUN configuration
+ ******************************************************************************/
+#if defined(__cplusplus)
+extern "C" {
+#endif /* __cplusplus*/
+
+/*!
+ * @brief This function executes configuration of clocks.
+ *
+ */
+void BOARD_BootClockRUN(void);
+
+#if defined(__cplusplus)
+}
+#endif /* __cplusplus*/
+
+/*******************************************************************************
+ ********************* Configuration BOARD_BootClockVLPR ***********************
+ ******************************************************************************/
+/*******************************************************************************
+ * Definitions for BOARD_BootClockVLPR configuration
+ ******************************************************************************/
+#define BOARD_BOOTCLOCKVLPR_CORE_CLOCK              2000000U  /*!< Core clock frequency: 2000000Hz */
+
+/*! @brief MCG set for BOARD_BootClockVLPR configuration.
+ */
+extern const mcg_config_t mcgConfig_BOARD_BootClockVLPR;
+/*! @brief SIM module set for BOARD_BootClockVLPR configuration.
+ */
+extern const sim_clock_config_t simConfig_BOARD_BootClockVLPR;
+/*! @brief OSC set for BOARD_BootClockVLPR configuration.
+ */
+extern const osc_config_t oscConfig_BOARD_BootClockVLPR;
+
+/*******************************************************************************
+ * API for BOARD_BootClockVLPR configuration
+ ******************************************************************************/
+#if defined(__cplusplus)
+extern "C" {
+#endif /* __cplusplus*/
+
+/*!
+ * @brief This function executes configuration of clocks.
+ *
+ */
+void BOARD_BootClockVLPR(void);
+
+#if defined(__cplusplus)
+}
+#endif /* __cplusplus*/
+
 #endif /* _CLOCK_CONFIG_H_ */
+
