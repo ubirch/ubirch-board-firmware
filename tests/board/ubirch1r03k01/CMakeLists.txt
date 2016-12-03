@@ -15,7 +15,7 @@ if (BOARD MATCHES "ubirch1r03k01")
     test_sdcard.c
     test_i2s.c
     test_rf_lpuart.c
-    ${FATFS_MIDDLEWARE_SRCS}
+    ${FATFS_MIDDLEWARE_SRC}
     )
 
   add_executable(test_board ${SRCS})

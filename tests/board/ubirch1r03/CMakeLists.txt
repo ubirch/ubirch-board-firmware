@@ -9,7 +9,7 @@ if (BOARD MATCHES "^ubirch1r03$")
     test_quectel.c
     test_sdcard.c
     test_rf_lpuart.c
-    ${FATFS_MIDDLEWARE_SRCS}
+    ${FATFS_MIDDLEWARE_SRC}
     )
 
   add_executable(test_board ${SRCS})

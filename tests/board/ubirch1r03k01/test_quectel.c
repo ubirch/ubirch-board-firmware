@@ -15,7 +15,7 @@ void test_quectel() {
     modem_send("ATI");
     ok("M66 identified", modem_expect("Quectel_Ltd", 5000));
 
-    status_t status = 0;
+    uint8_t status = 0;
     int level = 0, voltage = 0;
     double lat = 0.0, lon = 0.0;
     rtc_datetime_t date = {0};
