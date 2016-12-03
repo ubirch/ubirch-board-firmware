@@ -129,6 +129,9 @@ static inline status_t board_console_init(uint32_t baud) {
   PORT_SetPinMux(BOARD_DEBUG_PORT, BOARD_DEBUG_TX_PIN, BOARD_DEBUG_TX_ALT);
   PORT_SetPinMux(BOARD_DEBUG_PORT, BOARD_DEBUG_RX_PIN, BOARD_DEBUG_RX_ALT);
 
+  // since the LPuart initialization depends very much on the source clock and its
+  // frequency, we do a check here and retrieve the frequency accordingly
+  // The CLOCK_SetLpuartSrc() is already done during clock init.
   uint32_t lpuart_src_freq;
   switch (SIM->SOPT2 & SIM_SOPT2_LPUARTSRC_MASK) {
     case SIM_SOPT2_LPUARTSRC(3U): {
