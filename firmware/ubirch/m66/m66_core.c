@@ -109,7 +109,7 @@ void modem_init() {
   // configure uart driver connected to the M66
   lpuart_config_t lpuart_config;
   LPUART_GetDefaultConfig(&lpuart_config);
-  lpuart_config.baudRate_Bps = 115200;
+  lpuart_config.baudRate_Bps = BOARD_CELL_UART_BAUD;
   lpuart_config.parityMode = kLPUART_ParityDisabled;
   lpuart_config.stopBitCount = kLPUART_OneStopBit;
   LPUART_Init(BOARD_CELL_UART, &lpuart_config, BOARD_CELL_PORT_CLOCK_FREQ);

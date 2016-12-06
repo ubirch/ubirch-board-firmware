@@ -53,6 +53,9 @@ bool modem_tcp_connect(const char *host, uint16_t port, uint32_t timeout) {
 //    AT+QISHOWRA=1; // display IP address and port of the sender
 //    AT+QISHOWPT=1; // show transmission layer protocol type, TCP or UDP
 
+  modem_send("AT+QINDI=1");
+  if (!modem_expect_OK(uTimer_Remaining)) return false;
+
   modem_send("AT+QIOPEN=\"TCP\",\"%s\",\"%d\"", host, port);
   if (!modem_expect_OK(uTimer_Remaining)) return false;
   if (!modem_expect("CONNECT OK", uTimer_Remaining)) return false;
@@ -60,9 +63,7 @@ bool modem_tcp_connect(const char *host, uint16_t port, uint32_t timeout) {
   return true;
 }
 
-bool modem_tcp_send(const uint8_t *buffer, uint8_t size, uint32_t timeout) {
-  timer_set_timeout(timeout * 1000);
-
+bool modem_tcp_check_ack(uint32_t timeout) {
   // this is just to check if the tcp connection is alive
   uint16_t sent, acked, nacked;
   do {
@@ -70,9 +71,13 @@ bool modem_tcp_send(const uint8_t *buffer, uint8_t size, uint32_t timeout) {
     modem_expect_scan("+QISACK: %d, %d, %d", uTimer_Remaining, &sent, &acked, &nacked);
     if (!modem_expect_OK(uTimer_Remaining)) return false;
   } while (sent != 0);
+  return true;
+}
 
-  modem_send("AT+QINDI=1");
-  if (!modem_expect_OK(uTimer_Remaining)) return false;
+bool modem_tcp_send(const uint8_t *buffer, uint8_t size, uint32_t timeout) {
+  timer_set_timeout(timeout * 1000);
+
+  if(!modem_tcp_check_ack(uTimer_Remaining)) return false;
 
   modem_send("AT+QISEND=%d", size);
   // wait for prompt: '\r\n>' (3 bytes, last must be '>')
@@ -101,7 +106,6 @@ size_t modem_tcp_receive(uint8_t *buffer, size_t size, uint32_t timeout) {
     modem_expect_scan("+QISACK: %u, %u, %u", uTimer_Remaining, &sent, &acked, &nacked);
     if (!modem_expect_OK(uTimer_Remaining)) return false;
   } while (sent != acked);
-
 
   // wait for the receive notification
   int id, sc, sid;
