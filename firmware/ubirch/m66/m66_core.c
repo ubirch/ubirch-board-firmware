@@ -112,7 +112,29 @@ void modem_init() {
   lpuart_config.baudRate_Bps = BOARD_CELL_UART_BAUD;
   lpuart_config.parityMode = kLPUART_ParityDisabled;
   lpuart_config.stopBitCount = kLPUART_OneStopBit;
-  LPUART_Init(BOARD_CELL_UART, &lpuart_config, BOARD_CELL_PORT_CLOCK_FREQ);
+
+  // TODO refactor this to a global function
+  // since the LPuart initialization depends very much on the source clock and its
+  // frequency, we do a check here and retrieve the frequency accordingly
+  // The CLOCK_SetLpuartSrc() is already done during clock init.
+  uint32_t lpuart_src_freq;
+  switch (SIM->SOPT2 & SIM_SOPT2_LPUARTSRC_MASK) {
+    case SIM_SOPT2_LPUARTSRC(3U): {
+      lpuart_src_freq = CLOCK_GetInternalRefClkFreq();
+      break;
+    }
+    case SIM_SOPT2_LPUARTSRC(1U): {
+      lpuart_src_freq = CLOCK_GetPllFllSelClkFreq();
+      break;
+    }
+    default:
+    case SIM_SOPT2_LPUARTSRC(2U): {
+      lpuart_src_freq = CLOCK_GetOsc0ErClkFreq();
+      break;
+    }
+  }
+
+  LPUART_Init(BOARD_CELL_UART, &lpuart_config, lpuart_src_freq);
   LPUART_EnableRx(BOARD_CELL_UART, true);
   LPUART_EnableTx(BOARD_CELL_UART, true);
 

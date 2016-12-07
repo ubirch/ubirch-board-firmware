@@ -65,13 +65,9 @@ void board_install_bootloader_hook(void);
  * the button to enter bootloader mode.
  */
 static inline void board_init() {
-#if BOARD_CLOCK_RUN_MODE == VLPR
-  BOARD_BootClockVLPR();
-#elif BOARD_CLOCK_RUN_MODE == HSRUN
-  BOARD_BootClockHSRUN();
-#else
+//  BOARD_BootClockVLPR();
+//  BOARD_BootClockHSRUN();
   BOARD_BootClockRUN();
-#endif
 
   // enable led/button clock
   CLOCK_EnableClock(BOARD_LED0_PORT_CLOCK);
