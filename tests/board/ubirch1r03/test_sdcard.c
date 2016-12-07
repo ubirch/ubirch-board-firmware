@@ -2,6 +2,7 @@
 #include <fsl_sdhc.h>
 #include <fsl_port.h>
 #include <fsl_gpio.h>
+#include <fsl_specification.h>
 
 #define BUFFER_SIZE 255
 
@@ -39,6 +40,11 @@ void init_sdhc_pins() {
 
 int test_sdhc(void) {
 #if TEST_SDCARD
+  if(CLOCK_GetBusClkFreq() < SD_CLOCK_25MHZ) {
+    PRINT("skipping SDHC test, bus clock frequency %d is lower than required %d\r\n",CLOCK_GetBusClkFreq(), SD_CLOCK_25MHZ);
+    return;
+  }
+
   init_sdhc_pins();
 
   FRESULT error;

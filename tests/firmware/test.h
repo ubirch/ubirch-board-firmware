@@ -10,7 +10,7 @@ extern uint32_t test_1ms_ticker;
 
 void failed(char *file, int line, char *expr);
 
-#define TEST(prefix, test) PRINTF("= %-15s: %s\r\n", prefix, ((test == 0) ? "OK" : "FAIL"))
+#define TEST(prefix, test) {int __r = test; PRINTF("= %-15s: %s\r\n", prefix, ((__r == 0) ? "OK" : ((__r == -1) ? "SKIP" : "FAIL")));}
 
 // either continue or fail with a message
 #define __OK_FAILED(__e) ((__e) ? ((void)0) : (failed(__FILE__, __LINE__,  #__e)))

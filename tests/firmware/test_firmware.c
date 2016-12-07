@@ -45,7 +45,7 @@ int test_sdhc_fat();
 
 #if defined(BOARD_FRDM_KL82Z) || defined(BOARD_FRDM_K82F)
 #  define LED BOARD_LED1
-#elif defined(BOARD_UBIRCH_1R02)
+#elif defined(BOARD_UBIRCH_1R02) || defined(BOARD_UBIRCH_1R03)
 #  define LED BOARD_LED0
 #else
 #  define LED(...)
@@ -56,7 +56,7 @@ volatile bool on = true;
 
 void SysTick_Handler() {
   test_1ms_ticker++;
-  if (test_1ms_ticker % 100 == 0) on = !on;
+  if (test_1ms_ticker % 500 == 0) on = !on;
   LED(on);
 }
 

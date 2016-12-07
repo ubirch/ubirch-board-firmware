@@ -7,12 +7,11 @@
 #  define BOARD_RGBS_LEN  1
 #endif
 
-#define RANGE 50
+#define RANGE 850
 
 int test_ws2812b(void) {
   // initialize FlexIO
   flexio_config_t flexio_config;
-  CLOCK_SetFlexio0Clock(kCLOCK_CoreSysClk);
   FLEXIO_GetDefaultConfig(&flexio_config);
   FLEXIO_Init(FLEXIO0, &flexio_config);
   FLEXIO_Reset(FLEXIO0);
@@ -23,7 +22,8 @@ int test_ws2812b(void) {
 
   ws2812b_init(&ws2812b_config_default);
 
-  uint32_t colors[2];
+  uint32_t colors[2] = {0,0};
+
   // swap blue and green (left/right)
   colors[0] = rgb(0, 0, 20);
   colors[1] = rgb(10, 0, 0);

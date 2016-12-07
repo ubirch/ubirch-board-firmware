@@ -33,8 +33,7 @@
 #define FLEXIO_SHIFT_BITS(n)        (((n) * 2 - 1) << 8)
 
 // calculate count from nanoseconds
-// (!) can't use USEC_TO_COUNT with floats as the the value is cast to uint64_t)
-#define NSEC_TO_COUNT(ns, freq)  (USEC_TO_COUNT((ns), (freq))/1000U)
+#define NSEC_TO_COUNT(ns, freq)  (((uint64_t)(ns) * (uint64_t)(freq))/1000000000UL)
 
 static uint8_t shifter_idx, clk_timer_idx;
 
@@ -47,9 +46,11 @@ void ws2812b_init(ws2812b_config_t *config) {
 
   // signal 0 and 1 high/low counter values,
   const uint32_t T0H = (uint32_t) NSEC_TO_COUNT(375, flexio_src_clk_freq) - 1;
-  const uint32_t T0L = (uint32_t) NSEC_TO_COUNT(875, flexio_src_clk_freq) - 1;
   const uint32_t T1H = (uint32_t) NSEC_TO_COUNT(750, flexio_src_clk_freq) - 1;
+  const uint32_t T0L = (uint32_t) NSEC_TO_COUNT(800, flexio_src_clk_freq) - 1;
   const uint32_t T1L = (uint32_t) NSEC_TO_COUNT(500, flexio_src_clk_freq) - 1;
+
+  PRINTF("T0H=%d T1H=%d T0L=%d T1L=%d\r\n", T0H, T1H, T0L, T1L);
 
   // shifter configuration, take clock timer as input and output in flexio pin
   const flexio_shifter_config_t shifter_config = {

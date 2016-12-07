@@ -44,7 +44,7 @@ void test_timer_runs(void) {
   // test that timer elapsed at least 100000us
   ASSERT_GREATER(timer_elapsed, 100000);
   // test that the ticker has elapsed about 1000ms
-  ASSERT_LESS(ticker_elapsed, 1005);
+  ASSERT_LESS(ticker_elapsed, 1100);
 }
 
 
@@ -65,14 +65,16 @@ void test_timeout() {
   const uint32_t interval = 1000 * 1000;
   timer_set_timeout(interval);
 
+  uint32_t start = test_1ms_ticker;
   uint32_t timer_start = timer_read();
   while (timer_timeout_remaining()) { __WFI(); counter++; }
   uint32_t elapsed =  (timer_read() - timer_start) / 1000;
+  uint32_t elapsed_ticker = test_1ms_ticker - start;
 
-  PRINTF("- start=%d, elapsed=%d, remaining=%d\r\n", timer_start, elapsed, timer_timeout_remaining());
+  PRINTF("- start=%d, elapsed=%d, remaining=%d, counter=%d, ticker=%d\r\n", timer_start, elapsed, timer_timeout_remaining(), counter, elapsed_ticker);
 
   // assert that we didn't just busy loop through the delay, we have an interrupt every ms
-  ASSERT_TRUE(counter <= 1010);
+  ASSERT_TRUE(counter/10 == elapsed_ticker/10);
 
   // assert the timing is 1000 (elapsed time between start and end)
   ASSERT_TRUE(elapsed >= 1000 && elapsed <= 1010);

@@ -29,6 +29,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <ubirch/timer.h>
+#include <fsl_specification.h>
 #include "support.h"
 
 #if defined(BOARD_FRDM_KL82Z) || defined(BOARD_FRDM_K82F)
@@ -66,6 +67,8 @@ int main(void) {
   // INITIALIZE CONSOLE (Tests debug uart pins!)
   board_console_init(BOARD_DEBUG_BAUD);
 
+  PRINTF("Board system core clock: %d\r\n", CLOCK_GetCoreSysClkFreq());
+
   // 100ms led blink, only works if setup for LED was correct
   SysTick_Config(BOARD_SYSTICK_1MS);
 
@@ -79,7 +82,7 @@ int main(void) {
   test_gpio();
   test_rgb_flexio();
   test_sdhc();
-  test_uart();
+  test_rfuart();
 
   PRINTF("DONE\r\n");
 

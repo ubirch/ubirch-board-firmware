@@ -7,11 +7,17 @@
 #include <ff.h>
 #include <diskio.h>
 #include <fsl_mpu.h>
+#include <fsl_specification.h>
 #include "test.h"
 
 static FATFS fatfs;
 
 int test_sdhc_fat(void) {
+  if(CLOCK_GetBusClkFreq() < SD_CLOCK_25MHZ) {
+    PRINTF("- SDHC requirement (bus clock: %d < %d)\r\n", CLOCK_GetBusClkFreq(), SD_CLOCK_25MHZ);
+    return -1;
+  }
+
   sdhc_init();
   MPU_Enable(MPU, false);
 

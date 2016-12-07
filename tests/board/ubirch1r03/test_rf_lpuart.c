@@ -1,7 +1,7 @@
 #include <support.h>
 #include <ubirch/rf-sub-ghz/rf_lpuart.h>
 
-void test_uart(void) {
+void test_rfuart(void) {
 #if TEST_RFUART
   const char *hello = "HELLO WORLD\r\n";
 

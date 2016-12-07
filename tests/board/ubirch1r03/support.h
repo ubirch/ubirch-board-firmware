@@ -46,6 +46,6 @@ void test_rgb_flexio(void);
 void test_quectel(void);
 void test_gpio(void);
 int test_sdhc(void);
-void test_uart(void);
+void test_rfuart(void);
 
 #endif //UBIRCH_BOARD_TEST_SUPPORT_H

@@ -402,29 +402,31 @@ void BOARD_BootClockRUN(void)
 !!Configuration
 name: BOARD_BootClockVLPR
 outputs:
-- {id: Bus_clock.outFreq, value: 2 MHz}
-- {id: Core_clock.outFreq, value: 2 MHz}
+- {id: Bus_clock.outFreq, value: 4 MHz}
+- {id: Core_clock.outFreq, value: 4 MHz}
 - {id: ERCLK32K.outFreq, value: 32.768 kHz}
-- {id: FLEXIOCLK.outFreq, value: 2 MHz}
-- {id: Flash_clock.outFreq, value: 2000/3 kHz}
-- {id: FlexBus_clock.outFreq, value: 1 MHz}
+- {id: FLEXIOCLK.outFreq, value: 4 MHz}
+- {id: Flash_clock.outFreq, value: 800 kHz}
+- {id: FlexBus_clock.outFreq, value: 4 MHz}
 - {id: LPO_clock.outFreq, value: 1 kHz}
-- {id: LPUARTCLK.outFreq, value: 2 MHz}
-- {id: MCGIRCLK.outFreq, value: 2 MHz}
-- {id: System_clock.outFreq, value: 2 MHz}
+- {id: LPUARTCLK.outFreq, value: 4 MHz}
+- {id: MCGIRCLK.outFreq, value: 4 MHz}
+- {id: System_clock.outFreq, value: 4 MHz}
 settings:
 - {id: MCGMode, value: BLPI}
 - {id: powerMode, value: VLPR}
 - {id: FLEXIOClkConfig, value: 'yes'}
 - {id: LPUARTClkConfig, value: 'yes'}
 - {id: MCG.CLKS.sel, value: MCG.IRCS}
+- {id: MCG.FCRDIV.scale, value: '1'}
 - {id: MCG.IRCS.sel, value: MCG.FCRDIV}
 - {id: MCG_C1_IRCLKEN_CFG, value: Enabled}
 - {id: RTC_CR_OSCE_CFG, value: Enabled}
 - {id: SIM.FLEXIOSRCSEL.sel, value: MCG.MCGIRCLK}
 - {id: SIM.LPUARTSRCSEL.sel, value: MCG.MCGIRCLK}
 - {id: SIM.OSC32KSEL.sel, value: RTC.RTC32KCLK}
-- {id: SIM.OUTDIV4.scale, value: '3'}
+- {id: SIM.OUTDIV3.scale, value: '1'}
+- {id: SIM.OUTDIV4.scale, value: '5'}
 sources:
 - {id: RTC.RTC32kHz.outFreq, value: 32.768 kHz, enabled: true}
  * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR THE CLOCKS TOOL **/
@@ -437,7 +439,7 @@ const mcg_config_t mcgConfig_BOARD_BootClockVLPR =
     .mcgMode = kMCG_ModeBLPI,                 /* BLPI - Bypassed Low Power Internal */
     .irclkEnableMode = kMCG_IrclkEnable,      /* MCGIRCLK enabled, MCGIRCLK disabled in STOP mode */
     .ircs = kMCG_IrcFast,                     /* Fast internal reference clock selected */
-    .fcrdiv = 0x1U,                           /* Fast IRC divider: divided by 2 */
+    .fcrdiv = 0x0U,                           /* Fast IRC divider: divided by 1 */
     .frdiv = 0x0U,                            /* FLL reference clock divider: divided by 1 */
     .drs = kMCG_DrsLow,                       /* Low frequency range */
     .dmx32 = kMCG_Dmx32Default,               /* DCO has a default range of 25% */
@@ -455,7 +457,7 @@ const sim_clock_config_t simConfig_BOARD_BootClockVLPR =
     .pllFllDiv = 0,                           /* PLLFLLSEL clock divider divisor: divided by 1 */
     .pllFllFrac = 0,                          /* PLLFLLSEL clock divider fraction: multiplied by 1 */
     .er32kSrc = SIM_OSC32KSEL_RTC32KCLK_CLK,  /* OSC32KSEL select: RTC32KCLK clock (32.768kHz) */
-    .clkdiv1 = 0x120000U,                     /* SIM_CLKDIV1 - OUTDIV1: /1, OUTDIV2: /1, OUTDIV3: /2, OUTDIV4: /3 */
+        .clkdiv1 = 0x40000U,                      /* SIM_CLKDIV1 - OUTDIV1: /1, OUTDIV2: /1, OUTDIV3: /1, OUTDIV4: /5 */
   };
 const osc_config_t oscConfig_BOARD_BootClockVLPR =
   {
