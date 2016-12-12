@@ -27,6 +27,7 @@
  * ```
  */
 
+#include <fsl_lptmr.h>
 #include "board.h"
 
 static void (*runBootloader)(void *arg);
@@ -43,5 +44,53 @@ void board_install_bootloader_hook(void) {
 }
 
 void NMI_Handler(void) {
+  PRINTF("BT from NMI\r\n");
   runBootloader(NULL);
+}
+
+#define LPTMR_SOURCE_CLOCK CLOCK_GetFreq(kCLOCK_LpoClk)
+/* Define LPTMR microseconds counts value */
+#define LPTMR_USEC_COUNT 1000
+
+volatile bool our_p_flag = 0;
+
+uint64_t previous_timer_count;
+uint64_t current_timer_count;
+int riq_count = 0;
+
+int run_the_bootloader(void) {
+
+  riq_count++;
+  PRINTF("BT from Button %d\r\n", riq_count);
+  lptmr_config_t lptmrConfig;
+
+   if (our_p_flag == 1) {
+     our_p_flag = 0;
+     current_timer_count = COUNT_TO_USEC(LPTMR_GetCurrentTimerCount(LPTMR0), LPTMR_SOURCE_CLOCK);
+
+     PRINTF("\r\nthe timer count is %ld :: %d\r\n", previous_timer_count, current_timer_count);
+     if ((current_timer_count - previous_timer_count) > 1000001) {
+      PRINTF("reset\r\n");
+      runBootloader(NULL);
+    } else {
+      PRINTF("Jus the boot loader\r\n");
+      runBootloader(NULL);
+    }
+     LPTMR_Deinit(LPTMR0);
+     return 0;
+  }
+  if (our_p_flag == 0) {
+    our_p_flag = 1;
+    GPIO_ClearPinsInterruptFlags(BOARD_BUTTON0_GPIO, 0x00000001);
+    LPTMR_GetDefaultConfig(&lptmrConfig);
+    LPTMR_Init(LPTMR0, &lptmrConfig);
+
+    LPTMR_SetTimerPeriod(LPTMR0, USEC_TO_COUNT(LPTMR_USEC_COUNT, LPTMR_SOURCE_CLOCK));
+    LPTMR_StartTimer(LPTMR0);
+
+    PRINTF("lptimer set\r\n");
+    previous_timer_count = COUNT_TO_USEC(LPTMR_GetCurrentTimerCount(LPTMR0), LPTMR_SOURCE_CLOCK);
+
+    return 0;
+  }
 }
