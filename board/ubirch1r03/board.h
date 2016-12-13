@@ -44,6 +44,13 @@
 #include "ubirch1r03.h"
 #include "clock_config.h"
 
+
+#define LPTMR_SOURCE_CLOCK CLOCK_GetFreq(kCLOCK_LpoClk)
+/* Define LPTMR microseconds counts value */
+#define LPTMR_USEC_COUNT 1000000U
+#define LPTMR0_IRQn LPTMR0_LPTMR1_IRQn
+#define BOARD_LPTMR_HANDLER LPTMR0_LPTMR1_IRQHandler
+
 /*!
  * @brief Installs a bootloader hook that runs on pressing the board button.
  *
@@ -167,9 +174,9 @@ static inline void enable_interrupt(IRQn_Type irq) {
   EnableIRQ(irq);
 }
 
-int run_the_bootloader(void);
+int Board_Reset_Bootloader(void);
 
 void BOARD_BUTTON0_HANDLER(void) {
-  run_the_bootloader();
+  Board_Reset_Bootloader();
 }
 #endif // _UBIRCH_BOARD_H_

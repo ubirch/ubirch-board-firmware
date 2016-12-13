@@ -44,28 +44,16 @@ void board_install_bootloader_hook(void) {
 }
 
 void NMI_Handler(void) {
-  PRINTF("BT from NMI\r\n");
   runBootloader(NULL);
 }
 
-#define LPTMR_SOURCE_CLOCK CLOCK_GetFreq(kCLOCK_LpoClk)
-/* Define LPTMR microseconds counts value */
-#define LPTMR_USEC_COUNT 1000000U
-#define LPTMR0_IRQn LPTMR0_LPTMR1_IRQn
-#define LPTMR_LED_HANDLER LPTMR0_LPTMR1_IRQHandler
-
 volatile uint32_t lptmrCounter = 0U;
-volatile bool our_p_flag = 0;
+volatile bool button_press_status = false;
 
-uint64_t previous_timer_count;
-uint64_t current_timer_count;
-int riq_count = 0;
-
-void LPTMR_LED_HANDLER(void)
+void BOARD_LPTMR_HANDLER(void)
 {
   LPTMR_ClearStatusFlags(LPTMR0, kLPTMR_TimerCompareFlag);
   lptmrCounter++;
-//  LED_TOGGLE();
   /*
    * Workaround for TWR-KV58: because write buffer is enabled, adding
    * memory barrier instructions to make sure clearing interrupt flag completed
@@ -75,45 +63,44 @@ void LPTMR_LED_HANDLER(void)
   __ISB();
 }
 
-int run_the_bootloader(void) {
-
-  riq_count++;
-  PRINTF("BT from Button %d\r\n", riq_count);
+int Board_Reset_Bootloader(void) {
   lptmr_config_t lptmrConfig;
 
-   if (our_p_flag == 1) {
-     our_p_flag = 0;
-     current_timer_count = COUNT_TO_USEC(LPTMR_GetCurrentTimerCount(LPTMR0), LPTMR_SOURCE_CLOCK);
+  GPIO_ClearPinsInterruptFlags(BOARD_BUTTON0_GPIO, 0x00000001);
 
-     PRINTF("\r\nthe timer count is %ld :: %d\r\n", previous_timer_count, current_timer_count);
-//     if ((current_timer_count - previous_timer_count) > 1000001) {
-     if (lptmrCounter >= 1) {
-       PRINTF("reset\r\n");
-      runBootloader(NULL);
-    } else {
-      PRINTF("Jus the boot loader\r\n");
+  if (button_press_status) {
+    button_press_status = false;
+
+    PRINTF("\r\nThe LPTimer count is %dsec\r\n", lptmrCounter);
+    if (lptmrCounter > 1) {
+      lptmrCounter = 0;
+      PRINTF("\r\nBoard resetting\r\n");
+      NVIC_SystemReset();
+    }
+    else {
+      PRINTF("\r\nBoard going into bootloader mode\r\n");
+      lptmrCounter = 0;
       runBootloader(NULL);
     }
-     LPTMR_Deinit(LPTMR0);
-     return 0;
-  }
-  if (our_p_flag == 0) {
-    our_p_flag = 1;
-    GPIO_ClearPinsInterruptFlags(BOARD_BUTTON0_GPIO, 0x00000001);
-    LPTMR_GetDefaultConfig(&lptmrConfig);
-    LPTMR_Init(LPTMR0, &lptmrConfig);
-
-    LPTMR_SetTimerPeriod(LPTMR0, USEC_TO_COUNT(LPTMR_USEC_COUNT, LPTMR_SOURCE_CLOCK));
-    LPTMR_EnableInterrupts(LPTMR0, kLPTMR_TimerInterruptEnable);
-
-    /* Enable at the NVIC */
-    EnableIRQ(LPTMR0_IRQn);
-
-    LPTMR_StartTimer(LPTMR0);
-
-    PRINTF("lptimer set\r\n");
-    previous_timer_count = COUNT_TO_USEC(LPTMR_GetCurrentTimerCount(LPTMR0), LPTMR_SOURCE_CLOCK);
-
+    LPTMR_Deinit(LPTMR0);
     return 0;
   }
+
+  if (!button_press_status) {
+    button_press_status = true;
+
+    GPIO_ClearPinsInterruptFlags(BOARD_BUTTON0_GPIO, 0x00000001);
+
+    LPTMR_GetDefaultConfig(&lptmrConfig);
+    LPTMR_Init(LPTMR0, &lptmrConfig);
+    //The time period is set to one second
+    // Every second a interrupt is triggered and increments the counter
+    LPTMR_SetTimerPeriod(LPTMR0, USEC_TO_COUNT(LPTMR_USEC_COUNT, LPTMR_SOURCE_CLOCK));
+    LPTMR_EnableInterrupts(LPTMR0, kLPTMR_TimerInterruptEnable);
+    /* Enable at the NVIC */
+    EnableIRQ(LPTMR0_IRQn);
+    // Start the LPTIMER
+    LPTMR_StartTimer(LPTMR0);
+  }
+  return 0;
 }
