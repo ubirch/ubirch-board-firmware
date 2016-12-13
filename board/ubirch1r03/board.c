@@ -50,13 +50,30 @@ void NMI_Handler(void) {
 
 #define LPTMR_SOURCE_CLOCK CLOCK_GetFreq(kCLOCK_LpoClk)
 /* Define LPTMR microseconds counts value */
-#define LPTMR_USEC_COUNT 1000
+#define LPTMR_USEC_COUNT 1000000U
+#define LPTMR0_IRQn LPTMR0_LPTMR1_IRQn
+#define LPTMR_LED_HANDLER LPTMR0_LPTMR1_IRQHandler
 
+volatile uint32_t lptmrCounter = 0U;
 volatile bool our_p_flag = 0;
 
 uint64_t previous_timer_count;
 uint64_t current_timer_count;
 int riq_count = 0;
+
+void LPTMR_LED_HANDLER(void)
+{
+  LPTMR_ClearStatusFlags(LPTMR0, kLPTMR_TimerCompareFlag);
+  lptmrCounter++;
+//  LED_TOGGLE();
+  /*
+   * Workaround for TWR-KV58: because write buffer is enabled, adding
+   * memory barrier instructions to make sure clearing interrupt flag completed
+   * before go out ISR
+   */
+  __DSB();
+  __ISB();
+}
 
 int run_the_bootloader(void) {
 
@@ -69,8 +86,9 @@ int run_the_bootloader(void) {
      current_timer_count = COUNT_TO_USEC(LPTMR_GetCurrentTimerCount(LPTMR0), LPTMR_SOURCE_CLOCK);
 
      PRINTF("\r\nthe timer count is %ld :: %d\r\n", previous_timer_count, current_timer_count);
-     if ((current_timer_count - previous_timer_count) > 1000001) {
-      PRINTF("reset\r\n");
+//     if ((current_timer_count - previous_timer_count) > 1000001) {
+     if (lptmrCounter >= 1) {
+       PRINTF("reset\r\n");
       runBootloader(NULL);
     } else {
       PRINTF("Jus the boot loader\r\n");
@@ -86,6 +104,11 @@ int run_the_bootloader(void) {
     LPTMR_Init(LPTMR0, &lptmrConfig);
 
     LPTMR_SetTimerPeriod(LPTMR0, USEC_TO_COUNT(LPTMR_USEC_COUNT, LPTMR_SOURCE_CLOCK));
+    LPTMR_EnableInterrupts(LPTMR0, kLPTMR_TimerInterruptEnable);
+
+    /* Enable at the NVIC */
+    EnableIRQ(LPTMR0_IRQn);
+
     LPTMR_StartTimer(LPTMR0);
 
     PRINTF("lptimer set\r\n");
