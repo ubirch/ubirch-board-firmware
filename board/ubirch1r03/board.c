@@ -75,6 +75,7 @@ int Board_Reset_Bootloader(void) {
     if (lptmrCounter > 1) {
       lptmrCounter = 0;
       PRINTF("\r\nBoard resetting\r\n");
+      //Initiates a system reset request to reset the MCU.
       NVIC_SystemReset();
     }
     else {
