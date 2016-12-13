@@ -72,7 +72,7 @@ int Board_Reset_Bootloader(void) {
     button_press_status = false;
 
     PRINTF("\r\nThe LPTimer count is %dsec\r\n", lptmrCounter);
-    if (lptmrCounter > 1000) {
+    if (lptmrCounter > 100) {
       lptmrCounter = 0;
       PRINTF("\r\nBoard resetting\r\n");
       //Initiates a system reset request to reset the MCU.
