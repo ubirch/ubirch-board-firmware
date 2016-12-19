@@ -101,16 +101,14 @@ static inline void board_init() {
   GPIO_PinInit(BOARD_PWR_EN_GPIO, BOARD_PWR_EN_PIN, &OUTFALSE);
 
   // installs a bootloader hook
-
   board_install_bootloader_hook();
 
-  // enable NMI handler, use it to call the bootloader
-//  SCB->SHCSR = SCB_ICSR_NMIPENDSET_Msk;
-  const gpio_pin_config_t newIN = {kGPIO_DigitalInput, false};
+  // Disable the NMI handler
+  const gpio_pin_config_t NMI_IN = {kGPIO_DigitalInput, false};
 
   CLOCK_EnableClock(BOARD_NMI_PORT_CLOCK);
   PORT_SetPinMux(BOARD_NMI_PORT, BOARD_NMI_PIN, kPORT_MuxAsGpio);
-  GPIO_PinInit(BOARD_NMI_GPIO, BOARD_NMI_PIN, &newIN);
+  GPIO_PinInit(BOARD_NMI_GPIO, BOARD_NMI_PIN, &NMI_IN);
 }
 
 /*!
@@ -174,9 +172,4 @@ static inline void enable_interrupt(IRQn_Type irq) {
   EnableIRQ(irq);
 }
 
-int Board_Reset_Bootloader(void);
-
-void BOARD_BUTTON0_HANDLER(void) {
-  Board_Reset_Bootloader();
-}
 #endif // _UBIRCH_BOARD_H_

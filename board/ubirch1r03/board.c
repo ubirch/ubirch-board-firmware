@@ -63,7 +63,8 @@ void BOARD_LPTMR_HANDLER(void)
   __ISB();
 }
 
-int Board_Reset_Bootloader(void) {
+void BOARD_BUTTON0_HANDLER(void) {
+
   lptmr_config_t lptmrConfig;
 
   GPIO_ClearPinsInterruptFlags(BOARD_BUTTON0_GPIO, 0x00000001);
@@ -72,6 +73,7 @@ int Board_Reset_Bootloader(void) {
     button_press_status = false;
 
     PRINTF("\r\nThe LPTimer count is %dsec\r\n", lptmrCounter);
+
     if (lptmrCounter > 100) {
       lptmrCounter = 0;
       PRINTF("\r\nBoard resetting\r\n");
@@ -84,7 +86,6 @@ int Board_Reset_Bootloader(void) {
       runBootloader(NULL);
     }
     LPTMR_Deinit(LPTMR0);
-    return 0;
   }
 
   if (!button_press_status) {
@@ -103,5 +104,4 @@ int Board_Reset_Bootloader(void) {
     // Start the LPTIMER
     LPTMR_StartTimer(LPTMR0);
   }
-  return 0;
 }
