@@ -47,13 +47,11 @@ void NMI_Handler(void) {
   runBootloader(NULL);
 }
 
-volatile uint32_t lptmrCounter = 0U;
 volatile bool button_press_status = false;
 
 void BOARD_LPTMR_HANDLER(void)
 {
   LPTMR_ClearStatusFlags(LPTMR0, kLPTMR_TimerCompareFlag);
-  lptmrCounter++;
   /*
    * Workaround for TWR-KV58: because write buffer is enabled, adding
    * memory barrier instructions to make sure clearing interrupt flag completed
@@ -70,22 +68,18 @@ void BOARD_BUTTON0_HANDLER(void) {
   GPIO_ClearPinsInterruptFlags(BOARD_BUTTON0_GPIO, 0x00000001);
 
   if (button_press_status) {
+
     button_press_status = false;
 
-    PRINTF("\r\nThe LPTimer count is %dsec\r\n", lptmrCounter);
-
-    if (lptmrCounter > 100) {
-      lptmrCounter = 0;
+    if (COUNT_TO_USEC(LPTMR_GetCurrentTimerCount(LPTMR0), LPTMR_SOURCE_CLOCK) > 200000) {
       PRINTF("\r\nBoard resetting\r\n");
       //Initiates a system reset request to reset the MCU.
       NVIC_SystemReset();
     }
     else {
-      PRINTF("\r\nBoard going into bootloader mode\r\n");
-      lptmrCounter = 0;
+      PRINTF("\r\nBoard going into Boot-Loader mode\r\n");
       runBootloader(NULL);
     }
-    LPTMR_Deinit(LPTMR0);
   }
 
   if (!button_press_status) {
@@ -95,9 +89,10 @@ void BOARD_BUTTON0_HANDLER(void) {
 
     LPTMR_GetDefaultConfig(&lptmrConfig);
     LPTMR_Init(LPTMR0, &lptmrConfig);
+
     //The time period is set to one second
-    // Every second a interrupt is triggered and increments the counter
     LPTMR_SetTimerPeriod(LPTMR0, USEC_TO_COUNT(LPTMR_USEC_COUNT, LPTMR_SOURCE_CLOCK));
+
     LPTMR_EnableInterrupts(LPTMR0, kLPTMR_TimerInterruptEnable);
     /* Enable at the NVIC */
     EnableIRQ(LPTMR0_IRQn);
@@ -105,3 +100,4 @@ void BOARD_BUTTON0_HANDLER(void) {
     LPTMR_StartTimer(LPTMR0);
   }
 }
+

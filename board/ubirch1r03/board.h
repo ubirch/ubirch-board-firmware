@@ -47,7 +47,7 @@
 
 #define LPTMR_SOURCE_CLOCK CLOCK_GetFreq(kCLOCK_LpoClk)
 /* Define LPTMR microseconds counts value */
-#define LPTMR_USEC_COUNT 10000U
+#define LPTMR_USEC_COUNT 1000000U
 #define LPTMR0_IRQn LPTMR0_LPTMR1_IRQn
 #define BOARD_LPTMR_HANDLER LPTMR0_LPTMR1_IRQHandler
 
