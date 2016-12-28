@@ -44,6 +44,13 @@
 #include "ubirch1r03.h"
 #include "clock_config.h"
 
+
+#define LPTMR_SOURCE_CLOCK CLOCK_GetFreq(kCLOCK_LpoClk)
+/* Define LPTMR microseconds counts value */
+#define LPTMR_USEC_COUNT 1000000U
+#define LPTMR0_IRQn LPTMR0_LPTMR1_IRQn
+#define BOARD_LPTMR_HANDLER LPTMR0_LPTMR1_IRQHandler
+
 /*!
  * @brief Installs a bootloader hook that runs on pressing the board button.
  *
@@ -87,6 +94,8 @@ static inline void board_init() {
 
   PORT_SetPinMux(BOARD_BUTTON0_PORT, BOARD_BUTTON0_PIN, kPORT_MuxAsGpio);
   GPIO_PinInit(BOARD_BUTTON0_GPIO, BOARD_BUTTON0_PIN, &IN);
+  PORT_SetPinInterruptConfig(BOARD_BUTTON0_PORT, BOARD_BUTTON0_PIN, kPORT_InterruptEitherEdge);
+  EnableIRQ(BOARD_BUTTON0_IRQ);
 
   PORT_SetPinMux(BOARD_PWR_EN_PORT, BOARD_PWR_EN_PIN, kPORT_MuxAsGpio);
   GPIO_PinInit(BOARD_PWR_EN_GPIO, BOARD_PWR_EN_PIN, &OUTFALSE);
@@ -94,8 +103,12 @@ static inline void board_init() {
   // installs a bootloader hook
   board_install_bootloader_hook();
 
-  // enable NMI handler, use it to call the bootloader
-  SCB->SHCSR = SCB_ICSR_NMIPENDSET_Msk;
+  // Disable the NMI handler
+  const gpio_pin_config_t NMI_IN = {kGPIO_DigitalInput, false};
+
+  CLOCK_EnableClock(BOARD_NMI_PORT_CLOCK);
+  PORT_SetPinMux(BOARD_NMI_PORT, BOARD_NMI_PIN, kPORT_MuxAsGpio);
+  GPIO_PinInit(BOARD_NMI_GPIO, BOARD_NMI_PIN, &NMI_IN);
 }
 
 /*!

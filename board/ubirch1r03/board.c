@@ -27,6 +27,7 @@
  * ```
  */
 
+#include <fsl_lptmr.h>
 #include "board.h"
 
 static void (*runBootloader)(void *arg);
@@ -45,3 +46,58 @@ void board_install_bootloader_hook(void) {
 void NMI_Handler(void) {
   runBootloader(NULL);
 }
+
+volatile bool button_press_status = false;
+
+void BOARD_LPTMR_HANDLER(void)
+{
+  LPTMR_ClearStatusFlags(LPTMR0, kLPTMR_TimerCompareFlag);
+  /*
+   * Workaround for TWR-KV58: because write buffer is enabled, adding
+   * memory barrier instructions to make sure clearing interrupt flag completed
+   * before go out ISR
+   */
+  __DSB();
+  __ISB();
+}
+
+void BOARD_BUTTON0_HANDLER(void) {
+
+  lptmr_config_t lptmrConfig;
+
+  GPIO_ClearPinsInterruptFlags(BOARD_BUTTON0_GPIO, 0x00000001);
+
+  if (button_press_status) {
+
+    button_press_status = false;
+
+    if (COUNT_TO_USEC(LPTMR_GetCurrentTimerCount(LPTMR0), LPTMR_SOURCE_CLOCK) > 200000) {
+      PRINTF("\r\nBoard resetting\r\n");
+      //Initiates a system reset request to reset the MCU.
+      NVIC_SystemReset();
+    }
+    else {
+      PRINTF("\r\nBoard going into Boot-Loader mode\r\n");
+      runBootloader(NULL);
+    }
+  }
+
+  if (!button_press_status) {
+    button_press_status = true;
+
+    GPIO_ClearPinsInterruptFlags(BOARD_BUTTON0_GPIO, 0x00000001);
+
+    LPTMR_GetDefaultConfig(&lptmrConfig);
+    LPTMR_Init(LPTMR0, &lptmrConfig);
+
+    //The time period is set to one second
+    LPTMR_SetTimerPeriod(LPTMR0, USEC_TO_COUNT(LPTMR_USEC_COUNT, LPTMR_SOURCE_CLOCK));
+
+    LPTMR_EnableInterrupts(LPTMR0, kLPTMR_TimerInterruptEnable);
+    /* Enable at the NVIC */
+    EnableIRQ(LPTMR0_IRQn);
+    // Start the LPTIMER
+    LPTMR_StartTimer(LPTMR0);
+  }
+}
+
