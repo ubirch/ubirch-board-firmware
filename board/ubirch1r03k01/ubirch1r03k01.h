@@ -32,6 +32,10 @@
 #define BOARD_UBIRCH_1R03K01
 #define BOARD                   "ubirch1r03k01"
 
+#define BOARD_MODE_RUN          0
+#define BOARD_MODE_VLPR         1
+#define BOARD_MODE_HSRUN        2
+
 #define BOARD_SYSTICK_1MS       (SystemCoreClock / 1000 - 1)
 #define BOARD_SYSTICK_100MS     (SystemCoreClock / 100 - 1)
 
