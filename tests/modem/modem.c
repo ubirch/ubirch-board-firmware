@@ -46,7 +46,7 @@ void error(char *msg) {
 
 
 int main(void) {
-  board_init();
+  board_init(BOARD_MODE_RUN);
   board_console_init(BOARD_DEBUG_BAUD);
 
   SysTick_Config(BOARD_SYSTICK_100MS / 10);

@@ -62,7 +62,7 @@ void SysTick_Handler() {
 
 int main(void) {
   // INITIALIZATION
-  board_init();
+  board_init(BOARD_MODE_RUN);
 
   // INITIALIZE CONSOLE (Tests debug uart pins!)
   board_console_init(BOARD_DEBUG_BAUD);

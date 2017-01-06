@@ -51,7 +51,7 @@ extern "C" {
 /*!
  * @brief Initialize the basic board functions.
  */
-static inline void board_init() {
+static inline void board_init(int mode /* ignored */) {
   BOARD_BootClockRUN();
 
   // enable led/button clock

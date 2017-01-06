@@ -53,7 +53,7 @@ extern "C" {
 /*!
  * @brief Initialize the basic board functions.
  */
-static inline void board_init() {
+static inline void board_init(int mode /* ignored */) {
   BOARD_BootClockRUN();
 
   // initialize the INTMUX - any interrupt triggers output interrupt (OR)

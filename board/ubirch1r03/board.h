@@ -44,7 +44,7 @@
 #include "ubirch1r03.h"
 #include "clock_config.h"
 
-
+// TODO move to appropriate place
 #define LPTMR_SOURCE_CLOCK CLOCK_GetFreq(kCLOCK_LpoClk)
 /* Define LPTMR microseconds counts value */
 #define LPTMR_USEC_COUNT 1000000U
@@ -71,10 +71,20 @@ void board_install_bootloader_hook(void);
  * the bootloader hook and configures the NMI interrupt to allow pressing
  * the button to enter bootloader mode.
  */
-static inline void board_init() {
-//  BOARD_BootClockVLPR();
-//  BOARD_BootClockHSRUN();
-  BOARD_BootClockRUN();
+static inline void board_init(int mode) {
+  switch (mode) {
+    case BOARD_MODE_VLPR:
+      BOARD_BootClockVLPR();
+          break;
+    case BOARD_MODE_HSRUN:
+      BOARD_BootClockHSRUN();
+          break;
+    case BOARD_MODE_RUN:
+    default:
+      BOARD_BootClockRUN();
+          break;
+  }
+
 
   // enable led/button clock
   CLOCK_EnableClock(BOARD_LED0_PORT_CLOCK);

@@ -24,12 +24,11 @@ void SysTick_Handler() {
 #define ERROR(...)  {PRINTF(__VA_ARGS__); PRINTF("\r\n"); while(true) {}}
 
 int main(void) {
-  board_init();
+  board_init(BOARD_MODE_RUN);
   board_console_init(BOARD_DEBUG_BAUD);
   SysTick_Config(BOARD_SYSTICK_100MS / 10);
   PRINTF("CC430\r\n");
 
-  CLOCK_SetLpuartClock(1);
   CLOCK_EnableClock(kCLOCK_PortC);
   PORT_SetPinMux(PORTC, 3U, kPORT_MuxAlt3);
   PORT_SetPinMux(PORTC, 4U, kPORT_MuxAlt3);
@@ -37,8 +36,30 @@ int main(void) {
   lpuart_config_t config;
   LPUART_GetDefaultConfig(&config);
   config.baudRate_Bps = 115200;
-  config.enableRx = true;
-  LPUART_Init(LPUART1, &config, CLOCK_GetPllFllSelClkFreq());
+
+  uint32_t lpuart_src_freq;
+  switch (SIM->SOPT2 & SIM_SOPT2_LPUARTSRC_MASK) {
+    case SIM_SOPT2_LPUARTSRC(3U): {
+      lpuart_src_freq = CLOCK_GetInternalRefClkFreq();
+      break;
+    }
+    case SIM_SOPT2_LPUARTSRC(2U): {
+      lpuart_src_freq = CLOCK_GetOsc0ErClkFreq();
+      break;
+    }
+    case SIM_SOPT2_LPUARTSRC(1U): {
+      lpuart_src_freq = CLOCK_GetPllFllSelClkFreq();
+      break;
+    }
+    default: {
+      // lpuart source clock is disabled
+      return kStatus_Fail;
+    }
+  }
+
+  LPUART_Init(LPUART1, &config, lpuart_src_freq);
+  LPUART_EnableTx(LPUART1, true);
+  LPUART_EnableRx(LPUART1, true);
 
   while (true) {
     uint8_t c;

@@ -61,7 +61,7 @@ void SysTick_Handler() {
 }
 
 int main(void) {
-  board_init();
+  board_init(BOARD_MODE_RUN);
   board_console_init(BOARD_DEBUG_BAUD);
 
   // set the ticker to 1ms for comparison rates

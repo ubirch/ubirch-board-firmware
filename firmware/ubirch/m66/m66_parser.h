@@ -58,6 +58,7 @@ const char *M66_URC[] = {
   NULL
 };
 
+//! unsolicited response codes
 enum urc {
     Ready = 0,
     Functional,
