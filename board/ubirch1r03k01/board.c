@@ -31,7 +31,7 @@
 
 static void (*runBootloader)(void *arg);
 
-extern void board_init();
+extern void board_init(const int mode);
 extern void board_nmi_disable();
 extern status_t board_console_init(uint32_t baud);
 extern void enable_interrupt(IRQn_Type irq);

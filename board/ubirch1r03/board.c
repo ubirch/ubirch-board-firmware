@@ -32,7 +32,7 @@
 
 static void (*runBootloader)(void *arg);
 
-extern void board_init();
+extern void board_init(const int mode);
 extern void board_nmi_disable();
 extern status_t board_console_init(uint32_t baud);
 extern void enable_interrupt(IRQn_Type irq);
@@ -62,22 +62,20 @@ void BOARD_LPTMR_HANDLER(void)
 }
 
 void BOARD_BUTTON0_HANDLER(void) {
-
   lptmr_config_t lptmrConfig;
-
   GPIO_ClearPinsInterruptFlags(BOARD_BUTTON0_GPIO, 0x00000001);
 
   if (button_press_status) {
-
     button_press_status = false;
 
     if (COUNT_TO_USEC(LPTMR_GetCurrentTimerCount(LPTMR0), LPTMR_SOURCE_CLOCK) > 200000) {
-      PRINTF("\r\nBoard resetting\r\n");
+      PRINTF("\r\nRESET\r\n");
+
       //Initiates a system reset request to reset the MCU.
       NVIC_SystemReset();
     }
     else {
-      PRINTF("\r\nBoard going into Boot-Loader mode\r\n");
+      PRINTF("\r\nBOOTLOADER\r\n");
       runBootloader(NULL);
     }
   }
@@ -92,8 +90,8 @@ void BOARD_BUTTON0_HANDLER(void) {
 
     //The time period is set to one second
     LPTMR_SetTimerPeriod(LPTMR0, USEC_TO_COUNT(LPTMR_USEC_COUNT, LPTMR_SOURCE_CLOCK));
-
     LPTMR_EnableInterrupts(LPTMR0, kLPTMR_TimerInterruptEnable);
+
     /* Enable at the NVIC */
     EnableIRQ(LPTMR0_IRQn);
     // Start the LPTIMER

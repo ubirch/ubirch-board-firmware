@@ -71,7 +71,7 @@ void board_install_bootloader_hook(void);
  * the bootloader hook and configures the NMI interrupt to allow pressing
  * the button to enter bootloader mode.
  */
-static inline void board_init(int mode) {
+static inline void board_init(const int mode) {
   switch (mode) {
     case BOARD_MODE_VLPR:
       BOARD_BootClockVLPR();
@@ -84,7 +84,6 @@ static inline void board_init(int mode) {
       BOARD_BootClockRUN();
           break;
   }
-
 
   // enable led/button clock
   CLOCK_EnableClock(BOARD_LED0_PORT_CLOCK);

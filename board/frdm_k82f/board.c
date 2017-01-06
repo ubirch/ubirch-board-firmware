@@ -29,7 +29,7 @@
 
 #include "board.h"
 
-extern void board_init();
+extern void board_init(const int mode);
 
 extern void board_nmi_disable();
 

@@ -64,7 +64,7 @@ void board_install_bootloader_hook(void);
  * the bootloader hook and configures the NMI interrupt to allow pressing
  * the button to enter bootloader mode.
  */
-static inline void board_init(int mode /* ignored */) {
+static inline void board_init(const int mode /* ignored */) {
   BOARD_BootClockRUN();
 
   // enable led/button clock
