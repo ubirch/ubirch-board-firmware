@@ -42,15 +42,25 @@ size_t modem_http_read_raw(uint8_t *buffer, uint32_t start, size_t size, uint32_
 
   int handle = 0;
   modem_send("AT+QFOPEN=\"RAM:HTTP.BIN\",2");
-  if (!modem_expect_scan("+QFOPEN: %d", uTimer_Remaining, &handle))
-    if (!handle) return 0;
+  if (!modem_expect_scan("+QFOPEN: %d", uTimer_Remaining, &handle)) return 0;
+  if (!handle) return 0;
 
   modem_send("AT+QFSEEK=%d,%d,%d", handle, start, 0);
-  if (!modem_expect_OK(uTimer_Remaining)) return 0;
+  if (!modem_expect_OK(uTimer_Remaining)) {
+    CSTDEBUG("GSM ERR  !! file seek failed\r\n");
+    modem_send("AT+QFCLOSE=%d", handle);
+    modem_expect_OK(uTimer_Remaining);
+    return 0;
+  }
 
   size_t available = 0;
   modem_send("AT+QFREAD=%d,%d", handle, size);
-  if (!modem_expect_scan("CONNECT %d", uTimer_Remaining, &available)) return 0;
+  if (!modem_expect_scan("CONNECT %d", uTimer_Remaining, &available)) {
+    CSTDEBUG("GSM INFO !! file read failed\r\n");
+    modem_send("AT+QFCLOSE=%d", handle);
+    modem_expect_OK(uTimer_Remaining);
+    return 0;
+  }
 
   size_t received = modem_read_binary(buffer, available, uTimer_Remaining);
 
@@ -109,8 +119,9 @@ int modem_http(http_method_t method, size_t *res_size, uint32_t timeout) {
     // M66 RAM has a length prefix and an end marker we need to ignore
     uint8_t tmp[8] = {0};
     modem_http_read_raw(tmp, 0, 7, 1000);
+    CIODUMP(tmp, 7);
     file_length = (uint16_t) strtol((const char *) tmp, NULL, 16);
-    for(file_start = 0; file_start < 7;) if(tmp[file_start++] == '\n') break;
+    for (file_start = 0; file_start < 7;) if (tmp[file_start++] == '\n') break;
     *res_size = file_length;
   } else {
     file_start = 0;

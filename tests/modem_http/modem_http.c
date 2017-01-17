@@ -24,14 +24,15 @@ void SysTick_Handler() {
 
 #define ERROR(...)  {PRINTF(__VA_ARGS__); PRINTF("\r\n"); while(true) {}}
 
-#define URL_WITH_CONTENT_LENGTH "http://api.ubirch.com/rp15/content-length-set.php"
+#define URL_WITH_CONTENT_LENGTH "http://api.ubirch.com/rp15/any-content.php?len=255&set=true"
 
-#define URL_WITHOUT_CONTENT_LENGTH "http://api.ubirch.com/rp15/content-length-not-set.php"
+#define URL_WITHOUT_CONTENT_LENGTH "http://api.ubirch.com/rp15/any-content.php?len=255"
 
 size_t read_response(uint8_t *buffer, size_t buffer_size, size_t res_size) {
   size_t position = 0;
   do {
     size_t received = modem_http_read(buffer, position, buffer_size, 60000);
+    if(!received) break;
     position += received;
     CIODUMP(buffer, received);
   } while (position < res_size);
@@ -46,6 +47,7 @@ int main(void) {
 
   modem_init();
   modem_enable();
+
   modem_register(6 * 5000);
   modem_gprs_attach(CELL_APN, CELL_USER, CELL_PWD, 60000);
 
@@ -53,6 +55,14 @@ int main(void) {
   int status;
   uint8_t buffer[256];
   for(uint8_t i = 0; i < sizeof(buffer) -1; i++) buffer[i] = (uint8_t) i;
+
+  char version[40];
+  size_t chars;
+  modem_send("ATI");
+  do {
+    chars = modem_readline(version, sizeof(version)-1, 500);
+    PRINTF("ATI: %s\r\n", version);
+  } while(chars && strncmp("OK", version, 2));
 
   // We need to test the GET and POST requests for version with a response that
   // contains Content-Length and one without. This is important as the response
