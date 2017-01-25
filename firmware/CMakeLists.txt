@@ -44,7 +44,7 @@ target_include_directories(firmware PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}/ubirch/sdhc
   ${CMAKE_CURRENT_SOURCE_DIR}
   )
-target_link_libraries(firmware board KinetisSDK::${MCU}::ksdk20)
+target_link_libraries(firmware board KinetisSDK::${MCU}::ksdk2)
 if (BOARD MATCHES "ubirch1r03")
   target_link_libraries(firmware KinetisSDK::${MCU}::sdmmc)
 endif ()

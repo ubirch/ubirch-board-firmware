@@ -23,4 +23,4 @@
 
 add_library(board board.c clock_config.c)
 target_include_directories(board PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-target_link_libraries(board KinetisSDK::${MCU}::ksdk20)
+target_link_libraries(board KinetisSDK::${MCU}::ksdk2)
