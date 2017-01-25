@@ -144,6 +144,9 @@ void i2c_error(char *s, status_t status) {
     case kStatus_I2C_Timeout:
       PRINTF("TIMEOUT\r\n");
           break;
+    case kStatus_I2C_Addr_Nak:
+      PRINTF("ADDR NAK\r\n");
+          break;
     default:
       PRINTF("UNKNOWN ERROR\r\n", status);
           break;
