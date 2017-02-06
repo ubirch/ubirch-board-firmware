@@ -3,13 +3,10 @@
 #include <stdlib.h>
 #include <fsl_flexio.h>
 
-#ifndef BOARD_RGBS_LEN
-#  define BOARD_RGBS_LEN  1
-#endif
-
 #define RANGE 850
 
 int test_ws2812b(void) {
+#ifdef BOARD_RGBS_LEN
   // initialize FlexIO
   flexio_config_t flexio_config;
   FLEXIO_GetDefaultConfig(&flexio_config);
@@ -40,6 +37,7 @@ int test_ws2812b(void) {
   colors[0] = 0;
   colors[1] = 0;
   ws2812b_send(colors, 2);
+#endif
 
   return 0;
 }

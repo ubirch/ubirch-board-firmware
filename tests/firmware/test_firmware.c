@@ -89,10 +89,10 @@ int main(void) {
   }
 
   TEST("SDHC", test_sdhc_fat());
-  TEST("WS2812B", test_ws2812b());
   TEST("I2C", test_i2c());
   TEST("TIMER", test_timer());
   TEST("RTC", test_rtc());
+  TEST("WS2812B", test_ws2812b());
 
   PRINTF("Test finished.\r\n");
 

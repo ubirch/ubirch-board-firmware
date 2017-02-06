@@ -10,8 +10,6 @@
 #include <stdarg.h>
 #include <ubirch/rf-sub-ghz/rf_lpuart.h>
 #include <ubirch/dbgutil.h>
-#include <ubirch/ws2812b.h>
-#include <fsl_flexio.h>
 
 
 volatile uint32_t milliseconds = 0;
@@ -31,27 +29,6 @@ int main(void) {
   board_init(BOARD_MODE_RUN);
   board_console_init(BOARD_DEBUG_BAUD);
   SysTick_Config(BOARD_SYSTICK_100MS / 10);
-
-  // enable external pin to output LED data signal
-  CLOCK_EnableClock(BOARD_RGBS_PORT_CLOCK);
-  PORT_SetPinMux(PORTA, BOARD_RGBS_PIN, BOARD_RGBS_ALT);
-
-  // initialize FlexIO
-  flexio_config_t flexio_config;
-  CLOCK_SetFlexio0Clock(kCLOCK_CoreSysClk);
-  FLEXIO_GetDefaultConfig(&flexio_config);
-  FLEXIO_Init(FLEXIO0, &flexio_config);
-  FLEXIO_Reset(FLEXIO0);
-
-
-  uint32_t led[2] = {0x0000ff00,0x00000000};
-  ws2812b_init(&ws2812b_config_default);
-  ws2812b_send(led, BOARD_RGBS_LEN);
-  delay(10);
-  led[0] = 0;
-  led[1] = 0;
-  ws2812b_send(led, BOARD_RGBS_LEN);
-  delay(10);
 
   PRINTF("CC430\r\n");
 
@@ -90,7 +67,6 @@ int main(void) {
   while (true) {
     uint8_t c;
     LPUART_ReadBlocking(LPUART1, &c, 1);
-    if (!on && milliseconds % 100 == 0) BOARD_LED0(true);
     PRINTF("%02x", c);
   }
 

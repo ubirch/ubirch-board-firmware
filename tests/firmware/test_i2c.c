@@ -64,7 +64,11 @@ int test_i2c(void) {
 
   for (uint8_t address = 0x01; address <= 0x7f; address++) {
     status_t status = i2c_ping(address);
-    ASSERT_TRUE(status == kStatus_Success || status == kStatus_I2C_Addr_Nak);
+    ASSERT_TRUE(status == kStatus_Success
+#ifndef BOARD_FRDM_KL82Z
+                || status == kStatus_I2C_Addr_Nak
+#endif
+    );
     if (status == kStatus_Success) {
       switch (address) {
         case ISL_DEVICE_ADDRESS: {
