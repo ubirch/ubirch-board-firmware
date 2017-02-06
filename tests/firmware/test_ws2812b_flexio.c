@@ -17,8 +17,8 @@ int test_ws2812b(void) {
   FLEXIO_Reset(FLEXIO0);
 
   // enable external pin to output LED data signal
-  CLOCK_EnableClock(kCLOCK_PortA);
-  PORT_SetPinMux(PORTA, 14U, kPORT_MuxAlt5);
+  CLOCK_EnableClock(BOARD_RGBS_PORT_CLOCK);
+  PORT_SetPinMux(PORTA, BOARD_RGBS_PIN, BOARD_RGBS_ALT);
 
   ws2812b_init(&ws2812b_config_default);
 

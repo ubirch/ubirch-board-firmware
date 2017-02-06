@@ -26,27 +26,7 @@
 #include <stdio.h>
 #include <ubirch/timer.h>
 #include <ubirch/modem.h>
-#include <ubirch/dbgutil.h>
 #include <ubirch/rtc.h>
-
-//int main(void) {
-//  board_init(BOARD_MODE_RUN);
-//  board_console_init(BOARD_DEBUG_BAUD);
-//
-//  while (true) {
-//    PRINTF("WAIT 10s\r\n");
-//    for (int i = 0; i < 5; i++) {
-//      BOARD_LED0(true);
-//      delay(500);
-//      BOARD_LED0(false);
-//      delay(500);
-//    }
-//
-//    PRINTF("SLEEP 10s\r\n");
-//    sleep(10);
-//  }
-//}
-
 #include "fsl_smc.h"
 #include "fsl_llwu.h"
 #include "fsl_rcm.h"
@@ -112,6 +92,9 @@ int main(void)
 
   board_init(BOARD_MODE_RUN);
   board_console_init(BOARD_DEBUG_BAUD);
+  modem_init();
+  modem_disable();
+  delay(1000);
 
   uint32_t counter = 0;
   while (1)
@@ -142,10 +125,9 @@ int main(void)
     rtc_set_alarm_in(5);
 
     smc_power_mode_vlls_config_t vlls_config; /* Local variable for vlls configuration */
-    vlls_config.subMode = kSMC_StopSub3;
+    vlls_config.subMode = kSMC_StopSub0;
     vlls_config.enablePorDetectInVlls0 = true;
-//    vlls_config.enableRam2InVlls2 = true;
-    vlls_config.enableLpoClock = true;
+    vlls_config.enableLpoClock = false;
     SMC_SetPowerModeVlls(SMC, &vlls_config);
   }
 }
