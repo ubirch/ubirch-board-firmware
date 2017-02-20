@@ -1,6 +1,6 @@
 /*!
  * @file
- * @brief __ubirch#1 r0.3__ board specific initialization functions
+ * @brief __uBridge r1.0__ board specific initialization functions
  *
  * Contains the declaration of initialization functions specific for the board.
  *
@@ -41,7 +41,7 @@
 #include <utilities/fsl_debug_console.h>
 
 // board specific includes
-#include "ubirch1r03.h"
+#include "ubridge10.h"
 #include "clock_config.h"
 
 // TODO move to appropriate place

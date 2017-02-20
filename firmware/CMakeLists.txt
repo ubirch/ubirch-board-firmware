@@ -1,6 +1,6 @@
 # Firmware code
 
-if (BOARD MATCHES "ubirch1r03")
+if (BOARD MATCHES "ubirch1r03|ubridge")
   set(CELL_SRCS
     ubirch/m66/m66_core.c
     ubirch/m66/m66_http.c
@@ -22,6 +22,8 @@ else ()
     )
 endif ()
 
+file(GLOB SPIRIT1_SRCS ubirch/spi/SPIRIT1_Library/Src/*.c)
+
 add_library(firmware
   ubirch/dbgutil.c
   ubirch/i2c.c
@@ -38,14 +40,17 @@ add_library(firmware
   ubirch/rf-sub-ghz/rf_lpuart.c
   ubirch/device.c
   ${CELL_SRCS}
-  ${SDHC_SRCS} )
+  ${SDHC_SRCS}
+  ${SPIRIT1_SRCS}
+  )
 target_include_directories(firmware PUBLIC
   ${FATFS_MIDDLEWARE_INC}
   ${CMAKE_CURRENT_SOURCE_DIR}/ubirch/sdhc
+  ${CMAKE_CURRENT_SOURCE_DIR}/ubirch/spi/SPIRIT1_Library/Inc
   ${CMAKE_CURRENT_SOURCE_DIR}
   )
 target_link_libraries(firmware board KinetisSDK::${MCU}::ksdk2)
-if (BOARD MATCHES "ubirch1r03")
+if (BOARD MATCHES "ubirch1r03|ubridge")
   target_link_libraries(firmware KinetisSDK::${MCU}::sdmmc)
 endif ()
 
