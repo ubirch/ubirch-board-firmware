@@ -148,12 +148,12 @@
 #define BOARD_DEBUG_IRQ         LPUART0_IRQn
 #define BOARD_DEBUG_IRQ_HANDLER LPUART0_IRQHandler
 #define BOARD_DEBUG_BAUD        115200
-#define BOARD_DEBUG_PORT        PORTB
-#define BOARD_DEBUG_PORT_CLOCK  kCLOCK_PortB
-#define BOARD_DEBUG_RX_PIN      16U
-#define BOARD_DEBUG_RX_ALT      kPORT_MuxAlt3
-#define BOARD_DEBUG_TX_PIN      17U
-#define BOARD_DEBUG_TX_ALT      kPORT_MuxAlt3
+#define BOARD_DEBUG_PORT        PORTA
+#define BOARD_DEBUG_PORT_CLOCK  kCLOCK_PortA
+#define BOARD_DEBUG_RX_PIN      1U
+#define BOARD_DEBUG_RX_ALT      kPORT_MuxAlt2
+#define BOARD_DEBUG_TX_PIN      2U
+#define BOARD_DEBUG_TX_ALT      kPORT_MuxAlt2
 
 //! @}
 
