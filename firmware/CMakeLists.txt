@@ -22,8 +22,6 @@ else ()
     )
 endif ()
 
-file(GLOB SPIRIT1_SRCS ubirch/spi/SPIRIT1_Library/Src/*.c)
-
 add_library(firmware
   ubirch/dbgutil.c
   ubirch/i2c.c
@@ -41,12 +39,10 @@ add_library(firmware
   ubirch/device.c
   ${CELL_SRCS}
   ${SDHC_SRCS}
-  ${SPIRIT1_SRCS}
   )
 target_include_directories(firmware PUBLIC
   ${FATFS_MIDDLEWARE_INC}
   ${CMAKE_CURRENT_SOURCE_DIR}/ubirch/sdhc
-  ${CMAKE_CURRENT_SOURCE_DIR}/ubirch/spi/SPIRIT1_Library/Inc
   ${CMAKE_CURRENT_SOURCE_DIR}
   )
 target_link_libraries(firmware board KinetisSDK::${MCU}::ksdk2)

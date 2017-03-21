@@ -140,8 +140,7 @@
 #define BOARD_SDHC_DET_PIN      7U
 #define BOARD_SDHC_DET_HANDLER  PORTE_IRQHandler
 
-// (debug) console TODO: fix this to use the USBRX/USBTX
-//! LPUART0 (RX - PTB16, TX - PTB17)
+//! LPUART0 (RX - PTA1, TX - PTA2)
 #define BOARD_DEBUG_TYPE        DEBUG_CONSOLE_DEVICE_TYPE_LPUART
 #define BOARD_DEBUG_UART        LPUART0
 #define BOARD_DEBUG_CLK_FREQ    CLOCK_GetPllFllSelClkFreq()
