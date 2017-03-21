@@ -1,58 +1,62 @@
-/**
- * Test the behaviour of the MODEM upon power enable.
- *
- * @author Matthias L. Jugel
- * @date 2017-01-10
- *
- * @copyright &copy; 2016 ubirch GmbH (https://ubirch.com)
- *
- * ```
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ```
- */
+//
+// Created by nirao on 20.03.17.
+//
 
-#include <stdint.h>
-#include <board.h>
-#include <stdio.h>
-#include <ubirch/timer.h>
 #include <ubirch/modem.h>
-#include <ubirch/rtc.h>
+#include <ubirch/timer.h>
+
+#include "fsl_common.h"
 #include "fsl_smc.h"
 #include "fsl_llwu.h"
 #include "fsl_rcm.h"
+#include "fsl_lptmr.h"
+#include "fsl_port.h"
+#include "power_mode.h"
+#include "board.h"
+#include "fsl_debug_console.h"
+
+#include "fsl_lpuart.h"
 #include "fsl_pmc.h"
+
+/*******************************************************************************
+ * Definitions
+ ******************************************************************************/
+
+#define LLWU_LPTMR_IDX 8U       /* LLWU_M0IF */
+#define LLWU_WAKEUP_PIN_IDX 7U /* LLWU_P7 */
+#define LLWU_WAKEUP_PIN_TYPE kLLWU_ExternalPinFallingEdge
+
+#define BOARD_WAKEUP_GPIO GPIOC
+#define BOARD_WAKEUP_PORT PORTC
+#define BOARD_WAKEUP_GPIO_PIN 3U
+#define BOARD_WAKEUP_IRQ PORTC_IRQn
+
+volatile uint32_t milliseconds = 0;
+bool on = true;
+
+void SysTick_Handler() {
+  milliseconds++;
+  if (milliseconds % 1000 == 0) on = !on;
+  BOARD_LED0(on);
+}
 
 /*!
  * @brief LLWU interrupt handler.
  */
 void LLWU_IRQHandler(void)
 {
-  /* If wakeup by LPTMR. */
-  if (LLWU_GetInternalWakeupModuleFlag(LLWU, 5U))
+  /* If wakeup by external pin. */
+  if (LLWU_GetExternalWakeupPinFlag(LLWU, LLWU_WAKEUP_PIN_IDX))
   {
-    RTC_DisableInterrupts(BOARD_RTC, kRTC_AlarmInterruptEnable);
-    RTC_ClearStatusFlags(BOARD_RTC, kRTC_AlarmFlag);
+    PORT_SetPinInterruptConfig(BOARD_WAKEUP_PORT, BOARD_WAKEUP_GPIO_PIN, kPORT_InterruptOrDMADisabled);
+    PORT_ClearPinsInterruptFlags(BOARD_WAKEUP_PORT, (1U << BOARD_WAKEUP_GPIO_PIN));
+    LLWU_ClearExternalWakeupPinFlag(LLWU, LLWU_WAKEUP_PIN_IDX);
   }
 }
 
-
-//LLWU_EnableInternalModuleInterruptWakup(LLWU, LLWU_LPTMR_IDX, true);
-
-
-/*! @brief Show current power mode. */
-void APP_ShowPowerMode(smc_power_state_t currentPowerState)
+void APP_ShowPowerMode(smc_power_state_t powerMode)
 {
-  switch (currentPowerState)
+  switch (powerMode)
   {
     case kSMC_PowerStateRun:
       PRINTF("    Power mode: RUN\r\n");
@@ -72,62 +76,85 @@ void APP_ShowPowerMode(smc_power_state_t currentPowerState)
 /*!
  * @brief main demo function.
  */
-int main(void)
-{
+int main(void) {
+
   uint32_t freq = 0;
-  smc_power_state_t currentPowerState;
+
+  smc_power_state_t curPowerState;
 
   /* Power related. */
   SMC_SetPowerModeProtection(SMC, kSMC_AllowPowerModeAll);
-  rcm_reset_source_t wakeupFromVLLS0 = kRCM_SourceWakeup & RCM_GetPreviousResetSources(RCM);
-  if (wakeupFromVLLS0 == kRCM_SourceWakeup) /* Wakeup from VLLS. */
+  if (kRCM_SourceWakeup & RCM_GetPreviousResetSources(RCM)) /* Wakeup from VLLS. */
   {
     PMC_ClearPeriphIOIsolationFlag(PMC);
     NVIC_ClearPendingIRQ(LLWU_IRQn);
-
-    /* Wait for PLL lock. */
-    while (!(kMCG_Pll0LockFlag & CLOCK_GetStatusFlags())) {}
-    CLOCK_SetPeeMode();
   }
 
   board_init(BOARD_MODE_RUN);
   board_console_init(BOARD_DEBUG_BAUD);
-  modem_init();
-  modem_disable();
-  delay(1000);
 
-  uint32_t counter = 0;
-  while (1)
+  SysTick_Config(BOARD_SYSTICK_100MS / 10);
+
+
+  port_pin_config_t pinConfig = {0};
+
+  pinConfig.mux = kPORT_MuxAsGpio;
+  pinConfig.pullSelect = kPORT_PullUp;
+  pinConfig.openDrainEnable = kPORT_OpenDrainEnable;
+
+  PORT_SetPinConfig(PORTC, BOARD_WAKEUP_GPIO_PIN, &pinConfig);
+
+  PORT_SetPinMux(PORTC, BOARD_WAKEUP_GPIO_PIN, kPORT_MuxAsGpio);          /* PORTC6 (pin 78) is configured as PTC6 */
+
+  const gpio_pin_config_t IN = {kGPIO_DigitalInput, false};
+
+  GPIO_PinInit(BOARD_WAKEUP_GPIO, BOARD_WAKEUP_GPIO_PIN, &IN);
+
+  NVIC_EnableIRQ(LLWU_IRQn);
+  NVIC_EnableIRQ(BOARD_WAKEUP_IRQ);
+
+  PRINTF("\r\n####################  Power Mode Switch Demo ####################\n\r\n");
+
+  if (kRCM_SourceWakeup & RCM_GetPreviousResetSources(RCM)) /* Wakeup from VLLS. */
   {
-    currentPowerState = SMC_GetPowerModeState(SMC);
+    PRINTF("\r\nMCU wakeup from VLLS modes...\r\n");
+  }
+  while (1) {
+
+    delay(5 * 1000);
+
+    curPowerState = SMC_GetPowerModeState(SMC);
 
     freq = CLOCK_GetFreq(kCLOCK_CoreSysClk);
 
-    PRINTF("\r\nRUN COUNT=%d (wakeup from VLLS=%d)\r\n", ++counter, wakeupFromVLLS0);
-
-    PRINTF("\r\n####################  Power Manager Demo ####################\n\r\n");
     PRINTF("    Core Clock = %dHz \r\n", freq);
 
-    APP_ShowPowerMode(currentPowerState);
+    APP_ShowPowerMode(curPowerState);
+    PRINTF("\r\n+++++++++++++++  Pull down LLWU_P7, to exit VLLS0  ++++++++++++++\r\n");
 
-    PRINTF("SLEEP!\r\n");
     /* Wait for debug console output finished. */
-    while (!(kLPUART_TransmissionCompleteFlag & LPUART_GetStatusFlags((LPUART_Type *)BOARD_DEBUG_UART))) {}
+    while (!(kLPUART_TransmissionCompleteFlag & LPUART_GetStatusFlags((LPUART_Type *)BOARD_DEBUG_UART)))
+    {
+    }
     DbgConsole_Deinit();
     PORT_SetPinMux(BOARD_DEBUG_PORT, BOARD_DEBUG_RX_PIN, kPORT_PinDisabledOrAnalog);
 
-    // set LLWU wakeup config
-    LLWU_EnableInternalModuleInterruptWakup(LLWU, 5U, true);
+//        PORT_SetPinInterruptConfig(BOARD_WAKEUP_PORT, BOARD_WAKEUP_GPIO_PIN, kPORT_InterruptEitherEdge);
+    LLWU_SetExternalWakeupPinMode(LLWU, LLWU_WAKEUP_PIN_IDX, LLWU_WAKEUP_PIN_TYPE);
     NVIC_EnableIRQ(LLWU_IRQn);
 
-    // set wakeup event
-    rtc_init();
-    rtc_set_alarm_in(5);
-
-    smc_power_mode_vlls_config_t vlls_config; /* Local variable for vlls configuration */
-    vlls_config.subMode = kSMC_StopSub0;
+    smc_power_mode_vlls_config_t vlls_config;
     vlls_config.enablePorDetectInVlls0 = true;
-    vlls_config.enableLpoClock = false;
+    vlls_config.enableRam2InVlls2 = true; /*!< Enable RAM2 power in VLLS2 */
+    vlls_config.enableLpoClock = true;    /*!< Enable LPO clock in VLLS mode */
+
+    smc_power_mode_lls_config_t lls_config;
+    lls_config.enableLpoClock = true;
+    lls_config.subMode = kSMC_StopSub3;
+
+    vlls_config.subMode = kSMC_StopSub0;
+    SMC_PreEnterStopModes();
     SMC_SetPowerModeVlls(SMC, &vlls_config);
+    SMC_PostExitStopModes();
   }
 }
