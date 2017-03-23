@@ -11,7 +11,7 @@
 #include "fsl_rcm.h"
 #include "fsl_lptmr.h"
 #include "fsl_port.h"
-#include "power_mode.h"
+#include "power_mode_rtc.h"
 #include "board.h"
 #include "fsl_debug_console.h"
 
@@ -22,14 +22,6 @@
 
 #define RTC_WAKEUP_INTERVAL 20 //Seconds
 #define LLWU_LPTMR_IDX 5U       /* LLWU_M0IF */
-
-#define LLWU_WAKEUP_PIN_IDX 7U /* LLWU_P7 */
-#define LLWU_WAKEUP_PIN_TYPE kLLWU_ExternalPinFallingEdge //kLLWU_ExternalPinAnyEdge
-
-#define BOARD_WAKEUP_GPIO GPIOC
-#define BOARD_WAKEUP_PORT PORTC
-#define BOARD_WAKEUP_GPIO_PIN 3U
-#define BOARD_WAKEUP_IRQ PORTC_IRQn
 
 volatile uint32_t milliseconds = 0;
 bool on = true;
@@ -81,16 +73,7 @@ void LLWU_IRQHandler(void)
     {
         RTC_ClearStatusFlags(RTC, kRTC_AlarmInterruptEnable);
     }
-    /* If wakeup by external pin. */
-    if (LLWU_GetExternalWakeupPinFlag(LLWU, LLWU_WAKEUP_PIN_IDX))
-    {
-        PORT_SetPinInterruptConfig(BOARD_WAKEUP_PORT, BOARD_WAKEUP_GPIO_PIN, kPORT_InterruptOrDMADisabled);
-        PORT_ClearPinsInterruptFlags(BOARD_WAKEUP_PORT, (1U << BOARD_WAKEUP_GPIO_PIN));
-        LLWU_ClearExternalWakeupPinFlag(LLWU, LLWU_WAKEUP_PIN_IDX);
-    }
 }
-
-
 
 void initrtc(void) {
     /* Init RTC */
@@ -143,26 +126,6 @@ void initrtc(void) {
     EnableIRQ(RTC_IRQn);
 }
 
-void initllwu(void) {
-
-    port_pin_config_t pinConfig = {0};
-
-    pinConfig.mux = kPORT_MuxAsGpio;
-    pinConfig.pullSelect = kPORT_PullUp;
-    pinConfig.openDrainEnable = kPORT_OpenDrainEnable;
-
-    PORT_SetPinConfig(PORTC, BOARD_WAKEUP_GPIO_PIN, &pinConfig);
-
-    PORT_SetPinMux(PORTC, BOARD_WAKEUP_GPIO_PIN, kPORT_MuxAsGpio);          /* PORTC6 (pin 78) is configured as PTC6 */
-
-    const gpio_pin_config_t IN = {kGPIO_DigitalInput, false};
-
-    GPIO_PinInit(BOARD_WAKEUP_GPIO, BOARD_WAKEUP_GPIO_PIN, &IN);
-
-    NVIC_EnableIRQ(LLWU_IRQn);
-    NVIC_EnableIRQ(BOARD_WAKEUP_IRQ);
-}
-
 /*!
  * @brief main demo function.
  */
@@ -188,7 +151,8 @@ int main(void) {
     SysTick_Config(BOARD_SYSTICK_100MS / 10);
 
     initrtc();
-    initllwu();
+
+    NVIC_EnableIRQ(LLWU_IRQn);
 
     /* Start the RTC time counter */
     RTC_StartTimer(RTC);
@@ -220,7 +184,7 @@ int main(void) {
         freq = CLOCK_GetFreq(kCLOCK_CoreSysClk);
         APP_ShowPowerMode(curPowerState);
         PRINTF("    Core Clock = %dHz \r\n", freq);
-        PRINTF("\r\n++++++ Pull down LLWU_P7 or Wait for RTC alarm to wake-up +++++\r\n");
+        PRINTF("\r\n++++++  Wait for RTC alarm to wake-up +++++\r\n");
 
         /* Wait for debug console output finished. */
         while (!(kLPUART_TransmissionCompleteFlag & LPUART_GetStatusFlags((LPUART_Type *) BOARD_DEBUG_UART))) {
@@ -228,7 +192,6 @@ int main(void) {
         DbgConsole_Deinit();
         PORT_SetPinMux(BOARD_DEBUG_PORT, BOARD_DEBUG_RX_PIN, kPORT_PinDisabledOrAnalog);
 
-        LLWU_SetExternalWakeupPinMode(LLWU, LLWU_WAKEUP_PIN_IDX, LLWU_WAKEUP_PIN_TYPE);
         LLWU_EnableInternalModuleInterruptWakup(LLWU, LLWU_LPTMR_IDX, true);
 
         smc_power_mode_vlls_config_t vlls_config;
@@ -245,4 +208,5 @@ int main(void) {
         SMC_SetPowerModeVlls(SMC, &vlls_config);
         SMC_PostExitStopModes();
     }
+    return 0;
 }
