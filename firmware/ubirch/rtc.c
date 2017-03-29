@@ -24,6 +24,8 @@
 #include <board.h>
 #include "rtc.h"
 
+#if defined(BOARD_RTC)
+
 static rtc_datetime_handler_t _handler = NULL;
 
 /*!
@@ -83,3 +85,5 @@ void rtc_attach(rtc_datetime_handler_t handler) {
 }
 
 extern void rtc_detach();
+
+#endif

@@ -144,7 +144,7 @@ void i2c_error(char *s, status_t status) {
     case kStatus_I2C_Timeout:
       PRINTF("TIMEOUT\r\n");
           break;
-#ifndef BOARD_FRDM_KL82Z
+#if !(defined(BOARD_FRDM_KL82Z) || defined(BOARD_USENSE))
     case kStatus_I2C_Addr_Nak:
       PRINTF("ADDR NAK\r\n");
           break;

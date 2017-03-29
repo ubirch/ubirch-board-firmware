@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding= "UTF-8" ?>
+<configuration name="" version="1.1" xsi:schemaLocation="http://kex.nxp.com/XSD/mex_configuration_1.1 http://kex.nxp.com/XSD/mex_configuration_1.1.xsd" uuid="543b5ccd-ab18-41b5-a222-c083f73be270" xmlns="http://kex.nxp.com/XSD/mex_configuration_1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+   <common>
+      <processor>MKL82Z128xxx7</processor>
+      <package>MKL82Z128VLL7</package>
+      <board></board>
+      <mcu_data>ksdk2_0</mcu_data>
+      <cores>
+         <core name="Core #1" id="core1" description=""/>
+      </cores>
+      <description></description>
+   </common>
+   <tools>
+      <pins name="Pins" version="1.0">
+         <pins_profile>
+            <processor_version>1.0.0</processor_version>
+         </pins_profile>
+         <functions_list>
+            <function name="BOARD_InitPins">
+               <description>Configures pin routing and optionally pin electrical features.&amp;lt;br/&amp;gt;</description>
+               <options>
+                  <coreID>singlecore</coreID>
+                  <enableClock>true</enableClock>
+               </options>
+               <pins>
+                  <pin peripheral="LPUART0" signal="RX" pin_num="97" pin_signal="ADC0_SE7b/PTD6/LLWU_P15/SPI0_PCS3/LPUART0_RX/SPI1_SOUT"/>
+                  <pin peripheral="LPUART0" signal="TX" pin_num="44" pin_signal="PTA14/SPI0_PCS0/LPUART0_TX/FXIO0_D20"/>
+               </pins>
+            </function>
+         </functions_list>
+      </pins>
+      <clocks name="Clocks" version="1.0">
+         <clocks_profile>
+            <processor_version>1.1.0</processor_version>
+         </clocks_profile>
+         <clock_configurations>
+            <clock_configuration name="BOARD_BootClockRUN">
+               <description></description>
+               <options/>
+               <dependencies/>
+               <clock_sources>
+                  <clock_source id="IRC48M.IRC48M.outFreq" value="48 MHz" locked="false" enabled="false"/>
+               </clock_sources>
+               <clock_outputs>
+                  <clock_output id="Bus_clock.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="Core_clock.outFreq" value="48 MHz" locked="true" accuracy="0.001"/>
+                  <clock_output id="Fast_bus_clock.outFreq" value="48 MHz" locked="false" accuracy=""/>
+                  <clock_output id="Flash_clock.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="IRC48MCLK.outFreq" value="48 MHz" locked="false" accuracy=""/>
+                  <clock_output id="LPO_clock.outFreq" value="1 kHz" locked="false" accuracy=""/>
+                  <clock_output id="LPUARTCLK.outFreq" value="28.8 MHz" locked="false" accuracy=""/>
+                  <clock_output id="MCGPLLCLK.outFreq" value="144 MHz" locked="false" accuracy=""/>
+                  <clock_output id="MCGPLLCLK2X.outFreq" value="288 MHz" locked="false" accuracy=""/>
+                  <clock_output id="PLLFLLCLK.outFreq" value="144 MHz" locked="false" accuracy=""/>
+                  <clock_output id="System_clock.outFreq" value="48 MHz" locked="false" accuracy=""/>
+               </clock_outputs>
+               <clock_settings>
+                  <setting id="MCGMode" value="PEE" locked="false"/>
+                  <setting id="LPUARTClkConfig" value="yes" locked="false"/>
+                  <setting id="MCG.FLL_mul.scale" value="640" locked="true"/>
+                  <setting id="MCG.IREFS.sel" value="MCG.FRDIV" locked="false"/>
+                  <setting id="MCG.OSCSEL.sel" value="SIM.IRC48MCLK" locked="false"/>
+                  <setting id="MCG.OSCSEL_PLL.sel" value="SIM.IRC48MCLK" locked="false"/>
+                  <setting id="MCG.PLLS.sel" value="MCG.PLL_DIV2" locked="false"/>
+                  <setting id="MCG.PRDIV.scale" value="3" locked="false"/>
+                  <setting id="MCG.VDIV.scale" value="18" locked="false"/>
+                  <setting id="SIM.LPUARTSRCSEL.sel" value="SIM.PLLFLLDIV" locked="false"/>
+                  <setting id="SIM.OUTDIV1.scale" value="3" locked="false"/>
+                  <setting id="SIM.OUTDIV2.scale" value="6" locked="false"/>
+                  <setting id="SIM.OUTDIV4.scale" value="6" locked="false"/>
+                  <setting id="SIM.OUTDIV5.scale" value="3" locked="false"/>
+                  <setting id="SIM.PLLFLLDIV.scale" value="5" locked="false"/>
+                  <setting id="SIM.PLLFLLSEL.sel" value="MCG.MCGPLLCLK" locked="false"/>
+               </clock_settings>
+            </clock_configuration>
+         </clock_configurations>
+      </clocks>
+   </tools>
+</configuration>
